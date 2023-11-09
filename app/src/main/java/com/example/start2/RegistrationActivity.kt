@@ -1,5 +1,6 @@
 package com.example.start2
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,8 +8,11 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
 
 import androidx.lifecycle.ViewModel
+import com.example.start2.home.HomeHostActivity
+import com.example.start2.home.NavigatorActivity
 
 class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
 
@@ -37,6 +41,18 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
         }
 
         Log.d(TAG, "onCreate called")
+        // changes with the response will be made here
+        registrationViewModel.response.observe(this, Observer { responseBody ->
+            // Logic to handle the response
+            // If the response meets certain conditions, start a new activity
+            if (responseBody != "Req") {
+                val intent = Intent(this, NavigatorActivity::class.java)
+                // Optionally, you can pass data to the new activity
+                intent.putExtra("responseKey", responseBody)
+                startActivity(intent)
+                finish()  // If you want to close the current activity
+            }
+        })
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -46,7 +62,9 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
 
             Log.d(TAG, "Initial fragment (BirthdayStepFragment) is set")
         }
+
     }
+
 
     override fun onBirthdaySelected(birthday: String) {
         supportFragmentManager.beginTransaction()
