@@ -16,7 +16,14 @@
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
 
-
+        <activity
+            android:name=".home.NavigatorActivity"
+            android:exported="false"
+            android:label="@string/title_activity_navigator"
+            android:theme="@style/Theme.Start2" />
+        <activity
+            android:name=".home.HomeHostActivity"
+            android:exported="false" />
         <!-- WelcomeActivity, initial activity -->
         <activity android:name=".WelcomeActivity"
             android:exported="true">

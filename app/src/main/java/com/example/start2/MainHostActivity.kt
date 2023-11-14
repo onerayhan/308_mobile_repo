@@ -3,6 +3,7 @@ package com.example.start2
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.start2.auth.MainFragment
 
 class MainHostActivity : AppCompatActivity() {
 

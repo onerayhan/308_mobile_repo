@@ -4,14 +4,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 
-import androidx.lifecycle.ViewModel
-import com.example.start2.home.HomeHostActivity
+import com.example.start2.auth.BirthdayStepFragment
 import com.example.start2.home.NavigatorActivity
 
 class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
@@ -34,7 +32,7 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
 
             if (supportFragmentManager.findFragmentById(R.id.fragment_container) is BirthdayStepFragment) {
                 supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                finish() // Eğer com.example.start2.MainFragment Activity'nin bir parçası değilse Activity'yi kapat
+                finish() // Eğer com.example.start2.auth.MainFragment Activity'nin bir parçası değilse Activity'yi kapat
             } else {
                 supportFragmentManager.popBackStack()
             }
