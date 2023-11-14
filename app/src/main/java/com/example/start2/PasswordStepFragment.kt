@@ -23,6 +23,7 @@ class PasswordStepFragment : Fragment() {
         val passwordEditText: EditText = view.findViewById(R.id.passwordEditText)
         val confirmPasswordEditText: EditText = view.findViewById(R.id.confirmPasswordEditText)
         val registerButton: Button = view.findViewById(R.id.registerButton)
+        val spotifyButton: Button = view.findViewById(R.id.spotifyButton)
 
         registerButton.setOnClickListener {
             val enteredPassword = passwordEditText.text.toString()
@@ -35,6 +36,10 @@ class PasswordStepFragment : Fragment() {
                 confirmPasswordEditText.error = "Passwords don't match"
             }
         }
+        spotifyButton.setOnClickListener {
+            listener?.onSpotifySelected()
+        }
+
     }
 
     override fun onAttach(context: Context) {

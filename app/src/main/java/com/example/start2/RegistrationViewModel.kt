@@ -54,6 +54,7 @@ class RegistrationViewModel : ViewModel() {
     }
 
     private val _response = MutableLiveData<String?>()
+    private val _spotiResponse = MutableLiveData<String?>()
     val response: MutableLiveData<String?> = _response
 
     fun sendUserDataToApi() {
@@ -90,6 +91,35 @@ class RegistrationViewModel : ViewModel() {
                 }
             } catch (e: IOException) {
                 _response.postValue("Request failed: ${e.message}")
+            }
+        }
+    }
+    fun sendSpotifyIntent() {
+        val apiUrl = "http://13.51.167.155/spoti_login"
+
+        val jsonObject = JSONObject().apply {
+            put("username", username)
+            put("password", password)
+            //put("public_id",publicId)
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val client = OkHttpClient()
+                val requestBody = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull())
+                val request = Request.Builder().url(apiUrl).post(requestBody).build()
+                val response = client.newCall(request).execute()
+                if(response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    _spotiResponse.postValue(responseBody)
+                }
+                else{
+                    _spotiResponse.postValue("Request was not successful. HTTP code: ${response.code}")
+                }
+
+
+            }
+            catch (e: IOException) {
+                _spotiResponse.postValue("Request failed: ${e.message}")
             }
         }
     }

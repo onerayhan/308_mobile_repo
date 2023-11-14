@@ -94,6 +94,10 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
 
     }
 
+    override fun onSpotifySelected() {
+        registrationViewModel.sendSpotifyIntent()
+    }
+
 
 
 
