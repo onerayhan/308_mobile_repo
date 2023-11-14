@@ -85,6 +85,13 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("io.coil-kt:coil-compose:1.3.2")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    implementation ("com.spotify.android:auth:1.2.5") // Maven dependency
+
+    // All other dependencies for your app should also be here:
+    implementation ("androidx.browser:browser:1.6.0")
+
 
 
     testImplementation("junit:junit:4.13.2")
@@ -140,6 +147,10 @@ dependencies {
     val nav_version = "2.7.5"
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    implementation ("com.alexstyl.swipeablecard:swipeablecard:0.1.0")
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation ("io.coil-kt:coil-compose:2.2.2")
 }
 
 

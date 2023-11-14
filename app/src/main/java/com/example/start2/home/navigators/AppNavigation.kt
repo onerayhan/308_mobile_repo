@@ -11,6 +11,7 @@ import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
+import com.example.start2.home.screens.RateScreen
 
 
 @Composable
@@ -22,6 +23,7 @@ fun AppNavGraph(
         startDestination = RootScreen.Home.route
     ) {
         addHomeRoute(navController)
+        addRateRoute(navController)
         //addSearchRoute(navController)
         //addFavoritesRoute(navController)
         addProfileRoute(navController)
@@ -54,6 +56,21 @@ private fun NavGraphBuilder.showHomeDetail(navController: NavController) {
                 navController.navigateUp()
             }
         )
+    }
+}
+private fun NavGraphBuilder.addRateRoute(navController: NavController) {
+    navigation(
+        route = RootScreen.Rate.route,
+        startDestination = LeafScreen.Rate.route
+    ) {
+        showRate(navController)
+
+    }
+}
+
+private fun NavGraphBuilder.showRate(navController: NavController) {
+    composable(route = LeafScreen.Rate.route) {
+        RateScreen()
     }
 }
 //end of home navigation

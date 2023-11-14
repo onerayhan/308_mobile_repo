@@ -71,6 +71,17 @@ fun ProfileIcon(
 }
 
 @Composable
+fun RateIcon(
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        imageVector = Icons.Outlined.Person,
+        contentDescription = stringResource(id = R.string.rate),
+        modifier = modifier
+    )
+}
+
+@Composable
 fun ArrowBackIcon(
     modifier: Modifier = Modifier,
     tint: Color = defaultIconTint()

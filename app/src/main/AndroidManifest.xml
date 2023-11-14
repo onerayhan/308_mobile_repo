@@ -21,9 +21,7 @@
             android:exported="false"
             android:label="@string/title_activity_navigator"
             android:theme="@style/Theme.Start2" />
-        <activity
-            android:name=".home.HomeHostActivity"
-            android:exported="false" />
+
         <!-- WelcomeActivity, initial activity -->
         <activity android:name=".WelcomeActivity"
             android:exported="true">
@@ -39,6 +37,19 @@
             android:theme="@style/Theme.Start2">
         </activity>
 
-        <activity android:name=".RegistrationActivity"></activity>
+        <activity android:name=".RegistrationActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.example.start2"
+                    android:host="callback" />
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name="LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 </manifest>

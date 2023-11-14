@@ -123,7 +123,11 @@ class RegistrationViewModel : ViewModel() {
             }
         }
     }
+/*
+    fun sendSpotifyToken(string token) {
+        val apiUrl = ""
+    }
 
-
+*/
 
 }

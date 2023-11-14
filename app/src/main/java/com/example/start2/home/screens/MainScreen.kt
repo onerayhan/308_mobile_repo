@@ -19,6 +19,7 @@ import com.example.start2.R
 import com.example.start2.core.FavoriteIcon
 import com.example.start2.core.HomeIcon
 import com.example.start2.core.ProfileIcon
+import com.example.start2.core.RateIcon
 import com.example.start2.core.SearchIcon
 import com.example.start2.home.navigators.AppNavGraph
 import com.example.start2.home.navigators.RootScreen
@@ -98,6 +99,17 @@ private fun BottomNavBar(
                 ProfileIcon()
             }
         )
+        NavigationBarItem(
+            selected = currentSelectedScreen == RootScreen.Rate,
+            onClick = { navController.navigateToRootScreen(RootScreen.Rate) },
+            alwaysShowLabel = true,
+            label = {
+                Text(text = stringResource(id = R.string.rate))
+            },
+            icon = {
+                RateIcon()
+            }
+        )
     }
 }
 @Preview
@@ -120,6 +132,10 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
                 destination.hierarchy.any { it.route == RootScreen.Profile.route } -> {
                     selectedItem.value = RootScreen.Profile
                 }
+                destination.hierarchy.any { it.route == RootScreen.Rate.route } -> {
+                    selectedItem.value = RootScreen.Rate
+                }
+
             }
 
         }

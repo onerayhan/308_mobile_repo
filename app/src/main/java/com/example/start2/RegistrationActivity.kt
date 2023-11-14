@@ -1,21 +1,74 @@
 package com.example.start2
 
+import android.app.Activity
+import android.app.Instrumentation
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.ImageButton
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-
 import com.example.start2.auth.BirthdayStepFragment
 import com.example.start2.home.NavigatorActivity
+import com.spotify.sdk.android.auth.AccountsQueryParameters.CLIENT_ID
+import com.spotify.sdk.android.auth.AuthorizationClient
+import com.spotify.sdk.android.auth.AuthorizationRequest
+import com.spotify.sdk.android.auth.AuthorizationResponse
+import com.spotify.sdk.android.auth.LoginActivity.REQUEST_CODE
+import java.security.MessageDigest
+import java.security.SecureRandom
+
 
 class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
 
     private val TAG = "RegistrationActivity"
+    val REQUEST_CODE = 1337
+    val REDIRECT_URI = "com.example.start2:/callback"
+    val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
     private val registrationViewModel by viewModels<RegistrationViewModel>()
+    val CODE_VERIFIER = getCodeVerifier()
+
+
+    private fun getCodeVerifier(): String {
+        val secureRandom = SecureRandom()
+        val code = ByteArray(64)
+        secureRandom.nextBytes(code)
+        return Base64.encodeToString(
+            code,
+            Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
+        )
+    }
+
+    fun getCodeChallenge(verifier: String): String {
+        val bytes = verifier.toByteArray()
+        val messageDigest = MessageDigest.getInstance("SHA-256")
+        messageDigest.update(bytes, 0, bytes.size)
+        val digest = messageDigest.digest()
+        return Base64.encodeToString(
+            digest,
+            Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
+        )
+    }
+    /*
+    fun getLoginActivityCodeIntent(): Intent =
+        AuthorizationClient.createLoginActivityIntent(
+            activity,
+            AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.CODE, REDIRECT_URI)
+                .setScopes(
+                    arrayOf(
+                        "user-library-read", "user-library-modify",
+                        "app-remote-control", "user-read-currently-playing"
+                    )
+                )
+                .setCustomParam("code_challenge_method", "S256")
+                .setCustomParam("code_challenge", getCodeChallenge(CODE_VERIFIER))
+                .build()
+        )*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +114,8 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
             Log.d(TAG, "Initial fragment (BirthdayStepFragment) is set")
         }
 
+
+
     }
 
 
@@ -95,14 +150,85 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
     }
 
     override fun onSpotifySelected() {
-        registrationViewModel.sendSpotifyIntent()
+        // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
+        // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
+        Log.d(TAG, "Spotify login started")
+        val REQUEST_CODE = 1337
+        val REDIRECT_URI = "com.example.start2:/callback"
+        val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
+
+        val builder =
+            AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI)
+
+        builder.setScopes(arrayOf("user-library-read"))
+        val request = builder.build()
+
+        AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request)
+       // registrationViewModel.sendSpotifyIntent()
+
+        Log.d(TAG, "Opening Spotify login activity with request: $request")
+
     }
 
+/*
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) { response :AuthorizationResponse
+        super.onActivityResult(requestCode, resultCode, intent)
+        Log.d(TAG, "onActivityResult called with requestCode: $requestCode, resultCode: $resultCode")
 
+        // Check if result comes from the correct activity
+        if (requestCode == REQUEST_CODE) {
+            val response = AuthorizationClient.getResponse(resultCode, intent)
+            Log.d(TAG, "Spotify response: ${response.type}")
+            when (response.type) {
+                AuthorizationResponse.Type.TOKEN -> {
+                    Log.d(TAG, "RESPONSEUMDUR BU BENİM:  ${response.toString()}")
+                }
+                AuthorizationResponse.Type.ERROR -> {
+                    Log.e(TAG, "Spotify login error: ${response.error}")
+                }
+                else -> {
+                    Log.d(TAG, "Other Spotify response type: ${response.type}")
 
-
-
-
-
+                }
+            }
+        }
+    }
+*/
 
 }
+
+/*
+        val builder =
+            AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.CODE, REDIRECT_URI)
+
+        builder.setScopes(arrayOf("user-library-read"))
+        val request = builder.build()
+
+        AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request)
+
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+
+            // Check if result comes from the correct activity
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                val resultCode = result.resultCode
+                val data = result.data
+                val response: AuthorizationResponse = AuthorizationClient.getResponse(resultCode, data)
+                when (response.type) {
+                    // Response was successful and contains auth token
+                    AuthorizationResponse.Type.TOKEN -> {
+                        println("Success! ${AuthorizationResponse.Type.TOKEN}")
+                    }
+                    // Auth flow returned an error
+                    AuthorizationResponse.Type.ERROR -> {
+                        println("Error")
+                        println(AuthorizationResponse.Type.ERROR)
+                    }
+                    // Most likely auth flow was cancelled
+                    else -> {
+                        println("Auth flow canceled")
+                    }
+                }
+            } else {
+                println("No result returned")
+            }
+        }*/
