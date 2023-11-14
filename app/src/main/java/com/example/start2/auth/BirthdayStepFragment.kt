@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.auth
 
 import com.example.start2.databinding.FragmentBirthdayStepBinding
 
@@ -7,8 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.DatePicker
+import com.example.start2.RegistrationStepsListener
 
 class BirthdayStepFragment : Fragment() {
 

@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.start2.R
 
-
+/*
 class HomeHostActivity : AppCompatActivity() {
     val screens = listOf("Home", "Feed", "Post", "Alert", "Jobs")
     //val navController = rememberNavController()
@@ -21,4 +21,4 @@ class HomeHostActivity : AppCompatActivity() {
                 .commit()
         }
     }
-}
+}*/
