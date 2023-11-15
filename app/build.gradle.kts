@@ -151,6 +151,22 @@ dependencies {
     implementation ("com.alexstyl.swipeablecard:swipeablecard:0.1.0")
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation ("io.coil-kt:coil-compose:2.2.2")
+    
+    // For Jetpack Compose.
+    implementation("com.patrykandpatrick.vico:compose:1.12.0")
+
+    // For `compose`. Creates a `ChartStyle` based on an M2 Material Theme.
+    implementation("com.patrykandpatrick.vico:compose-m2:1.12.0")
+
+    // For `compose`. Creates a `ChartStyle` based on an M3 Material Theme.
+    implementation("com.patrykandpatrick.vico:compose-m3:1.12.0")
+
+    // Houses the core logic for charts and other elements. Included in all other modules.
+    implementation("com.patrykandpatrick.vico:core:1.12.0")
+
+    // For the view system.
+    implementation("com.patrykandpatrick.vico:views:1.12.0")
+
 }
 
 

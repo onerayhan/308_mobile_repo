@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
-import com.example.start2.home.screens.AnalysisChartScreen
+import com.example.start2.home.screens.AnalysisTableScreen
 import com.example.start2.home.screens.AnalysisScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
@@ -141,8 +141,8 @@ private fun NavGraphBuilder.showAnalysis(navController: NavController) {
     }
 }
 private fun NavGraphBuilder.showAnalysisChart(navController: NavController) {
-    composable(route = LeafScreen.AnalysisChart.route) {
-        AnalysisChartScreen(navController)
+    composable(route = LeafScreen.AnalysisTable.route) {
+        AnalysisTableScreen(navController)
     }
 }
 //end of favorites navigation
