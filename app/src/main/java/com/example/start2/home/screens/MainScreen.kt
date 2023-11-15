@@ -16,6 +16,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.start2.R
+import com.example.start2.core.AnalysisIcon
 import com.example.start2.core.FavoriteIcon
 import com.example.start2.core.HomeIcon
 import com.example.start2.core.ProfileIcon
@@ -110,6 +111,17 @@ private fun BottomNavBar(
                 RateIcon()
             }
         )
+        NavigationBarItem(
+            selected = currentSelectedScreen == RootScreen.Analysis,
+            onClick = { navController.navigateToRootScreen(RootScreen.Analysis) },
+            alwaysShowLabel = true,
+            label = {
+                Text(text = stringResource(id = R.string.analysis))
+            },
+            icon = {
+                AnalysisIcon()
+            }
+        )
     }
 }
 @Preview
@@ -134,6 +146,9 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
                 }
                 destination.hierarchy.any { it.route == RootScreen.Rate.route } -> {
                     selectedItem.value = RootScreen.Rate
+                }
+                destination.hierarchy.any { it.route == RootScreen.Analysis.route } -> {
+                    selectedItem.value = RootScreen.Analysis
                 }
 
             }

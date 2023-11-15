@@ -80,6 +80,17 @@ fun RateIcon(
         modifier = modifier
     )
 }
+@Composable
+fun AnalysisIcon(
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        imageVector = Icons.Outlined.Person,
+        contentDescription = stringResource(id = R.string.analysis),
+        modifier = modifier
+    )
+}
+
 
 @Composable
 fun ArrowBackIcon(

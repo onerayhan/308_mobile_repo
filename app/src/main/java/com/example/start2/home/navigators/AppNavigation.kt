@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
+import com.example.start2.home.screens.AnalysisChartScreen
+import com.example.start2.home.screens.AnalysisScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen
@@ -27,6 +29,7 @@ fun AppNavGraph(
         //addSearchRoute(navController)
         //addFavoritesRoute(navController)
         addProfileRoute(navController)
+        addAnalysisRoute(navController)
     }
 }
 
@@ -93,21 +96,9 @@ private fun NavGraphBuilder.showSearch(navController: NavController) {
 
 //end of search navigation
 
-//favorites navigation
-private fun NavGraphBuilder.addFavoritesRoute(navController: NavController) {
-    navigation(
-        route = RootScreen.Favorites.route,
-        startDestination = LeafScreen.Favorites.route
-    ) {
-        showFavorites(navController)
-    }
-}
-private fun NavGraphBuilder.showFavorites(navController: NavController) {
-    composable(route = LeafScreen.Favorites.route) {
-        FavoritesScreen()
-    }
-}
-//end of favorites navigation
+
+
+
 */
 //profile navigation
 private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
@@ -132,3 +123,26 @@ private fun NavGraphBuilder.showFollowers(navController: NavController) {
     }
 }
 //end of profile navigation
+//favorites navigation
+
+private fun NavGraphBuilder.addAnalysisRoute(navController: NavController) {
+    navigation(
+        route = RootScreen.Analysis.route,
+        startDestination = LeafScreen.Analysis.route
+    ) {
+        showAnalysis(navController)
+        showAnalysisChart(navController)
+    }
+}
+//
+private fun NavGraphBuilder.showAnalysis(navController: NavController) {
+    composable(route = LeafScreen.Analysis.route) {
+        AnalysisScreen(navController)
+    }
+}
+private fun NavGraphBuilder.showAnalysisChart(navController: NavController) {
+    composable(route = LeafScreen.AnalysisChart.route) {
+        AnalysisChartScreen(navController)
+    }
+}
+//end of favorites navigation
