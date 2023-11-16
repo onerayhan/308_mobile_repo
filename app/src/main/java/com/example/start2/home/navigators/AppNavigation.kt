@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
 import com.example.start2.home.screens.AnalysisChartScreen
+import com.example.start2.home.screens.AnalysisOption
 import com.example.start2.home.screens.AnalysisScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
@@ -137,9 +138,12 @@ private fun NavGraphBuilder.addAnalysisRoute(navController: NavController) {
 //
 private fun NavGraphBuilder.showAnalysis(navController: NavController) {
     composable(route = LeafScreen.Analysis.route) {
-        AnalysisScreen(navController)
+        val selectedOption = AnalysisOption.SongPopularity // Provide a default option
+        AnalysisScreen(navController, selectedOption)
     }
-}
+    }
+
+
 private fun NavGraphBuilder.showAnalysisChart(navController: NavController) {
     composable(route = LeafScreen.AnalysisChart.route) {
         AnalysisChartScreen(navController)

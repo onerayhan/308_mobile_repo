@@ -48,8 +48,5 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name="LoginActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 </manifest>
