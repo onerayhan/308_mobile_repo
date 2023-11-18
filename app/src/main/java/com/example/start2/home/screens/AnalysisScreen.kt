@@ -27,11 +27,11 @@ import com.example.start2.home.ui.SongData
 import com.example.start2.home.ui.SongPopularityData
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun AnalysisScreenPreview() {
     val dummyNavController = rememberNavController()
-    AnalysisScreen(navController = dummyNavController, selectedOption = AnalysisOption.SongPopularity)
+    AnalysisScreen(navController = dummyNavController)
 }
 enum class AnalysisOption(val displayName: String) {
     SongPopularity("Song Popularity Over Time"),
@@ -42,23 +42,27 @@ enum class AnalysisOption(val displayName: String) {
 }
 
 @Composable
-fun AnalysisScreen(navController: NavController, selectedOption: AnalysisOption) {
+fun AnalysisScreen(navController: NavController) {
+    // Initialize the ViewModel using viewModel()
     val viewModel: AnalysisViewModel = viewModel()
+
+    var selectedOption by remember { mutableStateOf(AnalysisOption.SongPopularity) }
 
     Scaffold(
         topBar = { AnalysisTopBar() }
     ) { contentPadding ->
+        // Use contentPadding for the Column
         Column(
             modifier = Modifier.padding(contentPadding)
         ) {
             AnalysisOptionSelector(selectedOption) { option ->
+                selectedOption = option
                 viewModel.fetchDataForOption(option)
             }
             AnalysisChartArea(viewModel, selectedOption)
         }
     }
 }
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,35 +98,14 @@ fun AnalysisOptionSelector(selectedOption: AnalysisOption, onOptionSelected: (An
         // Button to show/hide the DropdownMenu
         Button(onClick = { expanded.value = true }) {
             Text("Show Options")
+        } }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Buttons for selecting an option
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            AnalysisOption.values().forEach { option ->
-                Button(
-                    onClick = {
-                        onOptionSelected(option) // Invoke the callback on button click
-                    },
-                    colors = if (option == selectedOption) {
-                        ButtonDefaults.buttonColors(containerColor = Color.Green)
-                    } else {
-                        ButtonDefaults.buttonColors(containerColor = Color.White)
-                    }
-                ) {
-                    Text(text = option.displayName)
-                }
-            }
-        }
-    }
-}
 @Composable
 fun AnalysisChartArea(viewModel: AnalysisViewModel, selectedOption: AnalysisOption) {
     val chartData by viewModel.chartData.observeAsState(listOf())
 
+    // Each chart function directly accepts List<FloatEntry>
     when (selectedOption) {
         AnalysisOption.SongPopularity -> SongPopularityTrendChart(chartData)
         AnalysisOption.RatingDistribution -> RatingDistributionChart(chartData)
