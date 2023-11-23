@@ -1,4 +1,5 @@
 package com.example.start2.home.screens
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +20,7 @@ import com.example.start2.home.ui.SongPopularityTrendChart
 
 
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.start2.home.ui.ArtistData
 import com.example.start2.home.ui.GenreData
@@ -26,6 +28,8 @@ import com.example.start2.home.ui.RatingData
 import com.example.start2.home.ui.SongData
 import com.example.start2.home.ui.SongPopularityData
 import com.patrykandpatrick.vico.core.entry.FloatEntry
+import com.example.start2.home.navigators.LeafScreen
+
 
 @Preview(showBackground = true)
 @Composable
@@ -55,11 +59,24 @@ fun AnalysisScreen(navController: NavController) {
         Column(
             modifier = Modifier.padding(contentPadding)
         ) {
-            AnalysisOptionSelector(selectedOption) { option ->
-                selectedOption = option
-                viewModel.fetchDataForOption(option)
-            }
-            AnalysisChartArea(viewModel, selectedOption)
+        }
+        Text(
+            text = "chartView",
+            modifier = Modifier.clickable { navController?.navigateToLeafScreen(LeafScreen.AnalysisTable) })
+        AnalysisOptionSelector(selectedOption) { option ->
+            selectedOption = option
+            viewModel.fetchDataForOption(option)
+        }
+        AnalysisChartArea(viewModel, selectedOption)
+    }
+}
+
+        private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
+            navigate(leafScreen.route) {
+                launchSingleTop = true
+                restoreState = true
+                popUpTo(graph.findStartDestination().id) {
+                    saveState = true
         }
     }
 }
