@@ -95,7 +95,7 @@ class MainFragment : Fragment() {
 
     private fun navigateToRegistration(username: String) {
         val intent = Intent(requireContext(), RegistrationActivity::class.java)
-        intent.putExtra("EXTRA_Username", username)
+        intent.putExtra("username", username)
         startActivity(intent)
     }
 
@@ -156,6 +156,9 @@ class MainFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         // Handle success and update the UI
                         println("Login successful. Response code: $responseCode")
+
+
+
                     }
                 } else {
                     println("Login failed. Response code: $responseCode")

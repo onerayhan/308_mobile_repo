@@ -19,6 +19,7 @@ sealed class LeafScreen(val route: String) {
     object Profile : LeafScreen("profile")
     object Followers : LeafScreen("followers")
     object AnalysisChart : LeafScreen("analysis_chart")
+    data class Friend(val username: String) :LeafScreen("friend/{username}")
     //Analysis table is noted as analysis for naming conventions
     object Analysis : LeafScreen("analysis")
 }

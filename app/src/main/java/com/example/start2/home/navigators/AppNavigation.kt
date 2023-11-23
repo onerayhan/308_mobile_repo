@@ -1,6 +1,7 @@
 package com.example.start2.home.navigators
 
 import FollowersScreen
+import com.example.start2.ProfileViewModel
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -113,8 +114,12 @@ private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
     }
 }
 private fun NavGraphBuilder.showProfile(navController: NavController) {
-    composable(route = LeafScreen.Profile.route) {
-        ProfileScreen(navController)
+    composable(
+        route = "${LeafScreen.Profile.route}/{username}",
+        arguments = listOf(navArgument("username") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val username = backStackEntry.arguments?.getString("username") ?: ""
+        ProfileScreen(navController, username)
     }
 }
 

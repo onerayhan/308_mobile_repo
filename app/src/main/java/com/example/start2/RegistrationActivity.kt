@@ -74,8 +74,8 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
 
-        val userName = intent.getStringExtra("userName")
-        userName?.let {
+        val username = intent.getStringExtra("username")
+        username?.let {
             registrationViewModel.saveUsername(it)
         }
 
