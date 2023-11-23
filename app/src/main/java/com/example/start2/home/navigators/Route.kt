@@ -11,6 +11,8 @@ sealed class RootScreen(val route: String) {
 }
 
 sealed class LeafScreen(val route: String) {
+
+    data class Friend(val username: String) : LeafScreen("friend/{username}")
     object Home : LeafScreen("home")
     object Search : LeafScreen("search")
     object HomeDetail : LeafScreen("home_detail")

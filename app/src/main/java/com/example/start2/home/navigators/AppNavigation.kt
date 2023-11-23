@@ -12,6 +12,7 @@ import com.example.start2.home.ProfileScreen
 import com.example.start2.home.screens.AnalysisChartScreen
 import com.example.start2.home.screens.AnalysisOption
 import com.example.start2.home.screens.AnalysisScreen
+import com.example.start2.home.screens.FriendScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen
@@ -77,31 +78,6 @@ private fun NavGraphBuilder.showRate(navController: NavController) {
         RateScreen()
     }
 }
-//end of home navigation
-/*
-//search navigation
-private fun NavGraphBuilder.addSearchRoute(navController: NavController) {
-    navigation(
-        route = RootScreen.Search.route,
-        startDestination = LeafScreen.Search.route
-    ) {
-        showSearch(navController)
-    }
-}
-
-private fun NavGraphBuilder.showSearch(navController: NavController) {
-    composable(route = LeafScreen.Search.route) {
-        SearchScreen()
-    }
-}
-
-//end of search navigation
-
-
-
-
-*/
-//profile navigation
 private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
     navigation(
         route = RootScreen.Profile.route,
@@ -123,8 +99,6 @@ private fun NavGraphBuilder.showFollowers(navController: NavController) {
         FollowersScreen()
     }
 }
-//end of profile navigation
-//favorites navigation
 
 private fun NavGraphBuilder.addAnalysisRoute(navController: NavController) {
     navigation(
@@ -141,7 +115,7 @@ private fun NavGraphBuilder.showAnalysis(navController: NavController) {
         val selectedOption = AnalysisOption.SongPopularity // Provide a default option
         AnalysisScreen(navController, selectedOption)
     }
-    }
+}
 
 
 private fun NavGraphBuilder.showAnalysisChart(navController: NavController) {

@@ -5,7 +5,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
+import com.example.start2.ProfileViewModel
 
 // https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1200px-Google_Images_2015_logo.svg.png
 
@@ -34,4 +36,3 @@ fun FollowerItem(follower: Follower) {
         Text(text = follower.username)
     }
 }
-

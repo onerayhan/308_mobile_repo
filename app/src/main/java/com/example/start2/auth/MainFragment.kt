@@ -1,5 +1,6 @@
 package com.example.start2.auth
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.start2.ProfileViewModel
 import com.example.start2.databinding.FragmentMainBinding
 import android.content.Intent
 import android.os.Bundle
@@ -8,8 +9,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.Navigation.findNavController
 import com.example.start2.RegistrationActivity
+import com.example.start2.home.NavigatorActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,6 +31,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class MainFragment : Fragment() {
+
+
     private lateinit var binding: FragmentMainBinding
     private val apiEndpoint =
         "http://13.51.167.155/api/get_all_users" // Replace with your API endpoint
@@ -77,7 +82,7 @@ class MainFragment : Fragment() {
                     }
 
                     val apiUrl = "http://13.51.167.155/api/login" // Replace with your API endpoint
-                    performLogin(apiUrl, jsonObject)
+                    performLogin(apiUrl, jsonObject,username)
 
                     // Use Kotlin coroutines to perform the network operation asynchronously
 
@@ -95,12 +100,12 @@ class MainFragment : Fragment() {
 
     private fun navigateToRegistration(username: String) {
         val intent = Intent(requireContext(), RegistrationActivity::class.java)
-        intent.putExtra("EXTRA_Username", username)
+        intent.putExtra("username", username)
         startActivity(intent)
     }
 
 
-    private fun performLogin(apiUrl: String, jsonRequestBody: JSONObject) {
+    private fun performLogin(apiUrl: String, jsonRequestBody: JSONObject,username: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val url = URL(apiUrl)
@@ -156,6 +161,10 @@ class MainFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         // Handle success and update the UI
                         println("Login successful. Response code: $responseCode")
+                        val intent = Intent(requireContext(), NavigatorActivity::class.java)
+                        intent.putExtra("username", username)
+                        startActivity(intent)
+
                     }
                 } else {
                     println("Login failed. Response code: $responseCode")
@@ -173,9 +182,7 @@ class MainFragment : Fragment() {
             }
         }
     }
-
-
-
+    // Use the ComposeView to host the Composable function
 
     private fun isUsernameRegistered(username: String): Boolean {
         val client = OkHttpClient()
@@ -198,6 +205,10 @@ class MainFragment : Fragment() {
                     val jsonObject = jsonArray.getJSONObject(i)
                     val registeredUsername = jsonObject.optString("username")
                     if (registeredUsername == username) {
+
+
+
+
                         return true
                     }
                 }

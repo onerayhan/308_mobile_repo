@@ -7,8 +7,6 @@ import com.example.start2.auth.MainFragment
 
 class MainHostActivity : AppCompatActivity() {
 
-    private val registrationViewModel by viewModels<RegistrationViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
