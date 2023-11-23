@@ -74,8 +74,8 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
 
-        val userName = intent.getStringExtra("userName")
-        userName?.let {
+        val username = intent.getStringExtra("username")
+        username?.let {
             registrationViewModel.saveUsername(it)
         }
 
@@ -153,14 +153,15 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
         // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
         // Request code will be used to verify if result comes from the login activity. Can be set to any integer.
         Log.d(TAG, "Spotify login started")
+        //registrationViewModel.sendSpotifyRequestToMainServer()
         val REQUEST_CODE = 1337
-        val REDIRECT_URI = "com.example.start2:/callback"
+        val REDIRECT_URI = "com.example.start2://callback"
         val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
 
         val builder =
             AuthorizationRequest.Builder(CLIENT_ID, AuthorizationResponse.Type.TOKEN, REDIRECT_URI)
 
-        builder.setScopes(arrayOf("user-library-read"))
+        builder.setScopes(arrayOf("user-library-read,user-top-read"))
         val request = builder.build()
 
         AuthorizationClient.openLoginActivity(this, REQUEST_CODE, request)
@@ -170,8 +171,8 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
 
     }
 
-/*
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) { response :AuthorizationResponse
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         Log.d(TAG, "onActivityResult called with requestCode: $requestCode, resultCode: $resultCode")
 
@@ -182,6 +183,10 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
             when (response.type) {
                 AuthorizationResponse.Type.TOKEN -> {
                     Log.d(TAG, "RESPONSEUMDUR BU BENİM:  ${response.toString()}")
+                    // Starting NavigatorActivity
+                    val intent = Intent(this, NavigatorActivity::class.java)
+                    intent.putExtra("SpotifyToken", response.accessToken) // Passing the token to the next activity
+                    startActivity(intent)
                 }
                 AuthorizationResponse.Type.ERROR -> {
                     Log.e(TAG, "Spotify login error: ${response.error}")
@@ -193,8 +198,27 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
             }
         }
     }
-*/
 
+/*
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (requestCode == AUTH_REQUEST_CODE) {
+            val response = AuthenticationClient.getResponse(resultCode, intent)
+            when (response.type) {
+                AuthenticationResponse.Type.TOKEN -> {
+                    // Handle successful response
+                    val accessToken = response.accessToken
+                }
+                AuthenticationResponse.Type.ERROR -> {
+                    // Handle error response
+                }
+                else -> {
+                    // Handle other cases
+                }
+            }
+        }
+    }
+*/
 }
 
 /*

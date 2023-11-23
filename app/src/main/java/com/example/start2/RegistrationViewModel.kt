@@ -80,10 +80,6 @@ class RegistrationViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
                     _response.postValue(responseBody)
-                    
-
-
-
 
 
                 } else {

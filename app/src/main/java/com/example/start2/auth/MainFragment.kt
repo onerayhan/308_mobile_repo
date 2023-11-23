@@ -95,7 +95,7 @@ class MainFragment : Fragment() {
 
     private fun navigateToRegistration(username: String) {
         val intent = Intent(requireContext(), RegistrationActivity::class.java)
-        intent.putExtra("EXTRA_Username", username)
+        intent.putExtra("username", username)
         startActivity(intent)
     }
 

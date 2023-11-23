@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -33,17 +34,31 @@ import com.example.start2.R
 
 import com.example.start2.home.screens.MainScreen
 import com.example.start2.home.ui.theme.Guardians_of_codedevelopment_mobileTheme
+import com.example.start2.viewmodels.DummySpotifyViewModel
+import com.example.start2.viewmodels.SpotifyViewModel
+import com.example.start2.viewmodels.SpotifyViewModelFactory
 
 class NavigatorActivity : ComponentActivity() {
 
+    private lateinit var viewModel: SpotifyViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar?.hide()
+        val token = intent.getStringExtra("SpotifyToken")
+        // Initialize ViewModel
+        val viewModel: SpotifyViewModel = if (token != null) {
+            ViewModelProvider(this, SpotifyViewModelFactory(token)).get(SpotifyViewModel::class.java)
+        } else {
+            DummySpotifyViewModel("dummy")
+        }
+        // Fetch top tracks
+        //viewModel.getUserTopTracks()
         setContent {
             Guardians_of_codedevelopment_mobileTheme {
                 // A surface container using the 'background' color from the theme
-                MainScreen()
+                MainScreen(viewModel)
             }
         }
+
     }
 }
