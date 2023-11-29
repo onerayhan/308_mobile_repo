@@ -17,7 +17,8 @@ import com.example.start2.home.screens.AnalysisScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen
-import com.example.start2.viewmodels.SpotifyViewModel
+import com.example.start2.home.screens.SearchScreen
+import com.example.start2.home.spotify.SpotifyViewModel
 
 
 @Composable
@@ -31,7 +32,7 @@ fun AppNavGraph(
     ) {
         addHomeRoute(navController)
         addRateRoute(navController)
-        //addSearchRoute(navController)
+        addSearchRoute(navController, spotifyViewModel)
         //addFavoritesRoute(navController)
         addProfileRoute(navController)
         addAnalysisRoute(navController, spotifyViewModel)
@@ -82,20 +83,20 @@ private fun NavGraphBuilder.showRate(navController: NavController) {
     }
 }
 //end of home navigation
-/*
+
 //search navigation
-private fun NavGraphBuilder.addSearchRoute(navController: NavController) {
+private fun NavGraphBuilder.addSearchRoute(navController: NavController,  spotifyViewModel: SpotifyViewModel) {
     navigation(
         route = RootScreen.Search.route,
         startDestination = LeafScreen.Search.route
     ) {
-        showSearch(navController)
+        showSearch(navController, spotifyViewModel)
     }
 }
 
-private fun NavGraphBuilder.showSearch(navController: NavController) {
+private fun NavGraphBuilder.showSearch(navController: NavController,  spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.Search.route) {
-        SearchScreen()
+        SearchScreen(navController, spotifyViewModel)
     }
 }
 
@@ -104,7 +105,7 @@ private fun NavGraphBuilder.showSearch(navController: NavController) {
 
 
 
-*/
+
 //profile navigation
 private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
     navigation(

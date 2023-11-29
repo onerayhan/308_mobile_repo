@@ -24,7 +24,7 @@ import com.example.start2.core.RateIcon
 import com.example.start2.core.SearchIcon
 import com.example.start2.home.navigators.AppNavGraph
 import com.example.start2.home.navigators.RootScreen
-import com.example.start2.viewmodels.SpotifyViewModel
+import com.example.start2.home.spotify.SpotifyViewModel
 
 
 @Composable

@@ -5,7 +5,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,14 +21,8 @@ import com.example.start2.home.ui.SongPopularityTrendChart
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import com.example.start2.home.ui.ArtistData
-import com.example.start2.home.ui.GenreData
-import com.example.start2.home.ui.RatingData
-import com.example.start2.home.ui.SongData
-import com.example.start2.home.ui.SongPopularityData
-import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.example.start2.home.navigators.LeafScreen
-import com.example.start2.viewmodels.SpotifyViewModel
+import com.example.start2.home.spotify.SpotifyViewModel
 
 
 @Preview(showBackground = true)
