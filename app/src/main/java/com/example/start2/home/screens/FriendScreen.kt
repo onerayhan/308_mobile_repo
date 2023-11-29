@@ -23,7 +23,7 @@ fun FriendScreen(
    friendViewModel: Friendwiewmodel  // Pass the ProfileViewModel
 ) {
     // Use the friend's username to fetch their profile
-
+    //tryut
     friendViewModel.fetchUserProfile(friendUsername)
     // Observing the state from the ViewModel
     val friendProfile by   friendViewModel.userProfile
