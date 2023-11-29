@@ -24,10 +24,11 @@ import com.example.start2.core.RateIcon
 import com.example.start2.core.SearchIcon
 import com.example.start2.home.navigators.AppNavGraph
 import com.example.start2.home.navigators.RootScreen
+import com.example.start2.viewmodels.SpotifyViewModel
 
-@Preview
+
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: SpotifyViewModel) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
@@ -45,7 +46,7 @@ fun MainScreen() {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            AppNavGraph(navController = navController)
+            AppNavGraph(navController = navController, spotifyViewModel = viewModel)
         }
     }
 }
