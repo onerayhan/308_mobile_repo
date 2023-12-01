@@ -33,7 +33,8 @@ fun MusicAddPage() {
     var addedTimestamp by remember { mutableStateOf("") }
     var selectedFileUri by remember { mutableStateOf<android.net.Uri?>(null) }
 
-    var keyboardController by remember { mutableStateOf<SoftwareKeyboardController?>(null) }
+    //TODO:: Berkant bunu kullanma
+    //var keyboardController by remember { mutableStateOf<SoftwareKeyboardController?>(null) }
 
     // Set the background color
     Box(
