@@ -21,13 +21,15 @@ import com.example.start2.core.FavoriteIcon
 import com.example.start2.core.HomeIcon
 import com.example.start2.core.ProfileIcon
 import com.example.start2.core.RateIcon
+import com.example.start2.core.RecommendationIcon
 import com.example.start2.core.SearchIcon
 import com.example.start2.home.navigators.AppNavGraph
 import com.example.start2.home.navigators.RootScreen
+import com.example.start2.home.spotify.SpotifyViewModel
 
-@Preview
+
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModel: SpotifyViewModel) {
     val navController = rememberNavController()
     val currentSelectedScreen by navController.currentScreenAsState()
     val currentRoute by navController.currentRouteAsState()
@@ -45,7 +47,7 @@ fun MainScreen() {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            AppNavGraph(navController = navController)
+            AppNavGraph(navController = navController, spotifyViewModel = viewModel)
         }
     }
 }
@@ -79,14 +81,14 @@ private fun BottomNavBar(
             }
         )
         NavigationBarItem(
-            selected = currentSelectedScreen == RootScreen.Favorites,
-            onClick = { navController.navigateToRootScreen(RootScreen.Favorites) },
+            selected = currentSelectedScreen == RootScreen.Recommendation,
+            onClick = { navController.navigateToRootScreen(RootScreen.Recommendation) },
             alwaysShowLabel = true,
             label = {
-                Text(text = stringResource(id = R.string.favorites))
+                Text(text = stringResource(id = R.string.recommendation))
             },
             icon = {
-                FavoriteIcon()
+                RecommendationIcon()
             }
         )
         NavigationBarItem(
@@ -138,8 +140,8 @@ private fun NavController.currentScreenAsState(): State<RootScreen> {
                 destination.hierarchy.any { it.route == RootScreen.Search.route } -> {
                     selectedItem.value = RootScreen.Search
                 }
-                destination.hierarchy.any { it.route == RootScreen.Favorites.route } -> {
-                    selectedItem.value = RootScreen.Favorites
+                destination.hierarchy.any { it.route == RootScreen.Recommendation.route } -> {
+                    selectedItem.value = RootScreen.Recommendation
                 }
                 destination.hierarchy.any { it.route == RootScreen.Profile.route } -> {
                     selectedItem.value = RootScreen.Profile

@@ -9,18 +9,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
-import com.example.start2.home.screens.AnalysisChartScreen
+
 import com.example.start2.home.screens.AnalysisOption
+
+import com.example.start2.home.screens.AnalysisTableScreen
 import com.example.start2.home.screens.AnalysisScreen
-import com.example.start2.home.screens.FriendScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen
+import com.example.start2.home.screens.RecommendationScreen
+import com.example.start2.home.screens.SearchScreen
+import com.example.start2.home.spotify.SpotifyViewModel
 
 
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
+    spotifyViewModel: SpotifyViewModel
 ) {
     NavHost(
         navController = navController,
@@ -28,10 +33,11 @@ fun AppNavGraph(
     ) {
         addHomeRoute(navController)
         addRateRoute(navController)
-        //addSearchRoute(navController)
+        addSearchRoute(navController, spotifyViewModel)
         //addFavoritesRoute(navController)
+        addRecommendationRoute(navController)
         addProfileRoute(navController)
-        addAnalysisRoute(navController)
+        addAnalysisRoute(navController, spotifyViewModel)
     }
 }
 
@@ -78,6 +84,51 @@ private fun NavGraphBuilder.showRate(navController: NavController) {
         RateScreen()
     }
 }
+//end of home navigation
+
+// Recommendation navigation
+private fun NavGraphBuilder.addRecommendationRoute(navController: NavController) {
+    navigation(
+        route = RootScreen.Recommendation.route,
+        startDestination = LeafScreen.Recommendation.route
+    )
+    {
+        showRecommendation(navController)
+    }
+}
+
+
+private fun NavGraphBuilder.showRecommendation(navController: NavController) {
+    composable(route = LeafScreen.Recommendation.route) {
+        RecommendationScreen()
+    }
+}
+
+//end of recommendation navigation
+
+//search navigation
+private fun NavGraphBuilder.addSearchRoute(navController: NavController,  spotifyViewModel: SpotifyViewModel) {
+    navigation(
+        route = RootScreen.Search.route,
+        startDestination = LeafScreen.Search.route
+    ) {
+        showSearch(navController, spotifyViewModel)
+    }
+}
+
+private fun NavGraphBuilder.showSearch(navController: NavController,  spotifyViewModel: SpotifyViewModel) {
+    composable(route = LeafScreen.Search.route) {
+        SearchScreen(navController, spotifyViewModel)
+    }
+}
+
+//end of search navigation
+
+
+
+
+
+//profile navigation
 private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
     navigation(
         route = RootScreen.Profile.route,
@@ -99,28 +150,30 @@ private fun NavGraphBuilder.showFollowers(navController: NavController) {
         FollowersScreen()
     }
 }
+//end of profile navigation
+//favorites navigation
 
-private fun NavGraphBuilder.addAnalysisRoute(navController: NavController) {
+private fun NavGraphBuilder.addAnalysisRoute(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     navigation(
         route = RootScreen.Analysis.route,
         startDestination = LeafScreen.Analysis.route
     ) {
-        showAnalysis(navController)
-        showAnalysisChart(navController)
+        showAnalysis(navController, spotifyViewModel)
+        showAnalysisChart(navController, spotifyViewModel)
     }
 }
 //
-private fun NavGraphBuilder.showAnalysis(navController: NavController) {
+private fun NavGraphBuilder.showAnalysis(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.Analysis.route) {
         val selectedOption = AnalysisOption.SongPopularity // Provide a default option
-        AnalysisScreen(navController, selectedOption)
+        AnalysisScreen(navController, spotifyViewModel)
     }
 }
 
 
-private fun NavGraphBuilder.showAnalysisChart(navController: NavController) {
-    composable(route = LeafScreen.AnalysisChart.route) {
-        AnalysisChartScreen(navController)
+private fun NavGraphBuilder.showAnalysisChart(navController: NavController, spotifyViewModel: SpotifyViewModel) {
+    composable(route = LeafScreen.AnalysisTable.route) {
+        AnalysisTableScreen(navController, spotifyViewModel)
     }
 }
 //end of favorites navigation
