@@ -146,6 +146,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -213,10 +214,26 @@ class RegistrationViewModel : ViewModel() {
     fun savePassword(password: String) {
         _password.value = password
     }
+    fun saveSpotifyToken(token: String?) {
+        _spotifyToken.value = token
+    }
 
     private val _response = MutableLiveData<String?>()
     private val _spotiResponse = MutableLiveData<String?>()
     val response: MutableLiveData<String?> = _response
+    private val _spotifyToken = MutableLiveData<String?>()
+    val spotifyToken: LiveData<String?> = _spotifyToken
+    private val _combinedData = MediatorLiveData<Pair<String?, String?>>().apply {
+        addSource(response) { response ->
+            value = response to _spotifyToken.value
+        }
+        addSource(_spotifyToken) { token ->
+            value = response.value to token
+        }
+    }
+    val combinedData: LiveData<Pair<String?, String?>> = _combinedData
+
+
 
     fun sendUserDataToApi() {
 

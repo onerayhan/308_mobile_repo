@@ -32,15 +32,16 @@ class PasswordStepFragment : Fragment() {
 
             if (enteredPassword == confirmedPassword) {
                 // Burada listener aracılığıyla ana aktiviteye bilgi gönderelim
+                listener?.onSpotifySelected()
                 listener?.onPasswordSelected(enteredPassword)
             } else {
                 confirmPasswordEditText.error = "Passwords don't match"
             }
         }
-        spotifyButton.setOnClickListener {
-            listener?.onSpotifySelected()
-        }
 
+        spotifyButton.setOnClickListener {
+
+        }
     }
 
     override fun onAttach(context: Context) {

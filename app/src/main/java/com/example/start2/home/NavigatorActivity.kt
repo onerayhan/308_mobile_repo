@@ -1,6 +1,7 @@
 package com.example.start2.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,9 @@ class NavigatorActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         actionBar?.hide()
         val token = intent.getStringExtra("SpotifyToken")
+        if (token != null) {
+            Log.d("NavigatorActivity", token)
+        }
         // Initialize ViewModel
         val viewModel: SpotifyViewModel = if (token != null) {
             ViewModelProvider(this, SpotifyViewModelFactory(token)).get(SpotifyViewModel::class.java)

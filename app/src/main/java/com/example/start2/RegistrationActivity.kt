@@ -24,6 +24,7 @@ import java.security.MessageDigest
 import java.security.SecureRandom
 
 
+
 class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
 
     private val TAG = "RegistrationActivity"
@@ -92,6 +93,7 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
         }
 
         Log.d(TAG, "onCreate called")
+        /*
         // changes with the response will be made here
         registrationViewModel.response.observe(this, Observer { responseBody ->
             // Logic to handle the response
@@ -100,10 +102,26 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
                 val intent = Intent(this, NavigatorActivity::class.java)
                 // Optionally, you can pass data to the new activity
                 intent.putExtra("responseKey", responseBody)
+                //intent.putExtra("SpotifyToken", token)
+                registrationViewModel.spotifyToken.value?.let {token ->
+                    intent.putExtra("SpotifyToken", token)
+
+                }
                 startActivity(intent)
-                finish()  // If you want to close the current activity
+                finish()  // If you want to close the current
+
+            }
+        })*/
+        registrationViewModel.combinedData.observe(this, Observer { (responseBody, token) ->
+            if (responseBody != null && responseBody != "Req" && token != null) {
+                val intent = Intent(this, NavigatorActivity::class.java)
+                intent.putExtra("responseKey", responseBody)
+                intent.putExtra("SpotifyToken", token)
+                startActivity(intent)
+                finish()
             }
         })
+
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -184,9 +202,10 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
                 AuthorizationResponse.Type.TOKEN -> {
                     Log.d(TAG, "RESPONSEUMDUR BU BENİM:  ${response.toString()}")
                     // Starting NavigatorActivity
-                    val intent = Intent(this, NavigatorActivity::class.java)
-                    intent.putExtra("SpotifyToken", response.accessToken) // Passing the token to the next activity
-                    startActivity(intent)
+                    //val intent = Intent(this, NavigatorActivity::class.java)
+                    //intent.putExtra("SpotifyToken", response.accessToken) // Passing the token to the next activity
+                    //startActivity(intent)
+                    registrationViewModel.saveSpotifyToken(response.accessToken)
                 }
                 AuthorizationResponse.Type.ERROR -> {
                     Log.e(TAG, "Spotify login error: ${response.error}")
