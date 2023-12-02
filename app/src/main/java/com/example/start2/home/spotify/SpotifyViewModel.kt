@@ -11,11 +11,13 @@ import kotlin.math.log
 
 open class SpotifyViewModel(protected val token: String) : ViewModel() {
 
-    private val repository = SpotifyRepository(SpotifyServiceProvider.instance, SpotifySearchServiceProvider.instance)
+    private val repository = SpotifyRepository(SpotifyServiceProvider.instance, SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance)
 
     val topTracks = MutableLiveData<TopTracksResponse>()
 
     val searchResults = MutableLiveData<SpotifySearchResponse>()
+
+    val recommendationResults = MutableLiveData<SpotifyRecommendationsResponse>()
 
 
     open fun getUserTopTracks() {
@@ -35,9 +37,18 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
             }
         }
     }
+
+    open fun getRecommendation(recommendationQuery: String) {
+        viewModelScope.launch {
+            val result = repository.getRecommendation(token,recommendationQuery)
+            result?.let {
+                recommendationResults.postValue(it)
+            }
+        }
+    }
 }
 
-open class SpotifyRepository(private val spotifyService: SpotifyService, private val spotifySearchService: SpotifySearchService) {
+open class SpotifyRepository(private val spotifyService: SpotifyService, private val spotifySearchService: SpotifySearchService, private val spotifyRecommendationsService: SpotifyRecommendationsService) {
     open suspend fun getUserTopTracks(token: String?): TopTracksResponse? {
         return try {
             val response = spotifyService.getUserTopTracks("Bearer $token")
@@ -67,6 +78,22 @@ open class SpotifyRepository(private val spotifyService: SpotifyService, private
             null
         }
         
+    }
+//TODO:: Implement user entry recommendation
+    open suspend fun getRecommendation(token: String?, recommendationQuery: String) : SpotifyRecommendationsResponse? {
+        return try {
+            Log.d("RegistrationActivity", "big in japan")
+            val response = spotifyRecommendationsService.getRecommendations("Bearer $token", 10, "TR", seedGenres = recommendationQuery)
+            if(response.isSuccessful) {
+                Log.d("RegistrationActivity", response.body().toString())
+                response.body()
+            } else {
+                Log.d("RegistrationActivity", "And every time I look at you")
+                null
+            }
+        } catch(e: Exception) {
+            null
+        }
     }
 
     private fun parseSpotifySearchResponse(rawResponse: RawSpotifySearchResponse?): SpotifySearchResponse {

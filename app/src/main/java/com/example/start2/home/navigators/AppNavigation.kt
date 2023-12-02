@@ -35,7 +35,7 @@ fun AppNavGraph(
         addRateRoute(navController)
         addSearchRoute(navController, spotifyViewModel)
         //addFavoritesRoute(navController)
-        addRecommendationRoute(navController)
+        addRecommendationRoute(navController, spotifyViewModel)
         addProfileRoute(navController)
         addAnalysisRoute(navController, spotifyViewModel)
     }
@@ -87,20 +87,20 @@ private fun NavGraphBuilder.showRate(navController: NavController) {
 //end of home navigation
 
 // Recommendation navigation
-private fun NavGraphBuilder.addRecommendationRoute(navController: NavController) {
+private fun NavGraphBuilder.addRecommendationRoute(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     navigation(
         route = RootScreen.Recommendation.route,
         startDestination = LeafScreen.Recommendation.route
     )
     {
-        showRecommendation(navController)
+        showRecommendation(navController, spotifyViewModel)
     }
 }
 
 
-private fun NavGraphBuilder.showRecommendation(navController: NavController) {
+private fun NavGraphBuilder.showRecommendation(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.Recommendation.route) {
-        RecommendationScreen()
+        RecommendationScreen(navController, spotifyViewModel )
     }
 }
 
