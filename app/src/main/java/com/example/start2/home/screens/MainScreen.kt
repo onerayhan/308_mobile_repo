@@ -36,9 +36,6 @@ fun MainScreen(viewModel: SpotifyViewModel) {
     Scaffold(
         bottomBar = {
             BottomNavBar(navController = navController, currentSelectedScreen = currentSelectedScreen)
-//            if (currentRoute == null || bottomNavRoutes.contains(currentRoute)) {
-//
-//            }
         },
         modifier = Modifier.fillMaxSize(),
     ) {

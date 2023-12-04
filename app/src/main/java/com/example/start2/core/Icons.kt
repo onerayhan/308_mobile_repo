@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddChart
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.AddTask
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -41,7 +42,7 @@ fun SearchIcon(
     tint: Color = defaultIconTint()
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(id = R.drawable.ic_home),
+        imageVector = Icons.Outlined.Search,
         contentDescription = stringResource(id = R.string.search),
         tint = tint,
         modifier = modifier

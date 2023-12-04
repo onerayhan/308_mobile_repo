@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.spotify.Track
@@ -59,6 +60,7 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
                     onFilterChange = { /* Implement filter logic */ },
                     onSongSelect = { songId ->
                         Log.d("analysisTable", songId)
+                        navController?.navigateToLeafScreen(LeafScreen.SongInfo)
                         // Handle song selection, e.g., navigate to a detailed view
                     },
                 )
@@ -105,4 +107,14 @@ fun RecommendationsTableContent(
         }
     }
 
+}
+
+private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
+    navigate(leafScreen.route) {
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+    }
 }

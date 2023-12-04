@@ -19,6 +19,9 @@ import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen
 import com.example.start2.home.screens.RecommendationScreen
 import com.example.start2.home.screens.SearchScreen
+import com.example.start2.home.screens.info_screens.AlbumInfoScreen
+import com.example.start2.home.screens.info_screens.PerformerInfoScreen
+import com.example.start2.home.screens.info_screens.SongInfoScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 
 
@@ -32,11 +35,11 @@ fun AppNavGraph(
         startDestination = RootScreen.Home.route
     ) {
         addHomeRoute(navController)
-        addRateRoute(navController)
+        addRateRoute(navController,spotifyViewModel)
         addSearchRoute(navController, spotifyViewModel)
         //addFavoritesRoute(navController)
         addRecommendationRoute(navController, spotifyViewModel)
-        addProfileRoute(navController)
+        addProfileRoute(navController,spotifyViewModel)
         addAnalysisRoute(navController, spotifyViewModel)
     }
 }
@@ -69,12 +72,15 @@ private fun NavGraphBuilder.showHomeDetail(navController: NavController) {
         )
     }
 }
-private fun NavGraphBuilder.addRateRoute(navController: NavController) {
+private fun NavGraphBuilder.addRateRoute(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     navigation(
         route = RootScreen.Rate.route,
         startDestination = LeafScreen.Rate.route
     ) {
         showRate(navController)
+        showSongInfo(navController, spotifyViewModel)
+        showAlbumInfo(navController, spotifyViewModel)
+        showPerformerInfo(navController,spotifyViewModel)
 
     }
 }
@@ -94,6 +100,9 @@ private fun NavGraphBuilder.addRecommendationRoute(navController: NavController,
     )
     {
         showRecommendation(navController, spotifyViewModel)
+        showSongInfo(navController, spotifyViewModel)
+        showAlbumInfo(navController, spotifyViewModel)
+        showPerformerInfo(navController,spotifyViewModel)
     }
 }
 
@@ -113,6 +122,9 @@ private fun NavGraphBuilder.addSearchRoute(navController: NavController,  spotif
         startDestination = LeafScreen.Search.route
     ) {
         showSearch(navController, spotifyViewModel)
+        showSongInfo(navController, spotifyViewModel)
+        showAlbumInfo(navController, spotifyViewModel)
+        showPerformerInfo(navController,spotifyViewModel)
     }
 }
 
@@ -129,14 +141,16 @@ private fun NavGraphBuilder.showSearch(navController: NavController,  spotifyVie
 
 
 //profile navigation
-private fun NavGraphBuilder.addProfileRoute(navController: NavController) {
+private fun NavGraphBuilder.addProfileRoute(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     navigation(
         route = RootScreen.Profile.route,
         startDestination = LeafScreen.Profile.route
     ) {
         showProfile(navController)
         showFollowers(navController)
-
+        showSongInfo(navController, spotifyViewModel)
+        showAlbumInfo(navController, spotifyViewModel)
+        showPerformerInfo(navController,spotifyViewModel)
     }
 }
 private fun NavGraphBuilder.showProfile(navController: NavController) {
@@ -160,6 +174,9 @@ private fun NavGraphBuilder.addAnalysisRoute(navController: NavController, spoti
     ) {
         showAnalysis(navController, spotifyViewModel)
         showAnalysisChart(navController, spotifyViewModel)
+        showSongInfo(navController, spotifyViewModel)
+        showAlbumInfo(navController, spotifyViewModel)
+        showPerformerInfo(navController,spotifyViewModel)
     }
 }
 //
@@ -177,3 +194,21 @@ private fun NavGraphBuilder.showAnalysisChart(navController: NavController, spot
     }
 }
 //end of favorites navigation
+
+//Info Screens
+
+private fun NavGraphBuilder.showSongInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
+    composable(route = LeafScreen.SongInfo.route) {
+        SongInfoScreen()
+    }
+}
+private fun NavGraphBuilder.showPerformerInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
+    composable(route = LeafScreen.PerformerInfo.route) {
+        PerformerInfoScreen()
+    }
+}
+private fun NavGraphBuilder.showAlbumInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
+    composable(route = LeafScreen.AlbumInfo.route) {
+        AlbumInfoScreen()
+    }
+}

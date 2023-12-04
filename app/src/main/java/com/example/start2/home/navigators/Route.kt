@@ -23,4 +23,10 @@ sealed class LeafScreen(val route: String) {
     object AnalysisTable : LeafScreen("analysis_table")
     //Analysis table is noted as analysis for naming conventions
     object Analysis : LeafScreen("analysis")
+
+    object SongInfo : LeafScreen("song_info")
+
+    object PerformerInfo: LeafScreen("performer_info")
+
+    object AlbumInfo : LeafScreen("album_info")
 }
