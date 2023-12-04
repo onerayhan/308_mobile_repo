@@ -25,6 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+
+import androidx.compose.runtime.mutableStateListOf
+
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +50,7 @@ import com.example.start2.viewmodels.SongViewModel
 import com.example.start2.home.spotify.SpotifyViewModel
 
 
+
 //Stateful
 @Composable
 fun AnalysisTableScreen(navController: NavController, viewModelspoti: SpotifyViewModel) {
@@ -56,6 +60,7 @@ fun AnalysisTableScreen(navController: NavController, viewModelspoti: SpotifyVie
     viewModelspoti.getUserTopTracks()
     //var sortingCriterion by remember { mutableStateOf(SortingCriterion.Default) }
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
+
     val topTracks by viewModelspoti.topTracks.observeAsState()
     val selectedFilter = viewModel.selectedFilter
     Log.d("table", "im open")
@@ -189,7 +194,11 @@ fun Int.millisecondsToMinutes(): String {
 
 /*
 @Composable
+<<<<<<< HEAD
 fun TrackItem(track: Track, onSongSelect: (String) -> Unit) {
+=======
+fun SongItem(track: Track, onSongSelect: (String) -> Unit) {
+>>>>>>> origin/wrong_analysis
     Row(
         modifier = Modifier
             .clickable(onClick = { onSongSelect(track.id) })
@@ -326,6 +335,7 @@ fun generateDummyTracks(numTracks: Int = 10): List<Track> {
             uri = "spotify:track:${trackIds.random()}",
             is_local = false
         )
+
     }
 }
 
@@ -362,5 +372,6 @@ fun getSortedTracks(tracks: List<Track>, sortState: SortState): List<Track> {
             SortOrder.DEFAULT -> tracks
         }
         SortAttribute.DEFAULT -> tracks
+
     }
 }
