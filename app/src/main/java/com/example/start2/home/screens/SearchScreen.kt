@@ -38,7 +38,9 @@ fun SearchScreen(navController: NavController, viewModel: SpotifyViewModel) {
         searchResults?.let {
             SearchResultContent(
                 items = it.items,
-                onSongSelect = {}
+                onSongSelect = {songId ->},
+                onAlbumSelect = {albumId ->},
+                onArtistSelect = {artistId ->}
 
             )
         } ?: run{}
@@ -48,12 +50,14 @@ fun SearchScreen(navController: NavController, viewModel: SpotifyViewModel) {
 @Composable
 fun SearchResultContent(
     items: List<SpotifySearchItem>,
-    onSongSelect: (String) -> Unit
+    onSongSelect: (String) -> Unit,
+    onAlbumSelect: (String) -> Unit,
+    onArtistSelect: (String) -> Unit
 ) {
     LazyColumn {
         items(items) { item ->
             when (item) {
-                is SpotifySearchItem.TrackItem -> TrackItem(track = item.track, onSongSelect)
+                is SpotifySearchItem.TrackItem -> TrackItem(track = item.track, onSongSelect, onAlbumSelect , onArtistSelect )
                 is SpotifySearchItem.AlbumItem -> AlbumItem(album = item.album)
                 is SpotifySearchItem.ArtistItem -> ArtistItem(artist = item.artist)
             }
