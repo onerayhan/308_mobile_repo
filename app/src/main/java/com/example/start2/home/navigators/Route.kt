@@ -18,7 +18,7 @@ sealed class LeafScreen(val route: String) {
     object Rate : LeafScreen("rate")
     object Profile : LeafScreen("profile")
     object Followers : LeafScreen("followers")
-    object AnalysisChart : LeafScreen("analysis_chart")
+    object AnalysisTable : LeafScreen("analysis_table")
     //Analysis table is noted as analysis for naming conventions
     object Analysis : LeafScreen("analysis")
 }
