@@ -21,8 +21,16 @@ import com.example.start2.home.ui.SongPopularityTrendChart
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
+
+import com.example.start2.home.ui.ArtistData
+import com.example.start2.home.ui.GenreData
+import com.example.start2.home.ui.RatingData
+import com.example.start2.home.ui.SongData
+import com.example.start2.home.ui.SongPopularityData
+import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
+
 
 
 @Preview(showBackground = true)
@@ -41,6 +49,7 @@ enum class AnalysisOption(val displayName: String) {
 
 @Composable
 fun AnalysisScreen(navController: NavController, viewModel: SpotifyViewModel?) {
+
     // Initialize the ViewModel using viewModel()
     val viewModel: AnalysisViewModel = viewModel()
 
