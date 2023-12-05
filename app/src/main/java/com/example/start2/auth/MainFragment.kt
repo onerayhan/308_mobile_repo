@@ -1,4 +1,5 @@
 package com.example.start2.auth
+import android.content.ContentValues.TAG
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.start2.ProfileViewModel
 import com.example.start2.databinding.FragmentMainBinding
@@ -160,6 +161,7 @@ class MainFragment : Fragment() {
 
                     withContext(Dispatchers.Main) {
                         // Handle success and update the UI
+                        Log.d(TAG, "login: $username")
                         println("Login successful. Response code: $responseCode")
                         val intent = Intent(requireContext(), NavigatorActivity::class.java)
                         intent.putExtra("username", username)
