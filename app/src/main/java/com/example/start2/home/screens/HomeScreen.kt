@@ -56,6 +56,12 @@ fun HomeScreen(
     var releaseYear by remember { mutableStateOf("") }
     var addedTimestamp by remember { mutableStateOf("") }
     var selectedFileUri by remember { mutableStateOf<Uri?>(null) }
+    var albumName by remember { mutableStateOf("") }
+    var albumReleaseYear by remember { mutableStateOf("") }
+    var performerName by remember { mutableStateOf("") }
+    var genre by remember { mutableStateOf("") }
+    var mood by remember { mutableStateOf("") }
+    var instrument by remember { mutableStateOf("") }
 
     val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         // Handle the result of the file picker here
@@ -102,6 +108,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Other Text Fields...
+
                 OutlinedTextField(
                     value = length,
                     onValueChange = { length = it },
@@ -111,11 +118,64 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+
                 OutlinedTextField(
                     value = tempo,
                     onValueChange = { tempo = it },
                     label = { Text("Tempo", color = Color.White) },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = albumName,
+                    onValueChange = { albumName = it },
+                    label = { Text("Album Name", color = Color.White) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = albumReleaseYear,
+                    onValueChange = { albumReleaseYear = it },
+                    label = { Text("Album Release Year", color = Color.White) },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = performerName,
+                    onValueChange = { performerName = it },
+                    label = { Text("Performer Name", color = Color.White) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = genre,
+                    onValueChange = { genre = it },
+                    label = { Text("Genre", color = Color.White) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = mood,
+                    onValueChange = { mood = it },
+                    label = { Text("Mood", color = Color.White) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedTextField(
+                    value = instrument,
+                    onValueChange = { instrument = it },
+                    label = { Text("Instrument", color = Color.White) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
