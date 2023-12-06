@@ -1,5 +1,6 @@
 package com.example.start2.home.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,14 +15,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.Album
 import com.example.start2.home.spotify.Artist
-import com.example.start2.home.spotify.Track
 import com.example.start2.home.spotify.SpotifySearchItem
 import com.example.start2.home.spotify.SpotifyViewModel
 
 @Composable
-fun SearchScreen(navController: NavController, viewModel: SpotifyViewModel) {
+fun SearchScreen(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     var searchQuery: String by remember { mutableStateOf("") }
 
     Column {
@@ -30,18 +32,28 @@ fun SearchScreen(navController: NavController, viewModel: SpotifyViewModel) {
             onValueChange = { searchQuery = it },
             label = { Text("Search") }
         )
-        Button(onClick = { viewModel.search(searchQuery) }) {
+        Button(onClick = { spotifyViewModel.search(searchQuery) }) {
             Text("Search")
         }
 
-        val searchResults by viewModel.searchResults.observeAsState()
+        val searchResults by spotifyViewModel.searchResults.observeAsState()
         searchResults?.let {
             SearchResultContent(
                 items = it.items,
-                onSongSelect = {songId ->},
-                onAlbumSelect = {albumId ->},
-                onArtistSelect = {artistId ->}
-
+                onSongSelect = {songId ->
+                    Log.d("analysisParalysis", songId)
+                    //viewModelScope.launch {
+                    spotifyViewModel.saveSelectedTrack(songId)
+                    navController.navigateToLeafScreen(LeafScreen.SongInfo)
+                },
+                onAlbumSelect = {albumId ->
+                    spotifyViewModel.saveSelectedAlbum(albumId)
+                    navController.navigateToLeafScreen(LeafScreen.AlbumInfo)
+                },
+                onArtistSelect = {artistId ->
+                    spotifyViewModel.saveSelectedArtist(artistId)
+                    navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
+                }
             )
         } ?: run{}
     }
@@ -77,3 +89,13 @@ fun ArtistItem(artist: Artist) {
     // Layout for artist item
 }
 
+
+private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
+    navigate(leafScreen.route) {
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+    }
+}
