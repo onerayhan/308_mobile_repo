@@ -44,12 +44,6 @@ import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.viewmodels.SongViewModel
 import com.example.start2.home.spotify.SpotifyViewModel
 
-
-
-
-
-
-
 //Stateful
 @Composable
 fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyViewModel) {
