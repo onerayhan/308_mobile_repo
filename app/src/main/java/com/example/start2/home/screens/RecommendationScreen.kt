@@ -43,6 +43,7 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
             Text("Search")
         }
 
+
         val recommendationResults by viewModelSpoti.recommendationResults.observeAsState()
         recommendationResults?.let { tracks ->
             Column {
@@ -59,8 +60,8 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
                     selectedFilter = "All", // Or your implementation of filter
                     onFilterChange = { /* Implement filter logic */ },
                     onSongSelect = { songId ->
-                        Log.d("analysisTable", songId)
-                        navController?.navigateToLeafScreen(LeafScreen.SongInfo)
+                        //Log.d("analysisTable", songId)
+                        //navController?.navigateToLeafScreen(LeafScreen.SongInfo)
                         // Handle song selection, e.g., navigate to a detailed view
                     },
                 )
@@ -118,3 +119,4 @@ private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
         }
     }
 }
+

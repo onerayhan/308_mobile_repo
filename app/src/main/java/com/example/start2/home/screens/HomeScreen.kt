@@ -30,3 +30,13 @@ fun HomeScreen(
         }
     }
 }
+
+@Composable
+@Preview
+fun HomeScreenPreview() {
+    HomeScreen(
+        showDetail = {
+            // Handle the action when showing detail
+        }
+    )
+}

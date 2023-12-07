@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.patrykandpatrick.vico:core:1.12.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/36e56f98c5abb8a0c201f647ac0e58b7/transformed/core-1.12.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/36e56f98c5abb8a0c201f647ac0e58b7/transformed/core-1.12.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/core/1.12.0/434e089ee2e7e6e225a2d8a56366fe32cf799aaf/core-1.12.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/core/1.12.0/ee6d499b1fb2bb46696830d5d75c07c945913e8e/core-1.12.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

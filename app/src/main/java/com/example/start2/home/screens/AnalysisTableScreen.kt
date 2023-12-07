@@ -51,6 +51,10 @@ import com.example.start2.home.spotify.SpotifyViewModel
 
 
 
+
+
+
+
 //Stateful
 @Composable
 fun AnalysisTableScreen(navController: NavController, viewModelspoti: SpotifyViewModel) {
@@ -148,7 +152,7 @@ fun TrackItem(track: Track, onSongSelect: (String) -> Unit) {
         modifier = Modifier
             .clickable(onClick = { onSongSelect(track.id) })
             .fillMaxWidth()
-            .background(Color.DarkGray, RoundedCornerShape(8.dp))
+            .background(Color.White, RoundedCornerShape(8.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
