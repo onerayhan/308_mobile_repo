@@ -77,11 +77,11 @@ private fun createLineChart(data: List<FloatEntry>, lineColor: Color) {
 
     Chart(
         chart = lineChart(
-            lines = listOf(lineSpec(lineThickness = 10.dp, lineColor = lineColor))
+            lines = listOf(lineSpec(lineThickness = 6.dp, lineColor = lineColor))
         ),
         chartModelProducer = chartEntryModel,
-        startAxis = rememberStartAxis(axisLabelComponent(color = Color.Green)),
-        bottomAxis = rememberBottomAxis(axisLabelComponent(color = Color.Blue))
+        startAxis = rememberStartAxis(axisLabelComponent(color = Color.Red)),
+        bottomAxis = rememberBottomAxis(axisLabelComponent(color = Color.DarkGray))
     )
 }
 
@@ -109,7 +109,7 @@ private fun createColumnChart(data: List<FloatEntry>, columnColor: Color) {
         chart = columnChart,
         chartModelProducer = chartEntryModel,
         startAxis = rememberStartAxis(axisLabelComponent(color = Color.Red)),
-        bottomAxis = rememberBottomAxis(axisLabelComponent(color = Color.Blue))
+        bottomAxis = rememberBottomAxis(axisLabelComponent(color = Color.DarkGray))
     )
 }
 data class SongPopularityData(
@@ -141,22 +141,22 @@ data class SongData(
 // Specific Chart Implementations
 @Composable
 fun SongPopularityTrendChart(data: List<FloatEntry>) {
-    createLineChart(data, Color.Blue)
+    createLineChart(data, Color.Black)
 }
 
 @Composable
 fun RatingDistributionChart(data: List<FloatEntry>) {
-    createColumnChart(data, Color.Magenta)
+    createColumnChart(data, Color.Black)
 }
 
 @Composable
 fun GenrePopularityChart(data: List<FloatEntry>) {
-    createColumnChart(data, Color.Cyan)
+    createColumnChart(data, Color.Black)
 }
 
 @Composable
 fun ArtistProductivityChart(data: List<FloatEntry>) {
-    createLineChart(data, Color.Green)
+    createLineChart(data, Color.Black)
 }
 
 @Composable

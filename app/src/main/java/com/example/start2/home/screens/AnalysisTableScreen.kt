@@ -1,8 +1,7 @@
 package com.example.start2.home.screens
 
-import kotlin.random.Random
-import android.util.Log
 import androidx.activity.compose.BackHandler
+import kotlin.random.Random
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,19 +21,13 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.livedata.observeAsState import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.start2.home.spotify.Album
@@ -41,102 +35,175 @@ import com.example.start2.home.spotify.Artist
 import com.example.start2.home.spotify.Image
 import com.example.start2.home.spotify.Track
 import com.example.start2.home.navigators.LeafScreen
-import com.example.start2.viewmodels.SongViewModel
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.example.start2.home.spotify.SpotifyViewModel
 
 
+// Enumlar ve data classlar
+enum class SortOrder { ASCENDING, DESCENDING, DEFAULT }
+enum class SortAttribute { DURATION_MS, NAME, DEFAULT }
+data class SortState(val attribute: SortAttribute, var order: SortOrder = SortOrder.DEFAULT)
 
 
 
-
-
-//Stateful
+// Ana ekran
 @Composable
-fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyViewModel) {
-    val viewModel: SongViewModel = viewModel()
-    val songs = viewModel.songs
-    viewModel.generateDummyVM()
-    spotifyViewModel.getUserTopTracks()
-    //var sortingCriterion by remember { mutableStateOf(SortingCriterion.Default) }
+fun AnalysisTableScreen(navController: NavController, viewModelspoti: SpotifyViewModel) {
+    val topTracks by viewModelspoti.topTracks.observeAsState()
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
 
-    val topTracks by spotifyViewModel.topTracks.observeAsState()
-    val selectedFilter = viewModel.selectedFilter
-    Log.d("table", "im open")
+    // Başlık metnini burada tanımlayın ve dilediğiniz gibi güncelleyin
+    var title by remember { mutableStateOf("Başlık") }
 
-    BackHandler {
-        navController?.navigateToLeafScreen(LeafScreen.Analysis)
-    }
     topTracks?.let { tracks ->
-        val sortedTracks = getSortedTracks(tracks.items, sortState)
-        Column {
-            AnalysisTableHeader(sortState, onSortChange = { attribute ->
-                if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
-                    sortState = sortState.copy(order = SortOrder.values()[(sortState.order.ordinal + 1) % SortOrder.values().size])
-                } else {
-                    sortState = SortState(attribute, SortOrder.ASCENDING)
-                }
-            })
-            AnalysisTableContent(
+        var sortedTracks by remember { mutableStateOf(getSortedTracks(tracks.items, sortState)) }
 
-                songs = sortedTracks, // Assuming items is a list of Song in your TopTracksResponse
-                selectedFilter = "All", // Or your implementation of filter
-                onFilterChange = { /* Implement filter logic */ },
-                onSongSelect = { songId->
-                    Log.d("analysisTable", songId)
-                    // Handle song selection, e.g., navigate to a detailed view
-                    spotifyViewModel.saveSelectedTrack(songId)
-                    navController.navigateToLeafScreen(LeafScreen.SongInfo)
-                },
-                onAlbumSelect = {albumId ->
-                    spotifyViewModel.saveSelectedAlbum(albumId)
-                    navController.navigateToLeafScreen(LeafScreen.AlbumInfo)
-                },
-                onArtistSelect = {artistId ->
-                    spotifyViewModel.saveSelectedArtist(artistId)
-                    navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
-                }
-            )
+        BackHandler {
+            navController?.navigateToLeafScreen(LeafScreen.Analysis)
         }
 
-    } ?: run {
-        // Show loading or empty state
-    }
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Başlık metnini gösterin
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(16.dp)
+            )
+
+            FilterDropdowns(selectedFilter = "All") { selectedFilter ->
+                title = when (selectedFilter) {
+                    "All" -> "Tüm Şarkılar"
+                    "Recent" -> "En Son Şarkılar"
+                    "Popular" -> "Popüler Şarkılar"
+                    "Favorites" -> "Favori Şarkılar"
+                    else -> "Başlık"
+                }
+            }
+
+
+            AnalysisTableHeader(sortState) { attribute ->
+                sortState = if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
+                    sortState.copy(order = SortOrder.DESCENDING)
+                } else {
+                    SortState(attribute, SortOrder.ASCENDING)
+                }
+                sortedTracks = getSortedTracks(tracks.items, sortState)
+            }
+            AnalysisTableContent(sortedTracks)
+        }
+    } ?: Text("Yükleniyor veya veri yok.")
 }
 
-
-//Stateless
-
+// Tablo başlığı
 @Composable
 fun AnalysisTableHeader(sortState: SortState, onSortChange: (SortAttribute) -> Unit) {
-
-    Row (modifier =  Modifier.fillMaxWidth().background(Color.Red)){
-
-        // Create clickable text for each sortable attribute
-        Text("Name", Modifier.clickable { onSortChange(SortAttribute.NAME) })
-        Spacer(Modifier.width(8.dp))
-        Text("Duration", Modifier.clickable { onSortChange(SortAttribute.DURATION_MS) })
-        // Add more attributes as needed
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color(0xFFEEEEEE))
+    ) {
+        HeaderText("Name", SortAttribute.NAME, sortState, onSortChange)
+        Spacer(Modifier.width(16.dp))
+        HeaderText("Duration", SortAttribute.DURATION_MS, sortState, onSortChange)
     }
 }
+
+// Başlık metni
+@Composable
+fun HeaderText(text: String, attribute: SortAttribute, sortState: SortState, onSortChange: (SortAttribute) -> Unit) {
+    Text(text, Modifier
+        .clickable { onSortChange(attribute) }
+        .width(100.dp),
+        color = if (sortState.attribute == attribute) Color.Blue else Color.Black)
+}
+
+// Tablo içeriği
+@Composable
+fun AnalysisTableContent(songs: List<Track>) {
+    LazyColumn {
+        items(songs) { song ->
+            TrackItem(song)
+        }
+    }
+}
+
+// Şarkı öğesi
+@Composable
+fun TrackItem(track: Track) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(Color.LightGray)
+            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text(
+                text = "Title: ${track.name}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color.Black
+            )
+            Text(
+                text = "Artist: ${track.artists.joinToString { it.name }}",
+                color = Color.Black.copy(alpha = 0.7f)
+            )
+            Text(
+                text = "Album: ${track.album.name}",
+                color = Color.Black.copy(alpha = 0.7f)
+            )
+            Text(
+                text = "Length: ${track.duration_ms.millisecondsToMinutes()} min",
+                color = Color.Black.copy(alpha = 0.7f)
+            )
+        }
+    }
+}
+
+// Yardımcı fonksiyonlar
+fun getSortedTracks(tracks: List<Track>, sortState: SortState): List<Track> {
+    return when (sortState.attribute) {
+        SortAttribute.DURATION_MS -> when (sortState.order) {
+            SortOrder.ASCENDING -> tracks.sortedBy { it.duration_ms }
+            SortOrder.DESCENDING -> tracks.sortedByDescending { it.duration_ms }
+            SortOrder.DEFAULT -> tracks
+        }
+        SortAttribute.NAME -> when (sortState.order) {
+            SortOrder.ASCENDING -> tracks.sortedBy { it.name }
+            SortOrder.DESCENDING -> tracks.sortedByDescending { it.name }
+            SortOrder.DEFAULT -> tracks
+        }
+
+        else -> {tracks}
+    }
+}
+
+fun Int.millisecondsToMinutes(): String {
+    val minutes = this / 60000
+    val seconds = (this % 60000) / 1000
+    return "$minutes:${seconds.toString().padStart(2, '0')}"
+}
+
+
 @Composable
 fun AnalysisTableContent(
     songs: List<Track>,
     selectedFilter: String,
     onFilterChange: (String) -> Unit,
-    onSongSelect: (String) -> Unit,
-    onAlbumSelect: (String) -> Unit,
-    onArtistSelect: (String) -> Unit
+    onSongSelect: (String) -> Unit
 ) {
 
         Column (modifier = Modifier.fillMaxWidth()){
             // Implement filter dropdowns
-            //FilterDropdowns(selectedFilter, onFilterChange)
+            FilterDropdowns(selectedFilter, onFilterChange)
 
             // Display songs in a LazyColumn
             LazyColumn (){
                 items(songs) { song ->
-                    TrackItem(song, onSongSelect, onAlbumSelect, onArtistSelect)
+                    TrackItem(song, onSongSelect)
                 }
             }
         }
@@ -149,25 +216,19 @@ fun AnalysisTableContentPreview() {
         songs = generateDummyTracks(),
         selectedFilter = "All",
         onFilterChange = {},
-        onSongSelect = {songId-> },
-        onAlbumSelect = {albumId-> },
-        onArtistSelect = {artistId ->}
+        onSongSelect = {}
     )
 }
 
 @Composable
-fun TrackItem(
-    track: Track,
-    onSongSelect: (String) -> Unit,
-    onAlbumSelect: (String) -> Unit,
-    onArtistSelect: (String) -> Unit
-) {
+fun TrackItem(track: Track, onSongSelect: (String) -> Unit) {
     Row(
         modifier = Modifier
+            .clickable(onClick = { onSongSelect(track.id) })
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(8.dp))
+            .background(Color.DarkGray, RoundedCornerShape(8.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-            .padding(16.dp),
+            .padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
@@ -175,41 +236,32 @@ fun TrackItem(
                 text = "${track.name}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 4.dp).clickable( onClick = {onSongSelect(track.id) }),
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
                 text = "${track.artists.joinToString { it.name }}",
-                color = Color.Black.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 4.dp).clickable {
-                    val artistId = track.artists.firstOrNull()?.id ?: return@clickable
-                    onArtistSelect(artistId)
-                }
+                color = Color.White.copy(alpha = 0.7f),
+                modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
                 text = "${track.album.name}",
-                color = Color.Black.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 4.dp).clickable { onAlbumSelect(track.album.id) }
+                color = Color.White.copy(alpha = 0.7f),
+                modifier = Modifier.padding(bottom = 4.dp)
             )
             Text(
                 text = "${track.duration_ms.millisecondsToMinutes()} min",
-                color = Color.Black.copy(alpha = 0.7f)
+                color = Color.White.copy(alpha = 0.7f)
             )
             Text(
                 text = "${track.popularity}",
-                color = Color.Black.copy(alpha = 0.7f)
+                color = Color.White.copy(alpha = 0.7f)
             )
             // Add additional attributes here if needed
         }
     }
 }
 
-// Utility function to convert milliseconds to a formatted minutes string
-fun Int.millisecondsToMinutes(): String {
-    val minutes = this / 60000
-    val seconds = (this % 60000) / 1000
-    return "$minutes:${seconds.toString().padStart(2, '0')}"
-}
 
 
 /*
@@ -367,31 +419,5 @@ private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
         popUpTo(graph.findStartDestination().id) {
             saveState = true
         }
-    }
-}
-
-enum class SortOrder { ASCENDING, DESCENDING, DEFAULT }
-
-data class SortState(
-    val attribute: SortAttribute,
-    var order: SortOrder = SortOrder.DEFAULT
-)
-
-enum class SortAttribute { DURATION_MS, NAME, DEFAULT }
-
-fun getSortedTracks(tracks: List<Track>, sortState: SortState): List<Track> {
-    return when (sortState.attribute) {
-        SortAttribute.DURATION_MS -> when (sortState.order) {
-            SortOrder.ASCENDING -> tracks.sortedBy { it.duration_ms }
-            SortOrder.DESCENDING -> tracks.sortedByDescending { it.duration_ms }
-            SortOrder.DEFAULT -> tracks
-        }
-        SortAttribute.NAME -> when (sortState.order) {
-            SortOrder.ASCENDING -> tracks.sortedBy { it.name }
-            SortOrder.DESCENDING -> tracks.sortedByDescending { it.name }
-            SortOrder.DEFAULT -> tracks
-        }
-        SortAttribute.DEFAULT -> tracks
-
     }
 }
