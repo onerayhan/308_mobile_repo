@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.tehras.charts:pie:0.2.4-alpha@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/aab094b448ab296e420068ff5ff5eb56/transformed/pie-0.2.4-alpha/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/aab094b448ab296e420068ff5ff5eb56/transformed/pie-0.2.4-alpha/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/aab094b448ab296e420068ff5ff5eb56/transformed/pie-0.2.4-alpha/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/aab094b448ab296e420068ff5ff5eb56/transformed/pie-0.2.4-alpha/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

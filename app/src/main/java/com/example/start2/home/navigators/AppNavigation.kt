@@ -22,7 +22,7 @@ import com.example.start2.home.screens.RateScreen
 import com.example.start2.home.screens.RecommendationScreen
 import com.example.start2.home.screens.SearchScreen
 import com.example.start2.home.screens.info_screens.AlbumInfoScreen
-import com.example.start2.home.screens.info_screens.PerformerInfoScreen
+import com.example.start2.home.screens.info_screens.ArtistInfoScreen
 import com.example.start2.home.screens.info_screens.SongInfoScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 
@@ -207,7 +207,7 @@ private fun NavGraphBuilder.showSongInfo(navController: NavController, spotifyVi
 }
 private fun NavGraphBuilder.showPerformerInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.ArtistInfo.route) {
-        SingerScreen(navController,spotifyViewModel)
+        ArtistInfoScreen(navController,spotifyViewModel)
     }
 }
 private fun NavGraphBuilder.showAlbumInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
