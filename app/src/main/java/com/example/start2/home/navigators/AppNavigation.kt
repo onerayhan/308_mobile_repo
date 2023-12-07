@@ -1,6 +1,8 @@
 package com.example.start2.home.navigators
 
 import FollowersScreen
+import AnalysisScreen
+import AnalysisOption
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -10,10 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
 
-import com.example.start2.home.screens.AnalysisOption
 
 import com.example.start2.home.screens.AnalysisTableScreen
-import com.example.start2.home.screens.AnalysisScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen

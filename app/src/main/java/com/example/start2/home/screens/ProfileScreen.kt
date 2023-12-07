@@ -29,7 +29,6 @@ import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.navigators.RootScreen
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.saveable.rememberSaveable

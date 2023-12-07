@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,7 +31,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.start2.ProfileViewModel
 import com.example.start2.R
+import com.example.start2.UserPreferences
 import com.example.start2.home.screens.MainScreen
 import com.example.start2.home.ui.theme.Guardians_of_codedevelopment_mobileTheme
 import com.example.start2.home.spotify.SpotifyViewModel
@@ -38,11 +41,18 @@ import com.example.start2.home.spotify.SpotifyViewModelFactory
 import com.example.start2.home.spotify.DummySpotifyViewModel
 
 class NavigatorActivity : ComponentActivity() {
+    private val pv by viewModels<ProfileViewModel>()
 
     private lateinit var viewModel: SpotifyViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         actionBar?.hide()
+
+        val username = intent.getStringExtra("username")
+        val  userPreferences = UserPreferences(this)
+        userPreferences.username= username
         val token = intent.getStringExtra("SpotifyToken")
         if (token != null) {
             Log.d("NavigatorActivity", token)
