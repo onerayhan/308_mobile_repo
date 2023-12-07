@@ -1,49 +1,79 @@
 package com.example.start2.home.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.start2.swipecomponents.CardStack
+import com.example.start2.R
+import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.swipecomponents.Item
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RateScreen() {
-    val isEmpty = remember {
-        mutableStateOf(false)
-    }
-    Scaffold {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            if (!isEmpty.value) {
-                CardStack(
-                    items = accounts,
-                    onEmptyStack = {
-                        isEmpty.value = true
-                    }
-                )
-            } else {
-                Text(text = "No more cards", fontWeight = FontWeight.Bold)
+fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
+    var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
+    var rateQuery: String by remember { mutableStateOf("") }
+
+    Column {
+        TextField(
+            value = rateQuery,
+            onValueChange = { rateQuery = it },
+            label = { Text("Enter criteria for rate suggestions") }
+        )
+        Button(onClick = { viewModelSpoti.getRecommendation(rateQuery) }) {
+            Text("Get Suggestions")
+        }
+
+        val rateSuggestions by viewModelSpoti.recommendationResults.observeAsState()
+        rateSuggestions?.let { tracks ->
+            RateContent(
+                songs = tracks.tracks, // Assuming items is a list of Track
+                onSongSelect = { songId ->
+                    // Handle song selection, if needed
+                }
+            ) { trackId, rating ->
+                //
+                //viewModelSpoti.rateTrack(trackId, rating)
+                viewModelSpoti.removeRatedTrack(trackId)
+                 // Implement this in your ViewModel
             }
+        }
+    }
+}
+
+@Composable
+fun RateContent(
+    songs: List<com.example.start2.home.spotify.Track>,
+    onSongSelect: (String) -> Unit,
+    onRatingChanged: (String, Int) -> Unit
+) {
+    LazyColumn {
+        items(songs, key = {it.id})  { song->
+            TrackRateItem(
+                track = song,
+                onSongSelect =  onSongSelect,
+                onAlbumSelect = {},
+                onArtistSelect = {},
+                onRatingChanged = onRatingChanged,
+            )
         }
     }
 }
@@ -59,8 +89,52 @@ val accounts = mutableListOf<Item>(
 @Preview
 @Composable
 fun RateScreenPreview() {
-    RateScreen()
+    //RateScreen()
 }
+@Composable
+fun StarRating(rating: Int, onRatingChanged: (Int) -> Unit) {
+    Row {
+        (1..5).forEach { index ->
+            Icon(
+                painter = painterResource(
+                    id = if (index <= rating) R.drawable.star_full else R.drawable.star_empty
+                ),
+                contentDescription = "Rating Star",
+                modifier = Modifier
+                    .clickable { onRatingChanged(index) }
+                    .padding(4.dp),
+                tint = if (index <= rating) Color.Yellow else Color.Gray
+            )
+        }
+    }
+}
+
+@Composable
+fun TrackRateItem(
+    track: com.example.start2.home.spotify.Track,
+    onSongSelect: (String) -> Unit,
+    onAlbumSelect: (String) -> Unit,
+    onArtistSelect: (String) -> Unit,
+    onRatingChanged: (String, Int) -> Unit // Additional callback for rating change
+) {
+    var rating by remember { mutableStateOf(0) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onSongSelect(track.id) }
+            .padding(8.dp)
+    ) {
+        Text(text = track.name, fontWeight = FontWeight.Bold)
+        // Other track details like album and artist
+        StarRating(rating = rating) { newRating ->
+            rating = newRating
+            onRatingChanged(track.id, newRating)
+        }
+    }
+}
+
+
 
 
 

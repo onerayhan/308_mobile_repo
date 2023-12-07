@@ -1,5 +1,6 @@
 package com.example.start2
 
+import com.example.start2.home.spotify.TopTracksResponse
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

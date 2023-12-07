@@ -86,6 +86,14 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
             }
         }
     }
+
+    open fun removeRatedTrack(trackId: String) {
+        val currentTracks = recommendationResults.value?.tracks?.toMutableList()
+        currentTracks?.let {
+            it.removeAll { track -> track.id == trackId }
+            recommendationResults.postValue(recommendationResults.value?.copy(tracks = it))
+        }
+    }
     open fun search(searchQuery: String) {
         viewModelScope.launch { 
             val result = repository.search(token, searchQuery)
@@ -102,6 +110,16 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
                 recommendationResults.postValue(it)
             }
         }
+    }
+
+    open fun rateTrack(trackId: String, rating: Int) {
+        viewModelScope.launch{
+            val result = repository.rateTrack(trackId, rating)
+            result?.let {
+                //TODO::
+            }
+        }
+
     }
 }
 
@@ -224,6 +242,10 @@ open class SpotifyRepository(private val spotifyService: SpotifyService, private
             total = 0,
             items = items,
         )
+    }
+
+    open suspend fun rateTrack(trackId: String, rating: Int): RateResponse? {
+        return null
     }
 }
 

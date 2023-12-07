@@ -2,7 +2,6 @@ package com.example.start2.home.screens
 
 
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,27 +18,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.start2.ProfileViewModel
+import com.example.start2.ProfileViewModelFactory
+import com.example.start2.UserPreferences
 
 
 @Composable
@@ -47,11 +44,19 @@ fun HomeScreen(
     showDetail: () -> Unit
 ) {
 
+
+    val context = LocalContext.current
+    val userPreferences= remember{UserPreferences(context)}
+    val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
+
+
+
+
     var songName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var length by remember { mutableStateOf("") }
     var tempo by remember { mutableStateOf("") }
-    var recordingType by remember { mutableStateOf("") }
+    var recordingType by remember { mutableStateOf("STUDIO") }
     var listens by remember { mutableStateOf("") }
     var releaseYear by remember { mutableStateOf("") }
     var addedTimestamp by remember { mutableStateOf("") }
@@ -70,11 +75,13 @@ fun HomeScreen(
         }
     }
 
+
+
     // Set the background color
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFF5907E9)) // Dark background color
+            .background(color = Color(0xFFD62964)) // Dark background color
             .padding(16.dp)
     )  {
             Column(
@@ -227,8 +234,9 @@ fun HomeScreen(
                 Button(
                     onClick = {
                         filePickerLauncher.launch("audio/*")
-                    },
-                    modifier = Modifier
+                       },
+
+                         modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
                 ) {
@@ -247,14 +255,38 @@ fun HomeScreen(
                 // Submit Button
                 Button(
                     onClick = {
-                        // Form submit action
-                        // TODO: Handle the form submission logic here
-                        // For example, you can create a Music object with the entered data
-                        // and perform any necessary operations like saving to a database.
+                        val songParams = ProfileViewModel.SongParams(
+                            song_name = songName,
+                            username = username,
+                            length = length,
+                            tempo = tempo.toIntOrNull(),
+                            recording_type = recordingType,
+                            listens = listens.toIntOrNull(),
+                            release_year = releaseYear.toString(),
+                            added_timestamp = addedTimestamp,
+                            album_name = albumName,
+                            album_release_year = albumReleaseYear.toIntOrNull(),
+                            performer_name = performerName,
+                            genre = genre,
+                            mood = mood,
+                            instrument = instrument
+                        )
+
+
+                        // Launch the coroutine to add the song
+
+                            profileViewModel.addSong(songParams)
+
+                            // Enable the button after the operation is complete
+
+
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
+
+
                 ) {
                     Text("Add Music", color = Color.White)
                 }

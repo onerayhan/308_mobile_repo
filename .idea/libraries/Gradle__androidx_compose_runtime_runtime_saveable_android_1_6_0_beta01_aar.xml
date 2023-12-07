@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.runtime:runtime-saveable-android:1.6.0-beta01@aar">
     <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/26ccb32d9bd12dcf5970156f16a6d8a4/transformed/runtime-saveable-release/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/26ccb32d9bd12dcf5970156f16a6d8a4/transformed/runtime-saveable-release/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/26ccb32d9bd12dcf5970156f16a6d8a4/transformed/runtime-saveable-release/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/26ccb32d9bd12dcf5970156f16a6d8a4/transformed/runtime-saveable-release/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

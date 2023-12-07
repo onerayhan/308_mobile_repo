@@ -58,7 +58,10 @@ class NavigatorActivity : ComponentActivity() {
         userPreferences.username= username
         val token = intent.getStringExtra("SpotifyToken")
         if (token != null) {
-            Log.d("NavigatorActivity", token)
+            Log.d("token", token)
+
+        }else{
+            Log.d("token", "alo")
         }
         // Initialize ViewModel
         val viewModel: SpotifyViewModel = if (token != null) {

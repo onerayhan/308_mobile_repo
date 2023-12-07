@@ -28,5 +28,7 @@ sealed class LeafScreen(val route: String) {
 
     object ArtistInfo: LeafScreen("artist_info")
 
+    object FriendScreen: LeafScreen("friendscreen")
+
     object AlbumInfo : LeafScreen("album_info")
 }

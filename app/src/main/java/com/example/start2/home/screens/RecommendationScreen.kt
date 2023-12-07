@@ -29,7 +29,6 @@ import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.spotify.Track
 import androidx.lifecycle.viewModelScope
 
-
 @Composable
 fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
@@ -62,9 +61,8 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
                     selectedFilter = "All", // Or your implementation of filter
                     onFilterChange = { /* Implement filter logic */ },
 
-                    onSongSelect = { songId ->
-                        //Log.d("analysisTable", songId)
-                        //navController?.navigateToLeafScreen(LeafScreen.SongInfo)
+
+
 
                     onSongSelect = { songId  ->
                         Log.d("analysisParalysis", songId)

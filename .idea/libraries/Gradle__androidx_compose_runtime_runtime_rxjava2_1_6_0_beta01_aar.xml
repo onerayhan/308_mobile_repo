@@ -2,8 +2,8 @@
   <library name="Gradle: androidx.compose.runtime:runtime-rxjava2:1.6.0-beta01@aar">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/e6c86d854133e717e55c13beb6262a85/transformed/runtime-rxjava2-1.6.0-beta01/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e6c86d854133e717e55c13beb6262a85/transformed/runtime-rxjava2-1.6.0-beta01/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e6c86d854133e717e55c13beb6262a85/transformed/runtime-rxjava2-1.6.0-beta01/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/e6c86d854133e717e55c13beb6262a85/transformed/runtime-rxjava2-1.6.0-beta01/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
