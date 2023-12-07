@@ -1,5 +1,6 @@
 package com.example.start2.home.navigators
 
+import AnalysisScreen
 import FollowersScreen
 import SingerScreen
 import androidx.compose.runtime.Composable
@@ -11,10 +12,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
 
-import com.example.start2.home.screens.AnalysisOption
 
 import com.example.start2.home.screens.AnalysisTableScreen
-import com.example.start2.home.screens.AnalysisScreen
+
 import com.example.start2.home.screens.FriendScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen

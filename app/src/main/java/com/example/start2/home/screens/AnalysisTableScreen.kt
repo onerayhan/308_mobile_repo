@@ -63,13 +63,30 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
     val topTracks by spotifyViewModel.topTracks.observeAsState()
     val selectedFilter = viewModel.selectedFilter
     Log.d("table", "im open")
-
+    var title by remember { mutableStateOf("Title") }
     BackHandler {
         navController?.navigateToLeafScreen(LeafScreen.Analysis)
     }
     topTracks?.let { tracks ->
         val sortedTracks = getSortedTracks(tracks.items, sortState)
         Column {
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(16.dp)
+            )
+
+            FilterDropdowns(selectedFilter = "All") { selectedFilter ->
+                title = when (selectedFilter) {
+                    "All" -> "Tüm Şarkılar"
+                    "Recent" -> "En Son Şarkılar"
+                    "Popular" -> "Popüler Şarkılar"
+                    "Favorites" -> "Favori Şarkılar"
+                    else -> "Başlık"
+                }
+            }
             AnalysisTableHeader(sortState, onSortChange = { attribute ->
                 if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
                     sortState = sortState.copy(order = SortOrder.values()[(sortState.order.ordinal + 1) % SortOrder.values().size])
@@ -129,17 +146,17 @@ fun AnalysisTableContent(
     onArtistSelect: (String) -> Unit
 ) {
 
-        Column (modifier = Modifier.fillMaxWidth()){
-            // Implement filter dropdowns
-            //FilterDropdowns(selectedFilter, onFilterChange)
+    Column (modifier = Modifier.fillMaxWidth()){
+        // Implement filter dropdowns
+        //FilterDropdowns(selectedFilter, onFilterChange)
 
-            // Display songs in a LazyColumn
-            LazyColumn (){
-                items(songs) { song ->
-                    TrackItem(song, onSongSelect, onAlbumSelect, onArtistSelect)
-                }
+        // Display songs in a LazyColumn
+        LazyColumn (){
+            items(songs) { song ->
+                TrackItem(song, onSongSelect, onAlbumSelect, onArtistSelect)
             }
         }
+    }
 
 }
 @Preview(showBackground = true)
