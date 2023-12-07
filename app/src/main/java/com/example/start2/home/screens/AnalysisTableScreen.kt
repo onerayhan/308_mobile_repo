@@ -6,18 +6,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
@@ -25,8 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-
-import androidx.compose.runtime.mutableStateListOf
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,15 +52,15 @@ import com.example.start2.home.spotify.SpotifyViewModel
 
 //Stateful
 @Composable
-fun AnalysisTableScreen(navController: NavController, viewModelspoti: SpotifyViewModel) {
+fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     val viewModel: SongViewModel = viewModel()
     val songs = viewModel.songs
     viewModel.generateDummyVM()
-    viewModelspoti.getUserTopTracks()
+    spotifyViewModel.getUserTopTracks()
     //var sortingCriterion by remember { mutableStateOf(SortingCriterion.Default) }
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
 
-    val topTracks by viewModelspoti.topTracks.observeAsState()
+    val topTracks by spotifyViewModel.topTracks.observeAsState()
     val selectedFilter = viewModel.selectedFilter
     Log.d("table", "im open")
 
@@ -87,10 +82,20 @@ fun AnalysisTableScreen(navController: NavController, viewModelspoti: SpotifyVie
                 songs = sortedTracks, // Assuming items is a list of Song in your TopTracksResponse
                 selectedFilter = "All", // Or your implementation of filter
                 onFilterChange = { /* Implement filter logic */ },
-                onSongSelect = { songId ->
+                onSongSelect = { songId->
                     Log.d("analysisTable", songId)
                     // Handle song selection, e.g., navigate to a detailed view
+                    spotifyViewModel.saveSelectedTrack(songId)
+                    navController.navigateToLeafScreen(LeafScreen.SongInfo)
                 },
+                onAlbumSelect = {albumId ->
+                    spotifyViewModel.saveSelectedAlbum(albumId)
+                    navController.navigateToLeafScreen(LeafScreen.AlbumInfo)
+                },
+                onArtistSelect = {artistId ->
+                    spotifyViewModel.saveSelectedArtist(artistId)
+                    navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
+                }
             )
         }
 
@@ -119,7 +124,9 @@ fun AnalysisTableContent(
     songs: List<Track>,
     selectedFilter: String,
     onFilterChange: (String) -> Unit,
-    onSongSelect: (String) -> Unit
+    onSongSelect: (String) -> Unit,
+    onAlbumSelect: (String) -> Unit,
+    onArtistSelect: (String) -> Unit
 ) {
 
         Column (modifier = Modifier.fillMaxWidth()){
@@ -129,7 +136,7 @@ fun AnalysisTableContent(
             // Display songs in a LazyColumn
             LazyColumn (){
                 items(songs) { song ->
-                    TrackItem(song, onSongSelect)
+                    TrackItem(song, onSongSelect, onAlbumSelect, onArtistSelect)
                 }
             }
         }
@@ -142,15 +149,21 @@ fun AnalysisTableContentPreview() {
         songs = generateDummyTracks(),
         selectedFilter = "All",
         onFilterChange = {},
-        onSongSelect = {}
+        onSongSelect = {songId-> },
+        onAlbumSelect = {albumId-> },
+        onArtistSelect = {artistId ->}
     )
 }
 
 @Composable
-fun TrackItem(track: Track, onSongSelect: (String) -> Unit) {
+fun TrackItem(
+    track: Track,
+    onSongSelect: (String) -> Unit,
+    onAlbumSelect: (String) -> Unit,
+    onArtistSelect: (String) -> Unit
+) {
     Row(
         modifier = Modifier
-            .clickable(onClick = { onSongSelect(track.id) })
             .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(8.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
@@ -163,17 +176,20 @@ fun TrackItem(track: Track, onSongSelect: (String) -> Unit) {
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = Color.Black,
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 4.dp).clickable( onClick = {onSongSelect(track.id) }),
             )
             Text(
                 text = "${track.artists.joinToString { it.name }}",
                 color = Color.Black.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 4.dp).clickable {
+                    val artistId = track.artists.firstOrNull()?.id ?: return@clickable
+                    onArtistSelect(artistId)
+                }
             )
             Text(
                 text = "${track.album.name}",
                 color = Color.Black.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 4.dp).clickable { onAlbumSelect(track.album.id) }
             )
             Text(
                 text = "${track.duration_ms.millisecondsToMinutes()} min",

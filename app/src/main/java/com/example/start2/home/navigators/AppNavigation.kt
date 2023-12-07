@@ -1,6 +1,7 @@
 package com.example.start2.home.navigators
 
 import FollowersScreen
+import SingerScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -199,16 +200,16 @@ private fun NavGraphBuilder.showAnalysisChart(navController: NavController, spot
 
 private fun NavGraphBuilder.showSongInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.SongInfo.route) {
-        SongInfoScreen()
+        SongInfoScreen(navController,spotifyViewModel)
     }
 }
 private fun NavGraphBuilder.showPerformerInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
-    composable(route = LeafScreen.PerformerInfo.route) {
-        PerformerInfoScreen()
+    composable(route = LeafScreen.ArtistInfo.route) {
+        SingerScreen(navController,spotifyViewModel)
     }
 }
 private fun NavGraphBuilder.showAlbumInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.AlbumInfo.route) {
-        AlbumInfoScreen()
+        AlbumInfoScreen(navController,spotifyViewModel)
     }
 }
