@@ -137,14 +137,16 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                 contentDescription = "Profile Image",
                 modifier = Modifier.size(100.dp)
             )
+            Log.d("UserProfileContent", "Selected Image URI: $selectedImageUri")
+
 
             Text("Username: ${userProfile.username}")
             Text("Email: ${userProfile.email}")
             ClickableText(
-                text = AnnotatedString("Followers: ${userProfile.followersCount}"),
+                text = AnnotatedString("Followers: ${userProfile.follower_count}"),
                 onClick = { navController.navigateToLeafScreen(LeafScreen.Followers) },
             )
-            Text(text = "Following: ${userProfile.followingCount}", fontSize = 18.sp)
+            Text(text = "Following: ${userProfile.followed_count}", fontSize = 18.sp)
 
             // Add additional profile details here as needed
 
@@ -164,21 +166,30 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     // Launch the gallery to pick an image
                     openGalleryLauncher.launch("image/*")
                     selectedImageUri?.let { uri ->
+
                         // Convert URI to File
-                        val selectedImageFile = File(uri.path)
+                        val inputStream = context.contentResolver.openInputStream(selectedImageUri!!)
+
+                        Log.d("UserProfileContent", "Selected Image URI1213: $inputStream")
 
                         // Check if the file exists
-                        if (selectedImageFile.exists()) {
+                        if (inputStream != null) {
                             // Call the API to upload the photo
-                            profileViewModel.uploadPhoto(selectedImageFile)
-                            Log.d("ProfileScreen", "ftoyu attık: ${(profileViewModel.username)}")
+                            val tempFile = createTempFile("temp_image", null, context.cacheDir)
+                            tempFile.outputStream().use { output ->
+                                inputStream.copyTo(output)
+                            }
+
+                            // Now, you can pass the File to your ViewModel for upload
+                            profileViewModel.uploadPhoto(tempFile)
+                            Log.d("ProfileScreen", "Uploaded the photo successfully")
 
 
 
                         } else {
                             // Handle the case where the file does not exist
                             // (e.g., show an error message)
-                            Log.d("ProfileScreen", "ftoyu atamadık: ${(profileViewModel.username)}")
+                            Log.d("ProfileScreen", "ftoyu atamadık: ")
                         }
                     }
 

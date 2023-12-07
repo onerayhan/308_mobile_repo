@@ -2,6 +2,7 @@ package com.example.start2.home.screens
 
 
 
+import android.content.ContentResolver
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,10 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.start2.ProfileViewModel
 import com.example.start2.ProfileViewModelFactory
 import com.example.start2.UserPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 
 @Composable
@@ -51,7 +57,7 @@ fun HomeScreen(
 
 
 
-
+    val contentResolver = LocalContext.current.contentResolver
     var songName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var length by remember { mutableStateOf("") }
@@ -262,7 +268,7 @@ fun HomeScreen(
                             tempo = tempo.toIntOrNull(),
                             recording_type = recordingType,
                             listens = listens.toIntOrNull(),
-                            release_year = releaseYear.toString(),
+                            release_year = releaseYear.toIntOrNull(),
                             added_timestamp = addedTimestamp,
                             album_name = albumName,
                             album_release_year = albumReleaseYear.toIntOrNull(),
@@ -273,9 +279,12 @@ fun HomeScreen(
                         )
 
 
+
+
                         // Launch the coroutine to add the song
 
                             profileViewModel.addSong(songParams)
+
 
                             // Enable the button after the operation is complete
 
@@ -291,6 +300,26 @@ fun HomeScreen(
                     Text("Add Music", color = Color.White)
                 }
             }
+
         }
     }
 
+suspend fun readContentFromUri(contentResolver: ContentResolver, uri: Uri): String {
+    return withContext(Dispatchers.IO) {
+        val inputStream = contentResolver.openInputStream(uri)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+        val content = StringBuilder()
+        var line: String?
+
+        try {
+            while (reader.readLine().also { line = it } != null) {
+                content.append(line).append('\n')
+            }
+        } finally {
+            reader.close()
+            inputStream?.close()
+        }
+
+        return@withContext content.toString()
+    }
+}

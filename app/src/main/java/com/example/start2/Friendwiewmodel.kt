@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 
+/*
 open class Friendwiewmodel : ViewModel() {
 
     private val _username = MutableLiveData<String>()
@@ -70,8 +71,8 @@ open class Friendwiewmodel : ViewModel() {
                 _userProfile.value = UserProfile(
                     username = response.username,
                     email = response.email,
-                    followersCount = response.followersCount,
-                    followingCount = response.followingCount
+                    follower_count = response.follower_count,
+                    followed_count = response.followed_count
                     // Add more properties as needed
                 )
 
@@ -103,3 +104,4 @@ open class Friendwiewmodel : ViewModel() {
         _event.value = null
     }
 }
+*/

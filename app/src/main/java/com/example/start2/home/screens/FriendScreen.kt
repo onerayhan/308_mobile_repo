@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.start2.Friendwiewmodel
+
 import com.example.start2.ProfileViewModel
 import com.example.start2.ProfileViewModelFactory
 import com.example.start2.R
@@ -101,11 +101,11 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?) {
             androidx.compose.material3.Text("Username: ${userProfile.username}")
             androidx.compose.material3.Text("Email: ${userProfile.email}")
             androidx.compose.material3.Text(
-                text = AnnotatedString("Followers: ${userProfile.followersCount}"),
+                text = AnnotatedString("Followers: ${userProfile.follower_count}"),
 
             )
             androidx.compose.material3.Text(
-                text = "Following: ${userProfile.followingCount}",
+                text = "Following: ${userProfile.followed_count}",
                 fontSize = 18.sp
             )
             Row(

@@ -18,10 +18,12 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.rememberAsyncImagePainter
@@ -29,8 +31,12 @@ import coil.compose.rememberImagePainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.size.Scale
+import com.example.start2.ProfileViewModel
+import com.example.start2.ProfileViewModelFactory
 import com.example.start2.R
+import com.example.start2.UserPreferences
 
 // https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1200px-Google_Images_2015_logo.svg.png
 
@@ -78,6 +84,10 @@ data class Follower(val username: String, val profilePic: String)
 
 @Composable
 fun FollowersScreen() {
+    val context = LocalContext.current
+    val userPreferences= remember{ UserPreferences(context) }
+    val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
+
     val followers = listOf(
         Follower("Serhat Akın", "https://example.com/profile1.jpg"),
         Follower("Serdar Ali", "https://example.com/profile2.jpg"),
