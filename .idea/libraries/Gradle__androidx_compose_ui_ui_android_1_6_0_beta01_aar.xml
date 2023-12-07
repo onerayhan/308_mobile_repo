@@ -1,16 +1,16 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.ui:ui-android:1.6.0-beta01@aar">
     <ANNOTATIONS>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/annotations.zip!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/b33ec9533b4ae3f96f67a214a92d7093/transformed/ui-release/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.ui/ui-android/1.6.0-beta01/1915333167539d9abfe3b5ccea012cfd8b0f5585/ui-android-1.6.0-beta01-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.compose.ui/ui-android/1.6.0-beta01/1915333167539d9abfe3b5ccea012cfd8b0f5585/ui-android-1.6.0-beta01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

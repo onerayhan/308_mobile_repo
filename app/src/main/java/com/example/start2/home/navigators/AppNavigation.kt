@@ -15,6 +15,7 @@ import com.example.start2.home.screens.AnalysisOption
 
 import com.example.start2.home.screens.AnalysisTableScreen
 import com.example.start2.home.screens.AnalysisScreen
+import com.example.start2.home.screens.FriendScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen
@@ -149,6 +150,7 @@ private fun NavGraphBuilder.addProfileRoute(navController: NavController, spotif
     ) {
         showProfile(navController)
         showFollowers(navController)
+        showFriendsScreen(navController,spotifyViewModel)
         showSongInfo(navController, spotifyViewModel)
         showAlbumInfo(navController, spotifyViewModel)
         showPerformerInfo(navController,spotifyViewModel)
@@ -211,5 +213,11 @@ private fun NavGraphBuilder.showPerformerInfo(navController: NavController, spot
 private fun NavGraphBuilder.showAlbumInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.AlbumInfo.route) {
         AlbumInfoScreen(navController,spotifyViewModel)
+    }
+}
+
+private fun NavGraphBuilder.showFriendsScreen(navController: NavController, spotifyViewModel: SpotifyViewModel) {
+    composable(route = LeafScreen.FriendScreen.route) {
+        FriendScreen()
     }
 }

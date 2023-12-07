@@ -1,6 +1,6 @@
 package com.example.start2
 
-import retrofit2.Response
+import org.json.JSONObject
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -9,10 +9,10 @@ interface ApiService {
     suspend fun getUserProfile(@Body request: UserInfoRequest): UserProfile
 
     @POST("/api/unfollow")
-    suspend fun unfollowUser(@Body request: UnfollowRequest): ApiResponse
+    suspend fun unfollowUser(@Body request: JSONObject): ApiResponse
 
     @POST("/api/follow")
-    suspend fun followUser(@Body request: FollowRequest): FollowResponse
+    suspend fun followUser(@Body request: JSONObject): FollowResponse
 
 
     @POST("/api/user_followings")

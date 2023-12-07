@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.runtime:runtime-livedata:1.6.0-beta01@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/b9c5dbf5cc8ff017bf5fa652beecdef5/transformed/runtime-livedata-1.6.0-beta01/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b9c5dbf5cc8ff017bf5fa652beecdef5/transformed/runtime-livedata-1.6.0-beta01/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/b9c5dbf5cc8ff017bf5fa652beecdef5/transformed/runtime-livedata-1.6.0-beta01/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/b9c5dbf5cc8ff017bf5fa652beecdef5/transformed/runtime-livedata-1.6.0-beta01/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/b9c5dbf5cc8ff017bf5fa652beecdef5/transformed/runtime-livedata-1.6.0-beta01/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/b9c5dbf5cc8ff017bf5fa652beecdef5/transformed/runtime-livedata-1.6.0-beta01/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-livedata/1.6.0-beta01/a63d4d8a7fb5bef709f0a247c506dad559edc43c/runtime-livedata-1.6.0-beta01-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.compose.runtime/runtime-livedata/1.6.0-beta01/a63d4d8a7fb5bef709f0a247c506dad559edc43c/runtime-livedata-1.6.0-beta01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

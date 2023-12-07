@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.material:material-icons-extended-android:1.6.0-beta01@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/69ebe8f3455d2713db8d6ff7434885bd/transformed/material-icons-extended-release/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/69ebe8f3455d2713db8d6ff7434885bd/transformed/material-icons-extended-release/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/69ebe8f3455d2713db8d6ff7434885bd/transformed/material-icons-extended-release/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/69ebe8f3455d2713db8d6ff7434885bd/transformed/material-icons-extended-release/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/69ebe8f3455d2713db8d6ff7434885bd/transformed/material-icons-extended-release/res" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/69ebe8f3455d2713db8d6ff7434885bd/transformed/material-icons-extended-release/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.material/material-icons-extended-android/1.6.0-beta01/ac97e69bc063d593923d045bbd9ed02064d6c370/material-icons-extended-android-1.6.0-beta01-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.compose.material/material-icons-extended-android/1.6.0-beta01/ac97e69bc063d593923d045bbd9ed02064d6c370/material-icons-extended-android-1.6.0-beta01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
