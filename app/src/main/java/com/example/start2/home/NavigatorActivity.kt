@@ -40,6 +40,9 @@ import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.spotify.SpotifyViewModelFactory
 import com.example.start2.home.spotify.DummySpotifyViewModel
 
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+
 class NavigatorActivity : ComponentActivity() {
     private val pv by viewModels<ProfileViewModel>()
 
@@ -55,7 +58,10 @@ class NavigatorActivity : ComponentActivity() {
         userPreferences.username= username
         val token = intent.getStringExtra("SpotifyToken")
         if (token != null) {
-            Log.d("NavigatorActivity", token)
+            Log.d("token", token)
+
+        }else{
+            Log.d("token", "alo")
         }
         // Initialize ViewModel
         val viewModel: SpotifyViewModel = if (token != null) {

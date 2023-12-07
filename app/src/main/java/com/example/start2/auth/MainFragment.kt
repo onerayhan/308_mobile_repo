@@ -1,4 +1,5 @@
 package com.example.start2.auth
+import android.content.ContentValues.TAG
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.start2.ProfileViewModel
 import com.example.start2.databinding.FragmentMainBinding
@@ -11,7 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.Navigation.findNavController
+import com.example.start2.LoginListener
 import com.example.start2.RegistrationActivity
+import com.example.start2.RegistrationStepsListener
 import com.example.start2.home.NavigatorActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +35,7 @@ import java.net.URL
 
 class MainFragment : Fragment() {
 
-
+    private var listener: LoginListener? = null
     private lateinit var binding: FragmentMainBinding
     private val apiEndpoint =
         "http://13.51.167.155/api/get_all_users" // Replace with your API endpoint
@@ -82,6 +85,7 @@ class MainFragment : Fragment() {
                     }
 
                     val apiUrl = "http://13.51.167.155/api/login" // Replace with your API endpoint
+                    listener?.onSpotify()
                     performLogin(apiUrl, jsonObject,username)
 
                     // Use Kotlin coroutines to perform the network operation asynchronously
@@ -160,10 +164,10 @@ class MainFragment : Fragment() {
 
                     withContext(Dispatchers.Main) {
                         // Handle success and update the UI
+                        Log.d(TAG, "login: $username")
                         println("Login successful. Response code: $responseCode")
-                        val intent = Intent(requireContext(), NavigatorActivity::class.java)
-                        intent.putExtra("username", username)
-                        startActivity(intent)
+                        listener?.onLogin(username)
+
 
                     }
                 } else {

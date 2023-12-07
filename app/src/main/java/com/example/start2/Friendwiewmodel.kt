@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 
-class Friendwiewmodel : ViewModel() {
+open class Friendwiewmodel : ViewModel() {
 
     private val _username = MutableLiveData<String>()
     var username: String
@@ -20,7 +20,7 @@ class Friendwiewmodel : ViewModel() {
     private val apiService = ApiManager.createApiService()
 
     // State for user profile
-    private val _userProfile = mutableStateOf<UserProfile?>(null)
+    val _userProfile = mutableStateOf<UserProfile?>(null)
     val userProfile: State<UserProfile?> get() = _userProfile
 
     // State for loading and error handling

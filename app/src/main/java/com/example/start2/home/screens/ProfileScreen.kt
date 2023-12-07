@@ -1,9 +1,13 @@
 package com.example.start2.home
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -49,7 +53,16 @@ import com.example.start2.ProfileViewModelFactory
 import com.example.start2.UserPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
+import com.example.start2.home.screens.FriendScreen
+import com.google.gson.Gson
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 
 // Data class to represent the structure of the API response
@@ -60,6 +73,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 // ViewModel to handle API calls and store data
 
 // ViewModel factory to provide the ViewModel to the composable
+
+
+
+
+
 @Composable
 fun ProfileScreen(
     navController: NavController) {
@@ -69,10 +87,15 @@ fun ProfileScreen(
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     val username by profileViewModel.username.observeAsState()
 
+
+
     Log.d("ProfileScreen", "ProfileScreen123342: ${(profileViewModel.username)}")
     Log.d("ProfileScreen", "ProfileScreen123342: ${(username)}")
 
     profileViewModel.fetchUserProfile();
+
+
+
     // Save the username in the ViewModel
 
     // Observing the state from the ViewModel
@@ -86,7 +109,21 @@ fun ProfileScreen(
 
 @Composable
 fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController: NavController) {
+    val context = LocalContext.current
+    val userPreferences= remember{UserPreferences(context)}
+    val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
+
+
     var enteredUsername by rememberSaveable { mutableStateOf("") }
+    var selectedImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
+    var selectedImageFile by rememberSaveable { mutableStateOf<File?>(null) }
+    val openGalleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        // Handle the result of the gallery picker here
+        uri?.let {
+            selectedImageUri = it
+        }
+    }
+
 
     userProfile?.let {
         Column(
@@ -95,10 +132,11 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
         ) {
             // Existing content
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = rememberImagePainter(data = selectedImageUri),
                 contentDescription = "Profile Image",
                 modifier = Modifier.size(100.dp)
             )
+
             Text("Username: ${userProfile.username}")
             Text("Email: ${userProfile.email}")
             ClickableText(
@@ -122,11 +160,51 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
             // Button for initiating the search on the same page
             Button(
                 onClick = {
+                    // Launch the gallery to pick an image
+                    openGalleryLauncher.launch("image/*")
+                    selectedImageUri?.let { uri ->
+                        // Convert URI to File
+                        val selectedImageFile = File(uri.path)
+
+                        // Check if the file exists
+                        if (selectedImageFile.exists()) {
+                            // Call the API to upload the photo
+                            profileViewModel.uploadPhoto(selectedImageFile)
+                            Log.d("ProfileScreen", "ftoyu attık: ${(profileViewModel.username)}")
+
+
+
+                        } else {
+                            // Handle the case where the file does not exist
+                            // (e.g., show an error message)
+                            Log.d("ProfileScreen", "ftoyu atamadık: ${(profileViewModel.username)}")
+                        }
+                    }
+
+
+                },
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("Select Profile Image")
+            }
+
+
+            Button(
+                onClick = {
+
+
+
+                   navController.navigateToLeafScreen(LeafScreen.FriendScreen)
 
 
                     // Handle the search logic internally, for example, update the profile based on the entered username
                     // You can call a function in your ViewModel to fetch the profile for the entered username
-                     navController.navigateToLeafScreen(LeafScreen.Friend(userProfile.username))
+
+
+
+
 
                 },
                 modifier = Modifier
@@ -151,8 +229,6 @@ fun LoadingContent() {
 fun ErrorContent(errorMessage: String) {
     Text(text = "Error: $errorMessage", fontSize = 20.sp, color = Color.Red)
 }
-
-
 
 
 

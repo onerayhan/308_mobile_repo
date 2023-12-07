@@ -1,27 +1,26 @@
 package com.example.start2
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.start2.ApiManager
-import com.example.start2.ApiService
 import kotlinx.coroutines.launch
-import com.example.start2.UserInfoRequest
 
-import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.BufferedInputStream
-import java.net.HttpURLConnection
-import java.net.URL
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import java.io.File
+import com.google.gson.Gson
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+
+import java.io.IOException
+
 
 class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
 
@@ -61,8 +60,6 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     }
 
     fun fetchUserProfile() {
-
-
         viewModelScope.launch {
             try {
                 _loading.value = true
@@ -159,18 +156,26 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         }
 
     }
-    fun unfollowUser(followerUsername: String, followedUsername: String) {
+    fun unfollowUser(followedUsername: String) {
         viewModelScope.launch {
             try {
                 _loading.value = true
+                val myMap = mapOf(_username.value.toString() to "123")
+                val itemsObject = JSONObject()
+                itemsObject.put("followed_username", _username.value.toString())
+                itemsObject.put("follower_username", "123")
 
-                val request = UnfollowRequest(followerUsername, followedUsername)
+
+
+
+
+
                 // Assuming UnfollowRequest is a data class representing the request body
 
                 // Log statement before making the API request
-                Log.d("UserProfile", "Unfollowing user: $followerUsername -> $followedUsername")
+                Log.d("UserProfile", "Unfollowing user:  $itemsObject)")
 
-                val response = apiService.unfollowUser(request)
+                val response = apiService.unfollowUser(itemsObject)
 
                 // Log statement after a successful API response
                 Log.d("UserProfile", "Unfollow successful: $response")
@@ -193,24 +198,31 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             }
         }
     }
-    fun followUser(followerUsername: String, followedUsername: String) {
+
+
+    fun followUser(followedUsername: String) {
         viewModelScope.launch {
             try {
                 _loading.value = true
+                val request = FollowRequest(_username.value.toString(), "123")
+                val requestJson = request.toJson()
+                val itemsObject = JSONObject()
+                itemsObject.put("followed_username", _username.value.toString())
+                itemsObject.put("follower_username", "123")
 
-                val request = FollowRequest(followerUsername, followedUsername)
+
 
                 // Log statement before making the API request
-                Log.d("UserProfile", "Following user: $followerUsername -> $followedUsername")
+                Log.d("UserProfile", "Following user: $requestJson")
 
-                val response = apiService.followUser(request)
+                val response = apiService.followUser(requestJson)
 
                 // Log statement after a successful API response
                 Log.d("UserProfile", "Follow successful: $response")
 
                 // You can handle the response if needed, for example, check for success or failure messages
                 if (response.success) {
-                    // Handle success, update UI, etc.
+                    Log.d("UserProfile", "Follow successful: $response")
                 } else {
                     // Handle failure, display error message, etc.
                     _error.value = response.message ?: "Failed to follow user"
@@ -230,6 +242,11 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             }
         }
     }
+
+
+
+
+
     fun getUserFollowings() {
         viewModelScope.launch {
             try {
@@ -309,7 +326,225 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         }
     }
 
+    fun uploadPhoto(photoFile: File) {
+        val url = "http://13.51.167.155/api/upload_photo"
 
+        // Create a multipart request body with photo and username parameters
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("photo", "photo.jpg", RequestBody.create("image/jpeg".toMediaType(), photoFile))
+            .addFormDataPart("username", _username.value.orEmpty())
+            .build()
+
+        // Create a POST request
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        // Create an OkHttpClient
+        val client = OkHttpClient()
+
+        // Execute the request
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                // Handle the failure case
+                println("Error: ${response.code} - ${response.message}")
+                println(response.body?.string())
+            } else {
+                // Handle the success case
+                println("Success: ${response.body?.string()}")
+            }
+        }
+    }
+    data class SongParams(
+        val song_name: String,
+        val username: String,
+        val length: String? = null,
+        val tempo: Int? = null,
+        val recording_type: String? = null,
+        val listens: Int? = null,
+        val release_year: String? = null,
+        val added_timestamp: String? = null,
+        val album_name: String? = null,
+        val album_release_year: Int? = null,
+        val performer_name: String? = null,
+        val genre: String? = null,
+        val mood: String? = null,
+        val instrument: String? = null
+    )
+
+
+    fun addSong(songParams: SongParams) {
+        viewModelScope.launch {
+            try {
+                _loading.value = true
+
+                // Assuming Gson library for JSON serialization
+                val gson = Gson()
+
+                // Convert the SongParams object to JSON
+                val json = gson.toJson(songParams)
+
+                // Define the request body
+                val requestBody = json.toRequestBody("application/json".toMediaType())
+                Log.d("AddSongDebug", "Request Body1234: $json")
+
+
+                // Define the request
+                val request = Request.Builder()
+                    .url("http://13.51.167.155/api/add_song")
+                    .post(requestBody)
+                    .build()
+
+                // Create an OkHttpClient instance
+                val client = OkHttpClient()
+
+                // Execute the request asynchronously
+                client.newCall(request).enqueue(object : okhttp3.Callback {
+                    override fun onFailure(call: okhttp3.Call, e: IOException) {
+                        // Handle failure
+                        Log.e("AddSongDebug", "Request failed", e)
+                    }
+
+                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                        // Handle the response as needed
+                        val responseBody = response.body?.string()
+                        Log.d("AddSongDebug", "Response Body: $responseBody")
+                    }
+                })
+
+                // Log the request details for debugging
+                Log.d("AddSongDebug", "Request URL: ${request.url}")
+                Log.d("AddSongDebug", "Request Method: ${request.method}")
+                Log.d("AddSongDebug", "Request Body: $json")
+            } catch (e: Exception) {
+                // Handle the exception (e.g., log, show error message)
+                Log.e("AddSongDebug", "Exception: ${e.message}", e)
+            } finally {
+                // Cleanup or finalization
+                _loading.value = false
+            }
+        }
+    }
+
+    data class RatingObject(
+        val rating_type: String,
+        val song_name: String?,
+        val album_name: String?,
+        val performer_name: String?,
+        val rating: Int
+    )
+
+    data class UserRateBatchRequest(
+        val username: String,
+        val ratings: List<RatingObject>
+    )
+
+    fun postUserRateBatch(request: UserRateBatchRequest) {
+        val gson = Gson()
+        val json = gson.toJson(request)
+
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
+
+        val client = OkHttpClient()
+        val url = "http://13.51.167.155/api/user_rate_batch"  // Replace with your actual API base URL
+        val postRequest = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        val response = client.newCall(postRequest).execute()
+
+        if (!response.isSuccessful) {
+            // Handle the error here
+            println("Error: ${response.code} - ${response.message}")
+        } else {
+            // Handle the successful response here
+            println("Success: ${response.body?.string()}")
+        }
+    }
+    data class UserSongRatingRequest(
+        val username: String,
+        val song_name: String,
+        val rating: Int
+    )
+
+    fun addUserSongRating(request: UserSongRatingRequest) {
+        val gson = Gson()
+        val json = gson.toJson(request)
+
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
+
+        val client = OkHttpClient()
+        val url = "http://13.51.167.155/api/user_song_ratings"  // Replace with your actual API base URL
+        val postRequest = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        val response = client.newCall(postRequest).execute()
+
+        when {
+            response.isSuccessful -> {
+                // Handle the successful response here
+                val responseBody = response.body?.string()
+                println("Success: $responseBody")
+            }
+            response.code == 400 -> {
+                // Handle Bad Request (Missing required parameters) here
+                println("Bad Request: ${response.body?.string()}")
+            }
+            else -> {
+                // Handle other errors here
+                println("Error: ${response.code} - ${response.message}")
+            }
+        }
+    }
+    data class UserAlbumRatingRequest(
+        val username: String,
+        val album_name: String,
+        val rating: Int
+    )
+
+    fun addUserAlbumRating(request: UserAlbumRatingRequest) {
+        val gson = Gson()
+        val json = gson.toJson(request)
+
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val requestBody = json.toRequestBody(mediaType)
+
+        val client = OkHttpClient()
+        val url = "http://13.51.167.155/api/user_album_ratings"  // Replace with your actual API base URL
+        val postRequest = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        val response = client.newCall(postRequest).execute()
+
+        when {
+            response.isSuccessful -> {
+                // Handle the successful response here
+                val responseBody = response.body?.string()
+                println("Success: $responseBody")
+            }
+            response.code == 400 -> {
+                // Handle Bad Request (Missing required parameters) here
+                println("Bad Request: ${response.body?.string()}")
+            }
+            else -> {
+                // Handle other errors here
+                println("Error: ${response.code} - ${response.message}")
+            }
+        }
+    }
 
 
 }
+
+
+
+

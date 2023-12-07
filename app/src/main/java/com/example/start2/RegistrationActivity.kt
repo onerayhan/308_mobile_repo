@@ -173,7 +173,7 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
         Log.d(TAG, "Spotify login started")
         //registrationViewModel.sendSpotifyRequestToMainServer()
         val REQUEST_CODE = 1337
-        val REDIRECT_URI = "com.example.start2://callback"
+        val REDIRECT_URI = "http://13.51.167.155/callback"
         val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
 
         val builder =

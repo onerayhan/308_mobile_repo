@@ -27,6 +27,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.spotify.Track
+import androidx.lifecycle.viewModelScope
 
 @Composable
 fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
@@ -43,6 +44,7 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
             Text("Search")
         }
 
+
         val recommendationResults by viewModelSpoti.recommendationResults.observeAsState()
         recommendationResults?.let { tracks ->
             Column {
@@ -58,10 +60,26 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
                     songs = tracks.tracks, // Assuming items is a list of Song in your TopTracksResponse
                     selectedFilter = "All", // Or your implementation of filter
                     onFilterChange = { /* Implement filter logic */ },
-                    onSongSelect = { songId ->
-                        Log.d("analysisTable", songId)
-                        navController?.navigateToLeafScreen(LeafScreen.SongInfo)
+
+
+
+
+                    onSongSelect = { songId  ->
+                        Log.d("analysisParalysis", songId)
+                        //viewModelScope.launch {
+                        viewModelSpoti.saveSelectedTrack(songId)
+                        navController.navigateToLeafScreen(LeafScreen.SongInfo)
+                        //}
+
                         // Handle song selection, e.g., navigate to a detailed view
+                    },
+                    onAlbumSelect = {albumId->
+                        viewModelSpoti.saveSelectedAlbum(albumId)
+                        navController.navigateToLeafScreen(LeafScreen.AlbumInfo)
+                    },
+                    onArtistSelect = {artistId ->
+                        viewModelSpoti.saveSelectedArtist(artistId)
+                        navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
                     },
                 )
             }
@@ -92,7 +110,9 @@ fun RecommendationsTableContent(
     songs: List<Track>,
     selectedFilter: String,
     onFilterChange: (String) -> Unit,
-    onSongSelect: (String) -> Unit
+    onSongSelect: (String) -> Unit,
+    onAlbumSelect: (String) -> Unit,
+    onArtistSelect: (String) -> Unit,
 ) {
 
     Column (modifier = Modifier.fillMaxWidth()){
@@ -102,7 +122,7 @@ fun RecommendationsTableContent(
         // Display songs in a LazyColumn
         LazyColumn (){
             items(songs) { song ->
-                TrackItem(song, onSongSelect)
+                TrackItem(song, onSongSelect, onAlbumSelect, onArtistSelect)
             }
         }
     }
@@ -118,3 +138,4 @@ private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
         }
     }
 }
+
