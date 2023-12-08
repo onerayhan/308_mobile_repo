@@ -50,7 +50,9 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
                     // Handle song selection, if needed
                 }
             ) { trackId, rating ->
-                //
+                rateSuggestions!!.tracks.find { it.id == trackId }?.let { track ->
+                    // Handle rating change, if needed
+                }
                 //viewModelSpoti.rateTrack(trackId, rating)
                 viewModelSpoti.removeRatedTrack(trackId)
                  // Implement this in your ViewModel

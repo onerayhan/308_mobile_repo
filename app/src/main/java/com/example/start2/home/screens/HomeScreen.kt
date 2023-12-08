@@ -4,6 +4,7 @@ package com.example.start2.home.screens
 
 import android.content.ContentResolver
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -35,10 +36,15 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
+
+import androidx.navigation.NavController
 import com.example.start2.ProfileViewModel
 import com.example.start2.ProfileViewModelFactory
 import com.example.start2.UserPreferences
+import com.example.start2.viewmodels.MusicViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
@@ -47,10 +53,12 @@ import java.io.InputStreamReader
 
 @Composable
 fun HomeScreen(
-    showDetail: () -> Unit
+    showDetail: () -> Unit,
+    navController: NavController,
+    musicViewModel: MusicViewModel
 ) {
 
-
+    val batchResult by musicViewModel.batchResult.observeAsState()
     val context = LocalContext.current
     val userPreferences= remember{UserPreferences(context)}
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
@@ -74,12 +82,14 @@ fun HomeScreen(
     var mood by remember { mutableStateOf("") }
     var instrument by remember { mutableStateOf("") }
 
-    val filePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        // Handle the result of the file picker here
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
         uri?.let {
             selectedFileUri = it
         }
     }
+
 
 
 
@@ -239,12 +249,12 @@ fun HomeScreen(
                 // File Upload Section
                 Button(
                     onClick = {
-                        filePickerLauncher.launch("audio/*")
+                        filePickerLauncher.launch("*/*")
                        },
 
                          modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
+                             .fillMaxWidth()
+                             .height(50.dp)
                 ) {
                     Text("Select File", color = Color.White)
                 }
@@ -254,6 +264,19 @@ fun HomeScreen(
                     val file = DocumentFile.fromSingleUri(LocalContext.current, uri)
                     val fileName = file?.name ?: "Unknown File"
                     Text("Selected File: $fileName", color = Color.White)
+                }
+                Button(
+                    onClick = {
+                        selectedFileUri?.let { uri ->
+                            Log.d("MusicViewModel", "ALo: $uri")
+                            musicViewModel.processFileAndPostTracks(uri, contentResolver)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+                    Text("Submit File", color = Color.White)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -278,18 +301,9 @@ fun HomeScreen(
                             instrument = instrument
                         )
 
-
-
-
                         // Launch the coroutine to add the song
-
-                            profileViewModel.addSong(songParams)
-
-
+                        profileViewModel.addSong(songParams)
                             // Enable the button after the operation is complete
-
-
-
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -303,23 +317,3 @@ fun HomeScreen(
 
         }
     }
-
-suspend fun readContentFromUri(contentResolver: ContentResolver, uri: Uri): String {
-    return withContext(Dispatchers.IO) {
-        val inputStream = contentResolver.openInputStream(uri)
-        val reader = BufferedReader(InputStreamReader(inputStream))
-        val content = StringBuilder()
-        var line: String?
-
-        try {
-            while (reader.readLine().also { line = it } != null) {
-                content.append(line).append('\n')
-            }
-        } finally {
-            reader.close()
-            inputStream?.close()
-        }
-
-        return@withContext content.toString()
-    }
-}

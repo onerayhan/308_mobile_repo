@@ -12,10 +12,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
+import com.example.start2.viewmodels.MusicViewModel
 
-@Preview
+
 @Composable
-fun MusicAddPage() {
+fun MusicAddPage(musicViewModel: MusicViewModel ) {
     var songName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var length by remember { mutableStateOf("") }

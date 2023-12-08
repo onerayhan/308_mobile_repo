@@ -25,18 +25,20 @@ import com.example.start2.home.screens.info_screens.AlbumInfoScreen
 import com.example.start2.home.screens.info_screens.ArtistInfoScreen
 import com.example.start2.home.screens.info_screens.SongInfoScreen
 import com.example.start2.home.spotify.SpotifyViewModel
+import com.example.start2.viewmodels.MusicViewModel
 
 
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    spotifyViewModel: SpotifyViewModel
+    spotifyViewModel: SpotifyViewModel,
+    musicViewModel: MusicViewModel
 ) {
     NavHost(
         navController = navController,
         startDestination = RootScreen.Home.route
     ) {
-        addHomeRoute(navController)
+        addHomeRoute(navController, musicViewModel)
         addRateRoute(navController,spotifyViewModel)
         addSearchRoute(navController, spotifyViewModel)
         //addFavoritesRoute(navController)
@@ -47,18 +49,20 @@ fun AppNavGraph(
 }
 
 //home navigation
-private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
+private fun NavGraphBuilder.addHomeRoute(navController: NavController, musicViewModel: MusicViewModel) {
     navigation(
         route = RootScreen.Home.route,
         startDestination = LeafScreen.Home.route
     ) {
-        showHome(navController)
+        showHome(navController, musicViewModel)
         showHomeDetail(navController)
     }
 }
-private fun NavGraphBuilder.showHome(navController: NavController) {
+private fun NavGraphBuilder.showHome(navController: NavController, musicViewModel: MusicViewModel) {
     composable(route = LeafScreen.Home.route) {
         HomeScreen(
+            navController = navController,
+            musicViewModel = musicViewModel,
             showDetail = {
                 navController.navigate(LeafScreen.HomeDetail.route)
             }

@@ -1,5 +1,6 @@
 package com.example.start2
 
+import com.example.start2.services_and_responses.AddSongsBatchRequest
 import org.json.JSONObject
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -20,6 +21,7 @@ interface ApiService {
 
     @POST("/api/profile_picture")
     suspend fun getProfilePicture(@Body request: ProfilePictureRequest): ProfilePictureResponse
+
 
 
 }
