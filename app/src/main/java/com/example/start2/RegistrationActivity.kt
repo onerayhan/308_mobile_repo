@@ -201,10 +201,6 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
             when (response.type) {
                 AuthorizationResponse.Type.TOKEN -> {
                     Log.d(TAG, "RESPONSEUMDUR BU BENİM:  ${response.toString()}")
-                    // Starting NavigatorActivity
-                    //val intent = Intent(this, NavigatorActivity::class.java)
-                    //intent.putExtra("SpotifyToken", response.accessToken) // Passing the token to the next activity
-                    //startActivity(intent)
                     registrationViewModel.saveSpotifyToken(response.accessToken)
                 }
                 AuthorizationResponse.Type.ERROR -> {

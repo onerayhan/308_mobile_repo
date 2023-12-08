@@ -60,18 +60,11 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
                     songs = tracks.tracks, // Assuming items is a list of Song in your TopTracksResponse
                     selectedFilter = "All", // Or your implementation of filter
                     onFilterChange = { /* Implement filter logic */ },
-
-
-
-
                     onSongSelect = { songId  ->
                         Log.d("analysisParalysis", songId)
                         //viewModelScope.launch {
                         viewModelSpoti.saveSelectedTrack(songId)
                         navController.navigateToLeafScreen(LeafScreen.SongInfo)
-                        //}
-
-                        // Handle song selection, e.g., navigate to a detailed view
                     },
                     onAlbumSelect = {albumId->
                         viewModelSpoti.saveSelectedAlbum(albumId)
