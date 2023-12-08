@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.start2.DataHolder
 
 import com.example.start2.ProfileViewModel
 import com.example.start2.ProfileViewModelFactory
@@ -56,7 +57,7 @@ fun FriendScreen(
     Log.d("ProfileScreen", "ProfileScreen123342: ${(profileViewModel.username)}")
     Log.d("ProfileScreen", "ProfileScreen123342: ${(username)}")
 
-    profileViewModel.fetchUserProfileByUsername("123")
+    DataHolder.myData?.let { profileViewModel.fetchUserProfileByUsername(it.value) }
 
     // Save the username in the ViewModel
 
@@ -117,7 +118,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?) {
                 Button(
                     onClick = {
                         // Handle follow button click
-                       profileViewModel.followUser("123")
+                        DataHolder.myData?.let { it1 -> profileViewModel.followUser(it1.value) }
 
                     },
                     modifier = Modifier
@@ -130,7 +131,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?) {
                 Button(
                     onClick = {
                         // Handle unfollow button click
-                       profileViewModel.unfollowUser("123")
+                        DataHolder.myData?.let { it1 -> profileViewModel.unfollowUser(it1.value) }
 
                     },
                     modifier = Modifier
@@ -146,4 +147,12 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?) {
         // userProfile is null, handle this case (e.g., show a loading indicator or an error message)
         androidx.compose.material3.Text("User profile is null")
     }
+}
+object TextFieldUtils {
+    // Define a function that takes a string parameter
+    fun processUsername(username: String) {
+        // Perform actions with the username
+        println("Processing username: $username")
+    }
+
 }
