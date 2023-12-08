@@ -41,7 +41,7 @@ class MainFragment : Fragment() {
     private var listener: LoginListener? = null
     private lateinit var binding: FragmentMainBinding
     private val apiEndpoint =
-        "http://13.51.167.155/api/get_all_users" // Replace with your API endpoint
+        "http://51.20.128.164/api/get_all_users" // Replace with your API endpoint
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -101,7 +101,7 @@ class MainFragment : Fragment() {
                 put("password", password)
             }
 
-            val apiUrl = "http://13.51.167.155/api/login" // Replace with your API endpoint
+            val apiUrl = "http://51.20.128.164/api/login" // Replace with your API endpoint
             Log.d("MainHost", "Spotify login started")
 
             CoroutineScope(Dispatchers.Main).launch {

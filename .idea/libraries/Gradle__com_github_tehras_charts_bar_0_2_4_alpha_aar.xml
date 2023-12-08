@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.tehras.charts:bar:0.2.4-alpha@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8ba628f35157ea675120e39c14c8d396/transformed/bar-0.2.4-alpha/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/8ba628f35157ea675120e39c14c8d396/transformed/bar-0.2.4-alpha/jars/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/8ba628f35157ea675120e39c14c8d396/transformed/bar-0.2.4-alpha/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/8ba628f35157ea675120e39c14c8d396/transformed/bar-0.2.4-alpha/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

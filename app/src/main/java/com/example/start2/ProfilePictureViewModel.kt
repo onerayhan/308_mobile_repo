@@ -23,7 +23,7 @@ class ProfilePictureViewModel : ViewModel() {
 
     fun fetchProfilePicture(username: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            val apiUrl = "http://13.51.167.155/api/profile_picture"
+            val apiUrl = "http://51.20.128.164/api/profile_picture"
 
             try {
                 val url = URL(apiUrl)

@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.material:material-ripple-android:1.6.0-beta01@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8692849bb2a045db63456a13d9ca58cb/transformed/material-ripple-release/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8692849bb2a045db63456a13d9ca58cb/transformed/material-ripple-release/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/8692849bb2a045db63456a13d9ca58cb/transformed/material-ripple-release/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/8692849bb2a045db63456a13d9ca58cb/transformed/material-ripple-release/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/8692849bb2a045db63456a13d9ca58cb/transformed/material-ripple-release/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/8692849bb2a045db63456a13d9ca58cb/transformed/material-ripple-release/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.material/material-ripple-android/1.6.0-beta01/5658994fca2cfab39445d8960d9609737b5f71be/material-ripple-android-1.6.0-beta01-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.compose.material/material-ripple-android/1.6.0-beta01/5658994fca2cfab39445d8960d9609737b5f71be/material-ripple-android-1.6.0-beta01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

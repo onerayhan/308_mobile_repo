@@ -16,7 +16,7 @@ interface UserAlbumPreferencesService {
 
 object UserAlbumPreferencesServiceProvider {
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://13.51.167.155/")
+        .baseUrl("http://51.20.128.164/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     val instance: UserAlbumPreferencesService by lazy {

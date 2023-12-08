@@ -112,7 +112,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.patrykandpatrick.vico:compose:1.12.0")
     implementation("com.patrykandpatrick.vico:core:1.12.0")
-
+    implementation("me.onebone:toolbar-compose:2.3.5")
     implementation ("com.spotify.android:auth:1.2.5") // Maven dependency
 
     // All other dependencies for your app should also be here:

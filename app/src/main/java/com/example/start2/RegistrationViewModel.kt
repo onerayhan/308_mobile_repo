@@ -72,7 +72,7 @@ class RegistrationViewModel : ViewModel() {
             //put("public_id",publicId)
         }
 
-        val apiUrl = "http://13.51.167.155/api/register"
+        val apiUrl = "http://51.20.128.164/api/register"
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -95,7 +95,7 @@ class RegistrationViewModel : ViewModel() {
         }
     }
     fun sendSpotifyIntent() {
-        val apiUrl = "http://13.51.167.155/spoti_login"
+        val apiUrl = "http://51.20.128.164/spoti_login"
 
         val jsonObject = JSONObject().apply {
             put("username", username)
@@ -252,7 +252,7 @@ class RegistrationViewModel : ViewModel() {
             //put("public_id",publicId)
         }
 
-        val apiUrl = "http://13.51.167.155/api/register"
+        val apiUrl = "http://51.20.128.164/api/register"
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -281,7 +281,7 @@ class RegistrationViewModel : ViewModel() {
         }
     }
     fun sendSpotifyIntent() {
-        val apiUrl = "http://13.51.167.155/spoti_login"
+        val apiUrl = "http://51.20.128.164/spoti_login"
 
         val jsonObject = JSONObject().apply {
             put("username", username)

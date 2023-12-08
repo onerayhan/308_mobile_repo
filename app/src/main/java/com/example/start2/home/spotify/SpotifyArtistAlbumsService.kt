@@ -16,7 +16,7 @@ interface  SpotifyArtistAlbumsService {
         @Query("include_groups") includeGroups: String = "single,appears_on",
         @Query("market") market: String? = "TR",
         @Query("limit") limit: Int = 10,
-        @Query("offset") offset: Int = 5
+        @Query("offset") offset: Int = 0
     ): Response<SpotifyArtistAlbumsResponse>
 }
 

@@ -27,7 +27,7 @@ class SongViewModel : ViewModel() {
 
     fun fetchUserSongs(username: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            val apiUrl = "http://13.51.167.155/api/user_songs"
+            val apiUrl = "http://51.20.128.164/api/user_songs"
 
             try {
                 val url = URL(apiUrl)

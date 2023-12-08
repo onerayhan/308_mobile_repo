@@ -343,7 +343,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     }
 
     fun uploadPhoto(photoFile: File) {
-        val url = "http://13.51.167.155/api/upload_photo"
+        val url = "http://51.20.128.164/api/upload_photo"
 
         // Launch a coroutine within viewModelScope to handle the network operation
         viewModelScope.launch(Dispatchers.IO) {
@@ -428,7 +428,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
 
                 // Define the request
                 val request = Request.Builder()
-                    .url("http://13.51.167.155/api/add_song")
+                    .url("http://51.20.128.164/api/add_song")
                     .post(requestBody)
                     .build()
 
@@ -484,7 +484,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val requestBody = json.toRequestBody(mediaType)
 
         val client = OkHttpClient()
-        val url = "http://13.51.167.155/api/user_rate_batch"  // Replace with your actual API base URL
+        val url = "http://51.20.128.164/api/user_rate_batch"  // Replace with your actual API base URL
         val postRequest = Request.Builder()
             .url(url)
             .post(requestBody)
@@ -514,7 +514,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val requestBody = json.toRequestBody(mediaType)
 
         val client = OkHttpClient()
-        val url = "http://13.51.167.155/api/user_song_ratings"  // Replace with your actual API base URL
+        val url = "http://51.20.128.164/api/user_song_ratings"  // Replace with your actual API base URL
         val postRequest = Request.Builder()
             .url(url)
             .post(requestBody)
@@ -551,7 +551,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val requestBody = json.toRequestBody(mediaType)
 
         val client = OkHttpClient()
-        val url = "http://13.51.167.155/api/user_album_ratings"  // Replace with your actual API base URL
+        val url = "http://51.20.128.164/api/user_album_ratings"  // Replace with your actual API base URL
         val postRequest = Request.Builder()
             .url(url)
             .post(requestBody)
@@ -618,7 +618,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val requestBody = json.toRequestBody(mediaType)
 
         val client = OkHttpClient()
-        val url = "http://13.51.167.155/api/user_performer_ratings"  // Replace with your actual API base URL
+        val url = "http://51.20.128.164/api/user_performer_ratings"  // Replace with your actual API base URL
         val postRequest = Request.Builder()
             .url(url)
             .post(requestBody)
@@ -680,7 +680,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val requestBody = json.toRequestBody(mediaType)
 
         val client = OkHttpClient()
-        val url = "http://13.51.167.155/api/add_songs_batch"  // Replace with your actual API base URL
+        val url = "http://51.20.128.164/api/add_songs_batch"  // Replace with your actual API base URL
         val postRequest = Request.Builder()
             .url(url)
             .post(requestBody)
