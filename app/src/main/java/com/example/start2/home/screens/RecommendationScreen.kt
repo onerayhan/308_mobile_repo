@@ -11,11 +11,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,11 +37,21 @@ import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.spotify.Track
 import androidx.lifecycle.viewModelScope
+import com.example.start2.viewmodels.MusicViewModel
+import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
+fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyViewModel ,musicViewModel: MusicViewModel) {
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
     var recommendationQuery: String by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
+    var genresString: String by remember{ mutableStateOf("") }
+    val options = listOf("getGenrePrefs", "getAlbumPrefs", "getPerformerPrefs")
+    val selectedOptions = remember { mutableStateListOf<String>() }
+    val userGenrePreferences by musicViewModel.userGenrePreferences.observeAsState()
+    val userAlbumPreferences by musicViewModel.userAlbumPreferences.observeAsState()
+    val userPerformerPreferences by musicViewModel.userPerformerPreferences.observeAsState()
     //viewModelSpoti.
     Column {
         TextField(
@@ -40,11 +59,62 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
             onValueChange = { recommendationQuery = it },
             label = { Text("Pick one or more Genre(s) for a recommendation(Comma separated)") }
         )
-        Button(onClick = { viewModelSpoti.getRecommendation(recommendationQuery) }) {
+        Button(onClick = { viewModelSpoti.getRecommendation(genresString) }) {
             Text("Search")
         }
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }
+        ) {
+            TextField(
+                readOnly = true,
+                value = selectedOptions.joinToString(),
+                onValueChange = { },
+                label = { Text("Select Preferences") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        onClick = {
+                            if (selectedOptions.contains(option)) {
+                                selectedOptions.remove(option)
+                            } else {
+                                selectedOptions.add(option)
+                            }
+                        }
+                    ) {
+                        Text(option)
+                        Spacer(Modifier.width(20.dp))
+                        if (selectedOptions.contains(option)) {
+                            Icon(imageVector = Icons.Filled.Check, contentDescription = null)
+                        }
+                    }
+                }
+            }
+        }
+        Button(onClick = {
+            musicViewModel.onOptionSelected(options)
+        }) {
+            Text("Fetch Preferences")
+        }
 
+        userGenrePreferences?.let{ response ->
+            Log.d("RecomScreen", response.genres.joinToString(separator = ",") { it.genre.lowercase() })
 
+            genresString = response.genres.take(2).joinToString(separator = ",") { it.genre.lowercase() }
+        }
+        userAlbumPreferences?.let{ response ->
+            Log.d("RecomScreen", response.toString())
+        }
+        userPerformerPreferences?.let{ response ->
+            Log.d("RecomScreen",response.toString())
+        }
         val recommendationResults by viewModelSpoti.recommendationResults.observeAsState()
         recommendationResults?.let { tracks ->
             Column {
@@ -87,7 +157,9 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
 @Composable
 fun RecommendationsTableHeader(sortState: SortState, onSortChange: (SortAttribute) -> Unit) {
 
-    Row (modifier =  Modifier.fillMaxWidth().background(Color.Red)){
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.Red)){
 
         // Create clickable text for each sortable attribute
         androidx.compose.material3.Text("Name", Modifier.clickable { onSortChange(SortAttribute.NAME) })

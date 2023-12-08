@@ -18,12 +18,23 @@ import com.example.start2.services_and_responses.UserAlbumPreferencesServiceProv
 import com.example.start2.services_and_responses.UserGenrePreferencesResponse
 import com.example.start2.services_and_responses.UserGenrePreferencesService
 import com.example.start2.services_and_responses.UserGenrePreferencesServiceProvider
+import com.example.start2.services_and_responses.UserGetAlbumRatingsResponse
+import com.example.start2.services_and_responses.UserGetAlbumRatingsService
+import com.example.start2.services_and_responses.UserGetAlbumRatingsServiceProvider
+import com.example.start2.services_and_responses.UserGetPerformerRatingsResponse
+import com.example.start2.services_and_responses.UserGetPerformerRatingsService
+import com.example.start2.services_and_responses.UserGetPerformerRatingsServiceProvider
+import com.example.start2.services_and_responses.UserGetSongRatingsResponse
+import com.example.start2.services_and_responses.UserGetSongRatingsService
+import com.example.start2.services_and_responses.UserGetSongRatingsServiceProvider
 import com.example.start2.services_and_responses.UserPerformerPreferencesResponse
 import com.example.start2.services_and_responses.UserPerformerPreferencesService
 import com.example.start2.services_and_responses.UserPerformerPreferencesServiceProvider
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -54,12 +65,52 @@ data class MusicBatch(
     val songs: List<Music>
 )
 open class MusicViewModel(protected val username: String): ViewModel(){
-    private val repository = MusicRepository(AddSongsBatchServiceProvider.instance, UserGenrePreferencesServiceProvider.instance, UserAlbumPreferencesServiceProvider.instance, UserPerformerPreferencesServiceProvider.instance)
+    private val repository = MusicRepository(AddSongsBatchServiceProvider.instance, UserGenrePreferencesServiceProvider.instance, UserAlbumPreferencesServiceProvider.instance,
+        UserPerformerPreferencesServiceProvider.instance, UserGetSongRatingsServiceProvider.instance, UserGetAlbumRatingsServiceProvider.instance, UserGetPerformerRatingsServiceProvider.instance)
     val parsedMusics = MutableLiveData<List<Music>>()
     val batchResult = MutableLiveData<Boolean>()
     val userGenrePreferences = MutableLiveData<UserGenrePreferencesResponse>()
     val userPerformerPreferences = MutableLiveData<UserPerformerPreferencesResponse>()
     val userAlbumPreferences = MutableLiveData<UserAlbumPreferencesResponse>()
+
+    val userSongRatings = MutableLiveData<UserGetSongRatingsResponse>()
+    val userAlbumRatings = MutableLiveData<UserGetAlbumRatingsResponse>()
+    val userPerformerRatings = MutableLiveData<UserGetPerformerRatingsResponse>()
+
+    private val options = listOf("getGenrePrefs", "getAlbumPrefs", "getPerformerPrefs")
+    private var selectedOptions = mutableSetOf<String>()
+
+
+    fun onOptionSelected(options: List<String>) {
+        options.forEach{ option ->
+            if (selectedOptions.contains(option)) {
+                selectedOptions.remove(option)
+            } else {
+                selectedOptions.add(option)
+            }
+        }
+        fetchPreferencesBasedOnSelection()
+    }
+    private fun fetchPreferencesBasedOnSelection() {
+        viewModelScope.launch {
+            val deferredResponses = selectedOptions.map { option ->
+                when (option) {
+                    "getGenrePrefs" -> async { repository.getUserGenrePreferences(username) }
+                    "getAlbumPrefs" -> async { repository.getUserAlbumPreferences(username) }
+                    "getPerformerPrefs" -> async { repository.getUserPerformerPreferences(username) }
+                    else -> async { null }
+                }
+            }
+            deferredResponses.forEach { deferred ->
+                val response = deferred.await()
+                when (response) {
+                    is UserGenrePreferencesResponse -> response?.let { userGenrePreferences.postValue(it) }
+                    is UserAlbumPreferencesResponse -> response?.let { userAlbumPreferences.postValue(it) }
+                    is UserPerformerPreferencesResponse -> response?.let { userPerformerPreferences.postValue(it) }
+                }
+            }
+        }
+    }
 
     open fun saveSelectedMusics(musics: List<Music>) {
         val result = musics
@@ -89,6 +140,30 @@ open class MusicViewModel(protected val username: String): ViewModel(){
             val result = repository.getUserPerformerPreferences(username)
             result?.let{
                 userPerformerPreferences.postValue(it)
+            }
+        }
+    }
+    open fun getUserSongRatings() {
+        viewModelScope.launch{
+            val result = repository.getUserSongRatings(username)
+            result?.let{
+                userSongRatings.postValue(it)
+            }
+        }
+    }
+    open fun getUserAlbumRatings() {
+        viewModelScope.launch{
+            val result = repository.getUserAlbumRatings(username)
+            result?.let{
+                userAlbumRatings.postValue(it)
+            }
+        }
+    }
+    open fun getUserPerformerRatings() {
+        viewModelScope.launch{
+            val result = repository.getUserPerformerRatings(username)
+            result?.let{
+                userPerformerRatings.postValue(it)
             }
         }
     }
@@ -164,7 +239,8 @@ open class MusicViewModel(protected val username: String): ViewModel(){
 }
 
 open class MusicRepository(private val addSongsBatchService: AddSongsBatchService, private val userGenrePreferencesService: UserGenrePreferencesService, private val userAlbumPreferencesService: UserAlbumPreferencesService,
-                           private val userPerformerPreferencesService: UserPerformerPreferencesService
+                           private val userPerformerPreferencesService: UserPerformerPreferencesService, private val userGetSongRatingsService: UserGetSongRatingsService, private val userGetAlbumRatingsService: UserGetAlbumRatingsService,
+                           private val userGetPerformerRatingsService: UserGetPerformerRatingsService
 ) {
 
     open suspend fun getUserGenrePreferences(token: String) : UserGenrePreferencesResponse? {
@@ -215,6 +291,52 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             }
 
         } catch(e: Exception) {
+            null
+        }
+    }
+
+    open suspend fun getUserSongRatings(token: String) : UserGetSongRatingsResponse? {
+        return try {
+            val gson = Gson()
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("username", token)
+            val response = userGetSongRatingsService.getUserSongRatings(jsonObject)
+            if(response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+    open suspend fun getUserAlbumRatings(token: String) : UserGetAlbumRatingsResponse? {
+        return try {
+            val gson = Gson()
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("username", token)
+            val response = userGetAlbumRatingsService.getUserAlbumRatings(jsonObject)
+            if(response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+    open suspend fun getUserPerformerRatings(token: String) : UserGetPerformerRatingsResponse? {
+        return try {
+            val gson = Gson()
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("username", token)
+            val response = userGetPerformerRatingsService.getUserPerformerRatings(jsonObject)
+            if(response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
             null
         }
     }

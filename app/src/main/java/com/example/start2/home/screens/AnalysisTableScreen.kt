@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.DropdownMenu
@@ -28,7 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import coil.compose.rememberAsyncImagePainter
 import com.example.start2.home.spotify.Album
 import com.example.start2.home.spotify.Artist
 import com.example.start2.home.spotify.Image
@@ -181,6 +187,18 @@ fun TrackItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val imageUrl = track.album.images.firstOrNull()?.url ?: "" // Provide a default or error image URL if needed
+
+        androidx.compose.foundation.Image(
+            painter = rememberAsyncImagePainter(imageUrl),
+            contentDescription = "Album Art",
+            modifier = Modifier
+                .size(100.dp)
+                .padding(4.dp)
+                .padding(start = 0.dp,top = 0.dp,end = 4.dp, bottom = 0.dp)
+                .clip(CircleShape), // Adjust size as needed
+            contentScale = ContentScale.Crop // Adjust the scaling as needed
+        )
         Column {
             Text(
                 text = "${track.name}",
@@ -204,10 +222,6 @@ fun TrackItem(
             )
             Text(
                 text = "${track.duration_ms.millisecondsToMinutes()} min",
-                color = Color.Black.copy(alpha = 0.7f)
-            )
-            Text(
-                text = "${track.popularity}",
                 color = Color.Black.copy(alpha = 0.7f)
             )
             // Add additional attributes here if needed
