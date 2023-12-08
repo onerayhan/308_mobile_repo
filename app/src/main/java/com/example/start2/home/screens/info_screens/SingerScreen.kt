@@ -27,7 +27,7 @@ import com.example.start2.home.spotify.SpotifyViewModel
 
 data class Singer(val name: String)
 data class Song(val name: String, val releaseDate: String)
-data class Album(val name: String, val releaseDate: String)
+private data class Album(val name: String, val releaseDate: String)
 data class Single(val name: String, val releaseDate: String)
 data class AppearsOn(val name: String, val releaseDate: String)
 
@@ -84,7 +84,7 @@ fun SingerContent(
 }
 
 @Composable
-fun SingerContent(
+private fun SingerContent(
     singer: Singer,
     topSongs: List<Song>,
     albums: List<Album>,
@@ -203,7 +203,7 @@ val mockTopSongs = listOf(
 
 )
 
-val mockAlbums = listOf(
+private val mockAlbums = listOf(
     Album("Better Now", "2029"),
     Album("Somebody New", "2021"),
     Album("Come Back/ Filthy", "2020"),
@@ -244,7 +244,7 @@ val LightColorPalette = lightColors(
 
 
 @Composable
-fun AlbumItem(album: Album, onClick: () -> Unit) {
+private fun AlbumItem(album: Album, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

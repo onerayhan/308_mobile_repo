@@ -11,7 +11,9 @@ import kotlinx.coroutines.launch
 
 open class SpotifyViewModel(protected val token: String) : ViewModel() {
 
-    private val repository = SpotifyRepository(SpotifyServiceProvider.instance, SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance, SpotifyAlbumInfoServiceProvider.instance)
+    private val repository = SpotifyRepository(SpotifyServiceProvider.instance, SpotifySearchServiceProvider.instance,
+        SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance,
+        SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance, SpotifyArtistAlbumsServiceProvider.instance)
 
     val topTracks = MutableLiveData<TopTracksResponse>()
 
@@ -23,6 +25,9 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
     val selectedArtistInfo = MutableLiveData<SpotifyArtistInfoResponse>()
     val selectedTrackInfo = MutableLiveData<Track>()
     val selectedAlbumInfo = MutableLiveData<Album>()
+    val selectedArtistTopTracks = MutableLiveData<SpotifyArtistTopTrackResponse>()
+    val selectedArtistAlbums = MutableLiveData<SpotifyArtistAlbumsResponse>()
+
     val _selectedArtistID = MutableLiveData<String>()
     val _selectedTrackID = MutableLiveData<String>()
     val _selectedAlbumID = MutableLiveData<String>()
@@ -68,7 +73,23 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
             }
         }
     }
+    open fun getSelectedArtistTopTracks() {
+        viewModelScope.launch {
+            val result = repository.getSelectedArtistTopTracks(token, _selectedArtistID.value.toString())
+            result?.let {
+                selectedArtistTopTracks.postValue(it)
+            }
+        }
+    }
 
+    open fun getSelectedArtistAlbums() {
+        viewModelScope.launch {
+            val result = repository.getSelectedArtistAlbums(token, _selectedArtistID.value.toString())
+            result?.let {
+                selectedArtistAlbums.postValue(it)
+            }
+        }
+    }
     open fun getSelectedTrack() {
         viewModelScope.launch {
             val result = repository.getSelectedTrackInfo(token, _selectedTrackID.value.toString())
@@ -125,7 +146,8 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
 
 open class SpotifyRepository(private val spotifyService: SpotifyService, private val spotifySearchService: SpotifySearchService,
                              private val spotifyRecommendationsService: SpotifyRecommendationsService, private val spotifyArtistInfoService: SpotifyArtistInfoService,
-                             private val spotifyTrackInfoService: SpotifyTrackInfoService, private val spotifyAlbumInfoService : SpotifyAlbumInfoService ) {
+                             private val spotifyTrackInfoService: SpotifyTrackInfoService, private val spotifyAlbumInfoService : SpotifyAlbumInfoService ,
+                             private val spotifyArtistTopTrackService: SpotifyArtistTopTrackService, private val spotifyArtistAlbumsService: SpotifyArtistAlbumsService) {
     open suspend fun getUserTopTracks(token: String?): TopTracksResponse? {
         return try {
             val response = spotifyService.getUserTopTracks("Bearer $token")
@@ -150,6 +172,44 @@ open class SpotifyRepository(private val spotifyService: SpotifyService, private
                 null
             }
         } catch(e: Exception) {
+            null
+        }
+    }
+    open suspend fun getSelectedArtistTopTracks(token: String?, selectedArtistId: String) : SpotifyArtistTopTrackResponse? {
+        return try {
+            Log.d("RegistrationActivity", "Hello There buradayım")
+            val response = spotifyArtistTopTrackService.getArtistTopTracks("Bearer $token", selectedArtistId)
+            Log.d("RegistrationActivity", response.code().toString())
+            if(response.isSuccessful) {
+                Log.d("RegistrationActivity", "Hello There satoptracks")
+                Log.d("RegistrationActivity", response.body().toString())
+                Log.d("RegistrationActivity", "Hello There satoptracks")
+                response.body()
+
+            }
+            else {
+                Log.d("Registration Activity", "Hello There")
+                null
+            }
+
+        }
+        catch (e: Exception) {
+
+            Log.d("RegistrationActivity", "ao")
+            null
+        }
+    }
+    open suspend fun getSelectedArtistAlbums(token: String?,selectedArtistId: String): SpotifyArtistAlbumsResponse? {
+        return try {
+            val response = spotifyArtistAlbumsService.getArtistAlbums("Bearer $token",selectedArtistId )
+            if(response.isSuccessful){
+                response.body()
+            }
+            else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }

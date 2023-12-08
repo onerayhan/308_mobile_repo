@@ -1,5 +1,6 @@
 package com.example.start2.home.navigators
 
+import AnalysisScreen
 import FollowersScreen
 import SingerScreen
 import androidx.compose.runtime.Composable
@@ -11,10 +12,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.start2.home.ProfileScreen
 
-import com.example.start2.home.screens.AnalysisOption
 
 import com.example.start2.home.screens.AnalysisTableScreen
-import com.example.start2.home.screens.AnalysisScreen
+
 import com.example.start2.home.screens.FriendScreen
 import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
@@ -22,21 +22,23 @@ import com.example.start2.home.screens.RateScreen
 import com.example.start2.home.screens.RecommendationScreen
 import com.example.start2.home.screens.SearchScreen
 import com.example.start2.home.screens.info_screens.AlbumInfoScreen
-import com.example.start2.home.screens.info_screens.PerformerInfoScreen
+import com.example.start2.home.screens.info_screens.ArtistInfoScreen
 import com.example.start2.home.screens.info_screens.SongInfoScreen
 import com.example.start2.home.spotify.SpotifyViewModel
+import com.example.start2.viewmodels.MusicViewModel
 
 
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    spotifyViewModel: SpotifyViewModel
+    spotifyViewModel: SpotifyViewModel,
+    musicViewModel: MusicViewModel
 ) {
     NavHost(
         navController = navController,
         startDestination = RootScreen.Home.route
     ) {
-        addHomeRoute(navController)
+        addHomeRoute(navController, musicViewModel)
         addRateRoute(navController,spotifyViewModel)
         addSearchRoute(navController, spotifyViewModel)
         //addFavoritesRoute(navController)
@@ -47,18 +49,20 @@ fun AppNavGraph(
 }
 
 //home navigation
-private fun NavGraphBuilder.addHomeRoute(navController: NavController) {
+private fun NavGraphBuilder.addHomeRoute(navController: NavController, musicViewModel: MusicViewModel) {
     navigation(
         route = RootScreen.Home.route,
         startDestination = LeafScreen.Home.route
     ) {
-        showHome(navController)
+        showHome(navController, musicViewModel)
         showHomeDetail(navController)
     }
 }
-private fun NavGraphBuilder.showHome(navController: NavController) {
+private fun NavGraphBuilder.showHome(navController: NavController, musicViewModel: MusicViewModel) {
     composable(route = LeafScreen.Home.route) {
         HomeScreen(
+            navController = navController,
+            musicViewModel = musicViewModel,
             showDetail = {
                 navController.navigate(LeafScreen.HomeDetail.route)
             }
@@ -207,7 +211,7 @@ private fun NavGraphBuilder.showSongInfo(navController: NavController, spotifyVi
 }
 private fun NavGraphBuilder.showPerformerInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.ArtistInfo.route) {
-        SingerScreen(navController,spotifyViewModel)
+        ArtistInfoScreen(navController,spotifyViewModel)
     }
 }
 private fun NavGraphBuilder.showAlbumInfo(navController: NavController, spotifyViewModel: SpotifyViewModel) {

@@ -1,5 +1,6 @@
 package com.example.start2.auth
 import android.content.ContentValues.TAG
+import android.content.Context
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.start2.ProfileViewModel
 import com.example.start2.databinding.FragmentMainBinding
@@ -19,10 +20,12 @@ import com.example.start2.home.NavigatorActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.internal.wait
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -49,6 +52,20 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is LoginListener) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement RegistrationStepsListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -71,24 +88,40 @@ class MainFragment : Fragment() {
 
 
         binding.loginButton.setOnClickListener {
-                    val password = binding.passwordEditText.text.toString()
-                    val username = binding.phoneNumberEditText.text.toString().replace(" ", "")
+            val password = binding.passwordEditText.text.toString()
+            val username = binding.phoneNumberEditText.text.toString().replace(" ", "")
 
-                    binding.backButton1.setOnClickListener {
-                        val navController = findNavController(view)
-                        navController.popBackStack()
-                    }
+            binding.backButton1.setOnClickListener {
+                val navController = findNavController(view)
+                navController.popBackStack()
+            }
 
-                    val jsonObject = JSONObject().apply {
-                        put("username", username)
-                        put("password", password)
-                    }
+            val jsonObject = JSONObject().apply {
+                put("username", username)
+                put("password", password)
+            }
 
-                    val apiUrl = "http://13.51.167.155/api/login" // Replace with your API endpoint
-                    listener?.onSpotify()
-                    performLogin(apiUrl, jsonObject,username)
+            val apiUrl = "http://13.51.167.155/api/login" // Replace with your API endpoint
+            Log.d("MainHost", "Spotify login started")
 
-                    // Use Kotlin coroutines to perform the network operation asynchronously
+            CoroutineScope(Dispatchers.Main).launch {
+                val spotifyCompleted = listener?.onSpotify() ?: false
+                if(spotifyCompleted) {
+                    performLogin(apiUrl,jsonObject,username)
+                }
+                else{
+                    performLogin(apiUrl,jsonObject,username)
+
+                }
+            }
+
+
+            //performLogin(apiUrl, jsonObject,username)
+            Log.d("MainHost", "Spotify login started")
+
+
+
+            // Use Kotlin coroutines to perform the network operation asynchronously
 
         }
 
@@ -109,7 +142,7 @@ class MainFragment : Fragment() {
     }
 
 
-    private fun performLogin(apiUrl: String, jsonRequestBody: JSONObject,username: String) {
+    private suspend fun performLogin(apiUrl: String, jsonRequestBody: JSONObject,username: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val url = URL(apiUrl)
@@ -165,15 +198,16 @@ class MainFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         // Handle success and update the UI
                         Log.d(TAG, "login: $username")
-                        println("Login successful. Response code: $responseCode")
+                        Log.d(TAG,"Login successful. Response code: $responseCode")
                         listener?.onLogin(username)
 
 
                     }
                 } else {
-                    println("Login failed. Response code: $responseCode")
+                    Log.d(TAG,"Login failed. Response code: $responseCode")
                     withContext(Dispatchers.Main) {
                         // Handle the error and show a user-friendly message
+
                     }
                 }
 
@@ -182,6 +216,7 @@ class MainFragment : Fragment() {
                 e.printStackTrace()
                 withContext(Dispatchers.Main) {
                     // Handle other exceptions and show a user-friendly message
+
                 }
             }
         }
@@ -199,7 +234,7 @@ class MainFragment : Fragment() {
 
         try {
             val response = client.newCall(request).execute()
-            Log.d(TAG, "hqhqhhqhhq: $username")
+            Log.d(TAG, response.code.toString())
 
             if (response.isSuccessful) {
                 val responseBody = response.body?.string()
