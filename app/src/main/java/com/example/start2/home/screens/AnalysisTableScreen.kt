@@ -61,7 +61,9 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
 
     val topTracks by spotifyViewModel.topTracks.observeAsState()
-    val selectedFilter = viewModel.selectedFilter
+    val topArtists by spotifyViewModel.topArtists.observeAsState()
+    // val selectedFilter = viewModel.selectedFilter
+    val term by spotifyViewModel.selectedTerm.observeAsState()
     Log.d("table", "im open")
     var title by remember { mutableStateOf("Title") }
     BackHandler {
@@ -78,15 +80,17 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
                 modifier = Modifier.padding(16.dp)
             )
 
-            FilterDropdowns(selectedFilter = "All") { selectedFilter ->
-                title = when (selectedFilter) {
-                    "All" -> "Tüm Şarkılar"
-                    "Recent" -> "En Son Şarkılar"
-                    "Popular" -> "Popüler Şarkılar"
-                    "Favorites" -> "Favori Şarkılar"
-                    else -> "Başlık"
+            FilterDropdowns(selectedFilter = term ?: "Last Month", onFilterSelected = { selectedFilter ->
+                val termValue = when (selectedFilter) {
+                    "Last Month" -> "short_term"
+                    "Last 6 Months" -> "medium_term"
+                    "Last Year" -> "long_term"
+                    else -> ""
                 }
-            }
+                spotifyViewModel.selectedTerm.postValue(termValue)
+                spotifyViewModel.getUserTopTracks()
+                spotifyViewModel.getUserTopArtists()
+            })
             AnalysisTableHeader(sortState, onSortChange = { attribute ->
                 if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
                     sortState = sortState.copy(order = SortOrder.values()[(sortState.order.ordinal + 1) % SortOrder.values().size])
@@ -127,7 +131,9 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
 @Composable
 fun AnalysisTableHeader(sortState: SortState, onSortChange: (SortAttribute) -> Unit) {
 
-    Row (modifier =  Modifier.fillMaxWidth().background(Color.Red)){
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.Red)){
 
         // Create clickable text for each sortable attribute
         Text("Name", Modifier.clickable { onSortChange(SortAttribute.NAME) })
@@ -195,7 +201,7 @@ fun TrackItem(
             modifier = Modifier
                 .size(100.dp)
                 .padding(4.dp)
-                .padding(start = 0.dp,top = 0.dp,end = 4.dp, bottom = 0.dp)
+                .padding(start = 0.dp, top = 0.dp, end = 4.dp, bottom = 0.dp)
                 .clip(CircleShape), // Adjust size as needed
             contentScale = ContentScale.Crop // Adjust the scaling as needed
         )
@@ -205,20 +211,26 @@ fun TrackItem(
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = Color.Black,
-                modifier = Modifier.padding(bottom = 4.dp).clickable( onClick = {onSongSelect(track.id) }),
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .clickable(onClick = { onSongSelect(track.id) }),
             )
             Text(
                 text = "${track.artists.joinToString { it.name }}",
                 color = Color.Black.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 4.dp).clickable {
-                    val artistId = track.artists.firstOrNull()?.id ?: return@clickable
-                    onArtistSelect(artistId)
-                }
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .clickable {
+                        val artistId = track.artists.firstOrNull()?.id ?: return@clickable
+                        onArtistSelect(artistId)
+                    }
             )
             Text(
                 text = "${track.album.name}",
                 color = Color.Black.copy(alpha = 0.7f),
-                modifier = Modifier.padding(bottom = 4.dp).clickable { onAlbumSelect(track.album.id) }
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .clickable { onAlbumSelect(track.album.id) }
             )
             Text(
                 text = "${track.duration_ms.millisecondsToMinutes()} min",
@@ -284,6 +296,7 @@ fun SongItem(track: Track, onSongSelect: (String) -> Unit) {
     }
 }*/
 
+/*
 @Composable
 fun FilterDropdowns(selectedFilter: String, onFilterChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
@@ -312,7 +325,38 @@ fun FilterDropdowns(selectedFilter: String, onFilterChange: (String) -> Unit) {
             }
         }
     }
+}*/
+@Composable
+fun FilterDropdowns(selectedFilter: String, onFilterSelected: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val filters = listOf("Last Month", "Last 6 Months", "Last Year")
+
+    Column {
+        Text(
+            text = selectedFilter,
+            modifier = Modifier
+                .clickable(onClick = { expanded = true })
+                .padding(16.dp)
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            filters.forEach { filter ->
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onFilterSelected(filter)
+                }) {
+                    Text(text = filter)
+                }
+            }
+        }
+    }
 }
+
+
 
 fun generateDummyTracks(numTracks: Int = 10): List<Track> {
     val albumNames = listOf("Summer Dreams", "Winter Tales", "Autumn Memories", "Spring Awakenings", "Timeless Notes")
