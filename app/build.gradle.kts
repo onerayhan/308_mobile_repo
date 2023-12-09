@@ -59,6 +59,7 @@ dependencies {
 
     implementation ("com.google.dagger:hilt-android:2.38.1")
     implementation("androidx.core:core-ktx:+")
+    implementation("androidx.test.ext:junit-ktx:1.1.5")
     annotationProcessor ("com.google.dagger:hilt-android-compiler:2.38.1")
     implementation ("androidx.compose.ui:ui:1.5.4")
     implementation ("androidx.compose.material3:material3:1.1.2")
@@ -117,6 +118,10 @@ dependencies {
 
     // All other dependencies for your app should also be here:
     implementation ("androidx.browser:browser:1.6.0")
+    testImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
+    testImplementation ("org.mockito:mockito-android:3.11.0")
+    testImplementation ("org.robolectric:robolectric:4.9.1")
+
 
 
 

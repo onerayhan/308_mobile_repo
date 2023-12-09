@@ -15,13 +15,10 @@ interface ApiService {
     @POST("/api/follow")
     suspend fun followUser(@Body request: JSONObject): FollowResponse
 
-
     @POST("/api/user_followings")
     suspend fun getUserFollowings(@Body request: UserFollowingsRequest): UserFollowingsResponse
 
     @POST("/api/profile_picture")
     suspend fun getProfilePicture(@Body request: ProfilePictureRequest): ProfilePictureResponse
-
-
 
 }

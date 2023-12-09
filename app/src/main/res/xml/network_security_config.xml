@@ -3,6 +3,6 @@
 
     <domain-config cleartextTrafficPermitted="true">
         <!-- Specify domains where clear text traffic is not allowed -->
-        <domain includeSubdomains="true">13.51.167.155</domain>
+        <domain includeSubdomains="true">51.20.128.164</domain>
     </domain-config>
 </network-security-config>
