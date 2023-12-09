@@ -71,7 +71,7 @@ fun SearchResultContent(
             when (item) {
                 is SpotifySearchItem.TrackItem -> TrackItem(track = item.track, onSongSelect, onAlbumSelect , onArtistSelect )
                 is SpotifySearchItem.AlbumItem -> AlbumItem(album = item.album)
-                is SpotifySearchItem.ArtistItem -> ArtistItem(artist = item.artist)
+                is SpotifySearchItem.ArtistItem -> ArtistItem(artist = item.artist, onArtistSelect)
             }
         }
     }
@@ -84,10 +84,7 @@ fun AlbumItem(album: Album) {
     // Layout for album item
 }
 
-@Composable
-fun ArtistItem(artist: Artist) {
-    // Layout for artist item
-}
+
 
 
 private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {

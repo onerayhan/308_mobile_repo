@@ -157,7 +157,7 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
 
     open fun getRecommendation(recommendationQuery: String) {
         viewModelScope.launch {
-            val result = repository.getRecommendation(token,recommendationQuery)
+            val result = repository.getRecommendation(token,recommendationQuery,"","")
             result?.let {
                 recommendationResults.postValue(it)
             }
@@ -321,10 +321,10 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
         
     }
 //TODO:: Implement user entry recommendation
-    open suspend fun getRecommendation(token: String?, recommendationQuery: String) : SpotifyRecommendationsResponse? {
+    open suspend fun getRecommendation(token: String?, recommendationQuery: String , artistsQuery: String, trackQuery: String) : SpotifyRecommendationsResponse? {
         return try {
             Log.d("RegistrationActivity", "big in japan")
-            val response = spotifyRecommendationsService.getRecommendations("Bearer $token", 10, "TR", seedGenres = recommendationQuery)
+            val response = spotifyRecommendationsService.getRecommendations("Bearer $token", 10, "TR", seedGenres = recommendationQuery, seedArtists = artistsQuery, seedTracks = trackQuery)
             if(response.isSuccessful) {
                 Log.d("RegistrationActivity", response.body().toString())
                 response.body()

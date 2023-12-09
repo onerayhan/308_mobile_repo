@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +58,8 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
     spotifyViewModel.getUserTopTracks()
     //var sortingCriterion by remember { mutableStateOf(SortingCriterion.Default) }
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
+    var displayMode by remember { mutableStateOf("TopTracks") } // New state for display mode
+
 
     val topTracks by spotifyViewModel.topTracks.observeAsState()
     val topArtists by spotifyViewModel.topArtists.observeAsState()
@@ -69,59 +70,83 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
     BackHandler {
         navController?.navigateToLeafScreen(LeafScreen.Analysis)
     }
-    topTracks?.let { tracks ->
-        val sortedTracks = getSortedTracks(tracks.items, sortState)
-        Column {
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                color = Color.Black,
-                modifier = Modifier.padding(16.dp)
-            )
+    Column {
+        DisplayModeDropdown(currentMode = displayMode, onModeSelected = { mode ->
+            displayMode = mode
+        })
+        when(displayMode) {
+            "TopTracks" -> {
 
-            FilterDropdowns(selectedFilter = term ?: "Last Month", onFilterSelected = { selectedFilter ->
-                val termValue = when (selectedFilter) {
-                    "Last Month" -> "short_term"
-                    "Last 6 Months" -> "medium_term"
-                    "Last Year" -> "long_term"
-                    else -> ""
-                }
-                spotifyViewModel.selectedTerm.postValue(termValue)
-                spotifyViewModel.getUserTopTracks()
-                spotifyViewModel.getUserTopArtists()
-            })
-            AnalysisTableHeader(sortState, onSortChange = { attribute ->
-                if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
-                    sortState = sortState.copy(order = SortOrder.values()[(sortState.order.ordinal + 1) % SortOrder.values().size])
-                } else {
-                    sortState = SortState(attribute, SortOrder.ASCENDING)
-                }
-            })
-            AnalysisTableContent(
+                topTracks?.let { tracks ->
+                    val sortedTracks = getSortedTracks(tracks.items, sortState)
+                    Column {
+                        Text(
+                            text = title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 24.sp,
+                            color = Color.Black,
+                            modifier = Modifier.padding(16.dp)
+                        )
 
-                songs = sortedTracks, // Assuming items is a list of Song in your TopTracksResponse
-                selectedFilter = "All", // Or your implementation of filter
-                onFilterChange = { /* Implement filter logic */ },
-                onSongSelect = { songId->
-                    Log.d("analysisTable", songId)
-                    // Handle song selection, e.g., navigate to a detailed view
-                    spotifyViewModel.saveSelectedTrack(songId)
-                    navController.navigateToLeafScreen(LeafScreen.SongInfo)
-                },
-                onAlbumSelect = {albumId ->
-                    spotifyViewModel.saveSelectedAlbum(albumId)
-                    navController.navigateToLeafScreen(LeafScreen.AlbumInfo)
-                },
-                onArtistSelect = {artistId ->
-                    spotifyViewModel.saveSelectedArtist(artistId)
-                    navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
+                        FilterDropdowns(
+                            selectedFilter = term ?: "Last Month",
+                            onFilterSelected = { selectedFilter ->
+                                val termValue = when (selectedFilter) {
+                                    "Last Month" -> "short_term"
+                                    "Last 6 Months" -> "medium_term"
+                                    "Last Year" -> "long_term"
+                                    else -> ""
+                                }
+                                spotifyViewModel.selectedTerm.postValue(termValue)
+                                spotifyViewModel.getUserTopTracks()
+                                spotifyViewModel.getUserTopArtists()
+                            })
+                        AnalysisTableHeader(sortState, onSortChange = { attribute ->
+                            if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
+                                sortState =
+                                    sortState.copy(order = SortOrder.values()[(sortState.order.ordinal + 1) % SortOrder.values().size])
+                            } else {
+                                sortState = SortState(attribute, SortOrder.ASCENDING)
+                            }
+                        })
+                        AnalysisTableContentTracks(
+
+                            songs = sortedTracks, // Assuming items is a list of Song in your TopTracksResponse
+                            selectedFilter = "All", // Or your implementation of filter
+                            onFilterChange = { /* Implement filter logic */ },
+                            onSongSelect = { songId ->
+                                spotifyViewModel.saveSelectedTrack(songId)
+                                navController.navigateToLeafScreen(LeafScreen.SongInfo)
+                            },
+                            onAlbumSelect = { albumId ->
+                                spotifyViewModel.saveSelectedAlbum(albumId)
+                                navController.navigateToLeafScreen(LeafScreen.AlbumInfo)
+                            },
+                            onArtistSelect = { artistId ->
+                                spotifyViewModel.saveSelectedArtist(artistId)
+                                navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
+                            }
+                        )
+                    }
+
+                } ?: run {
+                    // Show loading or empty state
                 }
-            )
+            }
+            "TopArtists" -> {
+                topArtists?.let { artists ->
+                    // Display artists without sorting options
+                    AnalysisTableContentArtists(
+                        artists = artists.items,
+                        onArtistSelect = {artistId ->
+                        spotifyViewModel.saveSelectedArtist(artistId)
+                        navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
+                        }
+                    )
+                }
+            }
         }
 
-    } ?: run {
-        // Show loading or empty state
     }
 }
 
@@ -143,7 +168,7 @@ fun AnalysisTableHeader(sortState: SortState, onSortChange: (SortAttribute) -> U
     }
 }
 @Composable
-fun AnalysisTableContent(
+fun AnalysisTableContentTracks(
     songs: List<Track>,
     selectedFilter: String,
     onFilterChange: (String) -> Unit,
@@ -165,10 +190,27 @@ fun AnalysisTableContent(
     }
 
 }
+
+@Composable
+fun AnalysisTableContentArtists(
+    artists: List<Artist>,
+    onArtistSelect: (String) -> Unit,
+){
+    Column(modifier = Modifier.fillMaxWidth()) {
+
+        LazyColumn {
+            items(artists) { artist ->
+                ArtistItem(artist = artist, onArtistSelect)
+
+
+            }
+        }
+    }
+}
 @Preview(showBackground = true)
 @Composable
 fun AnalysisTableContentPreview() {
-    AnalysisTableContent(
+    AnalysisTableContentTracks(
         songs = generateDummyTracks(),
         selectedFilter = "All",
         onFilterChange = {},
@@ -178,6 +220,25 @@ fun AnalysisTableContentPreview() {
     )
 }
 
+
+@Composable
+fun ArtistItem(
+    artist: Artist,
+    onArtistSelect: (String) -> Unit,
+    ) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = artist.name,
+            fontWeight = FontWeight.Bold
+            // Add other styling as required
+        )
+        // You can add more information about the artist here if needed
+    }
+}
 @Composable
 fun TrackItem(
     track: Track,
@@ -350,6 +411,33 @@ fun FilterDropdowns(selectedFilter: String, onFilterSelected: (String) -> Unit) 
                     onFilterSelected(filter)
                 }) {
                     Text(text = filter)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DisplayModeDropdown(currentMode: String, onModeSelected: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val options = listOf("TopTracks", "TopArtists")
+
+    Column {
+        Text(
+            text = currentMode,
+            modifier = Modifier.clickable(onClick = { expanded = true })
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    onModeSelected(option)
+                }) {
+                    Text(text = option)
                 }
             }
         }

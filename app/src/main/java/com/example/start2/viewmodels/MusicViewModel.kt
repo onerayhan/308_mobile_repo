@@ -69,6 +69,7 @@ open class MusicViewModel(protected val username: String): ViewModel(){
         UserPerformerPreferencesServiceProvider.instance, UserGetSongRatingsServiceProvider.instance, UserGetAlbumRatingsServiceProvider.instance, UserGetPerformerRatingsServiceProvider.instance)
     val parsedMusics = MutableLiveData<List<Music>>()
     val batchResult = MutableLiveData<Boolean>()
+
     val userGenrePreferences = MutableLiveData<UserGenrePreferencesResponse>()
     val userPerformerPreferences = MutableLiveData<UserPerformerPreferencesResponse>()
     val userAlbumPreferences = MutableLiveData<UserAlbumPreferencesResponse>()
@@ -98,6 +99,7 @@ open class MusicViewModel(protected val username: String): ViewModel(){
                     "getGenrePrefs" -> async { repository.getUserGenrePreferences(username) }
                     "getAlbumPrefs" -> async { repository.getUserAlbumPreferences(username) }
                     "getPerformerPrefs" -> async { repository.getUserPerformerPreferences(username) }
+
                     else -> async { null }
                 }
             }

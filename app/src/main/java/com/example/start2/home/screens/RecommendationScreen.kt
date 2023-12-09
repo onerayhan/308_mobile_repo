@@ -47,6 +47,8 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
     var recommendationQuery: String by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var genresString: String by remember{ mutableStateOf("") }
+    var artistsString: String by remember{ mutableStateOf("") }
+
     val options = listOf("getGenrePrefs", "getAlbumPrefs", "getPerformerPrefs")
     val selectedOptions = remember { mutableStateListOf<String>() }
     val userGenrePreferences by musicViewModel.userGenrePreferences.observeAsState()
@@ -111,9 +113,12 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
         }
         userAlbumPreferences?.let{ response ->
             Log.d("RecomScreen", response.toString())
+
+
         }
         userPerformerPreferences?.let{ response ->
             Log.d("RecomScreen",response.toString())
+            artistsString = response.performers.take(1).joinToString (separator = "," ) {it.performer.lowercase()}
         }
         val recommendationResults by viewModelSpoti.recommendationResults.observeAsState()
         recommendationResults?.let { tracks ->
