@@ -1,0 +1,6 @@
+{
+    "target": "AndroidSmall2",
+    "package": "com.example.start2.androidsmall2",
+    "generateImplementation": true,
+    "generatePreviews": true
+}

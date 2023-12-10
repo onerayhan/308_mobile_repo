@@ -86,7 +86,8 @@ class SongViewModel : ViewModel() {
                 val song = Song(
                     title = songObject.getString("title"),
                     artist = songObject.getString("artist"),
-                    album = songObject.getString("album")
+                    album = songObject.getString("album"),
+                    duration=""
                     // Add other properties as needed
                 )
                 songs.add(song)
