@@ -182,54 +182,41 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     )
                     .requiredWidth(width = 128.dp)
                     .requiredHeight(height = 26.dp))
-
             Box(
                 modifier = Modifier
                     .requiredWidth(width = 300.dp)
                     .requiredHeight(height = 250.dp)
                     .clip(shape = RoundedCornerShape(15.dp))
                     .clickable {
-                        // Handle the button click behavior here
+                        // Galeriyi aç
                         openGalleryLauncher.launch("image/*")
-                        selectedImageUri.value?.let { uri ->
-                            // Convert URI to File
-                            val inputStream = context.contentResolver.openInputStream(uri)
-
-                            Log.d("UserProfileContent", "Selected Image URI1213: $inputStream")
-
-                            // Check if the file exists
-                            if (inputStream != null) {
-                                // Call the API to upload the photo
-                                val tempFile = createTempFile("temp_image", null, context.cacheDir)
-                                tempFile.outputStream().use { output ->
-                                    inputStream.copyTo(output)
-                                }
-
-                                // Now, you can pass the File to your ViewModel for upload
-                                profileViewModel.uploadPhoto(tempFile)
-                                Log.d("ProfileScreen", "Uploaded the photo successfully")
-
-                            } else {
-                                // Handle the case where the file does not exist
-                                // (e.g., show an error message)
-                                Log.d("ProfileScreen", "Fotoyu atamadık: ")
-                            }
-                        }
                     }
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_9),
-                    contentDescription = "Rectangle 16",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .offset(
-                            x = 27.5.dp,
-                            y = 193.5.dp
-                        )
-                        .requiredWidth(width = 140.dp)
-                        .requiredHeight(height = 44.dp)
-                        .clip(shape = RoundedCornerShape(15.dp))
-                )
+                if (selectedImageUri.value != null) {
+                    Image(
+                        painter = rememberImagePainter(data = selectedImageUri.value.toString()),
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .align(alignment = Alignment.Center)
+                            .requiredSize(120.dp)
+                            .clip(CircleShape)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.rectangle_9),
+                        contentDescription = "Rectangle 16",
+                        modifier = Modifier
+                            .align(alignment = Alignment.TopStart)
+                            .offset(
+                                x = 27.5.dp,
+                                y = 145.5.dp
+                            )
+                            .requiredWidth(width = 140.dp)
+                            .requiredHeight(height = 140.dp)
+                            .clip(shape = RoundedCornerShape(15.dp))
+                    )
+                }
+
                 Text(
                     text = "Edit profile",
                     color = Color(0xFFF3F3F3),
@@ -241,7 +228,8 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                         .offset(
                             x = 44.dp,
                             y = 204.dp
-                        ))
+                        )
+                )
             }
 
 
