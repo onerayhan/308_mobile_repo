@@ -1,5 +1,6 @@
 package com.example.start2.home
 
+import MyData
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -56,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.start2.DataHolder
 import com.example.start2.Song
 import java.io.File
 
@@ -68,6 +70,7 @@ fun ProfileScreen(navController: NavController) {
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     val username by profileViewModel.username.observeAsState()
 
+
     LaunchedEffect(Unit) {
         profileViewModel.fetchUserProfile()
     }
@@ -76,6 +79,8 @@ fun ProfileScreen(navController: NavController) {
     val userProfile by profileViewModel.userProfile
     val isLoading by profileViewModel.loading
     val error by profileViewModel.error
+
+
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(), // Ekranın tamamını kapla
@@ -90,13 +95,12 @@ fun ProfileScreen(navController: NavController) {
 
 
 
-
-
 @Composable
 fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController: NavController) {
     val context = LocalContext.current
     val userPreferences= remember { UserPreferences(context) }
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
+
 
 
     val selectedImageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
@@ -116,12 +120,10 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
 
         // Favori şarkıları ve şarkıları ekleyin (Örnek şarkı bilgileri)
         favoriteSongs.value = listOf(
-            Song("Song 1", "Artist 1", "3:45","a"),
-            Song("Song 2", "Artist 2", "4:12","b"),
-            Song("Song 3", "Artist 3", "3:28","c"),
-            Song("Song 4", "Artist 4", "2:59","d"),
-            Song("Song 5", "Artist 5", "4:20","e")
+
+
         )
+        profileViewModel.fetchUserSongs()
 
         Box(
             modifier = Modifier
@@ -197,9 +199,11 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                         painter = rememberImagePainter(data = selectedImageUri.value.toString()),
                         contentDescription = "Profile Image",
                         modifier = Modifier
-                            .align(alignment = Alignment.Center)
+                            .align(alignment = Alignment.TopStart)
+                            .offset(x = 205.dp, y = 50.dp)
                             .requiredSize(120.dp)
                             .clip(CircleShape)
+                            .background(color = Color.White)
                     )
                 } else {
                     Image(
@@ -209,7 +213,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                             .align(alignment = Alignment.TopStart)
                             .offset(
                                 x = 27.5.dp,
-                                y = 145.5.dp
+                                y = 193.5.dp
                             )
                             .requiredWidth(width = 140.dp)
                             .requiredHeight(height = 140.dp)
@@ -302,7 +306,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                         color = Color.White,
                         style = TextStyle(fontSize = 20.sp),
                         modifier = Modifier.align(Alignment.TopStart)
-                        .offset(x = 48.dp, y= 320.dp)
+                            .offset(x = 48.dp, y= 320.dp)
 
                     )
                     Text(
@@ -315,11 +319,11 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     )
                 }
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(top=30.dp)
-                            .fillMaxWidth()
-                    ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(top=30.dp)
+                        .fillMaxWidth()
+                ) {
                     items(favoriteSongs.value) { song ->
                         Row(
                             modifier = Modifier
@@ -384,6 +388,10 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                         modifier = Modifier
                             .align(Alignment.CenterStart)
                     )
+                    val dataToSend = MyData(enteredUsername)
+
+                    // Assign the data to the singleton object
+                    DataHolder.myData = dataToSend
 
                     Button(
                         onClick = {
@@ -396,42 +404,42 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     }
                 }
 
-                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
+    when (leafScreen) {
+        is LeafScreen.Friend -> {
+            navigate(leafScreen.route.replace("{username}", leafScreen.username)) {
+                launchSingleTop = true
+                restoreState = true
+                popUpTo(graph.findStartDestination().id) {
+                    saveState = true
                 }
             }
-                }
+        }
 
-
-
-
-
-
-
-
-
-            private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
-                when (leafScreen) {
-                    is LeafScreen.Friend -> {
-                        navigate(leafScreen.route.replace("{username}", leafScreen.username)) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                        }
-                    }
-
-                    else -> {
-                        navigate(leafScreen.route) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                        }
-                    }
+        else -> {
+            navigate(leafScreen.route) {
+                launchSingleTop = true
+                restoreState = true
+                popUpTo(graph.findStartDestination().id) {
+                    saveState = true
                 }
             }
+        }
+    }
+}
 
 
 

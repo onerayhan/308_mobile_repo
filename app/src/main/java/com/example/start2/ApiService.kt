@@ -10,10 +10,10 @@ interface ApiService {
     suspend fun getUserProfile(@Body request: UserInfoRequest): UserProfile
 
     @POST("/api/unfollow")
-    suspend fun unfollowUser(@Body request: JSONObject): ApiResponse
+    suspend fun unfollowUser(@Body request: UnfollowRequest): ApiResponse
 
     @POST("/api/follow")
-    suspend fun followUser(@Body request: JSONObject): FollowResponse
+    suspend fun followUser(@Body request: FollowRequest): FollowResponse
 
 
     @POST("/api/user_followings")
@@ -21,7 +21,6 @@ interface ApiService {
 
     @POST("/api/profile_picture")
     suspend fun getProfilePicture(@Body request: ProfilePictureRequest): ProfilePictureResponse
-
 
 
 }
