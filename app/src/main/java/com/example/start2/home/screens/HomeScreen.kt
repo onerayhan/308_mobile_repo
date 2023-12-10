@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.documentfile.provider.DocumentFile
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -107,143 +109,146 @@ fun HomeScreen(
                     .padding(16.dp)
             ) {
                 // Song Name and Username
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+                ExpandableCard(title = "Add Song Manually") {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        OutlinedTextField(
+                            value = songName,
+                            onValueChange = { songName = it },
+                            label = { Text("Song Name", color = Color.White) },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        OutlinedTextField(
+                            value = username,
+                            onValueChange = { username = it },
+                            label = { Text("Username", color = Color.White) },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Other Text Fields...
+
                     OutlinedTextField(
-                        value = songName,
-                        onValueChange = { songName = it },
-                        label = { Text("Song Name", color = Color.White) },
-                        modifier = Modifier.weight(1f)
+                        value = length,
+                        onValueChange = { length = it },
+                        label = { Text("Length (HH:MM:SS)", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+
 
                     OutlinedTextField(
-                        value = username,
-                        onValueChange = { username = it },
-                        label = { Text("Username", color = Color.White) },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Other Text Fields...
-
-                OutlinedTextField(
-                    value = length,
-                    onValueChange = { length = it },
-                    label = { Text("Length (HH:MM:SS)", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-
-                OutlinedTextField(
-                    value = tempo,
-                    onValueChange = { tempo = it },
-                    label = { Text("Tempo", color = Color.White) },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = albumName,
-                    onValueChange = { albumName = it },
-                    label = { Text("Album Name", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = albumReleaseYear,
-                    onValueChange = { albumReleaseYear = it },
-                    label = { Text("Album Release Year", color = Color.White) },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = performerName,
-                    onValueChange = { performerName = it },
-                    label = { Text("Performer Name", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = genre,
-                    onValueChange = { genre = it },
-                    label = { Text("Genre", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = mood,
-                    onValueChange = { mood = it },
-                    label = { Text("Mood", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = instrument,
-                    onValueChange = { instrument = it },
-                    label = { Text("Instrument", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    OutlinedTextField(
-                        value = recordingType,
-                        onValueChange = { recordingType = it },
-                        label = { Text("Recording Type", color = Color.White) },
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    OutlinedTextField(
-                        value = listens,
-                        onValueChange = { listens = it },
-                        label = { Text("Listens", color = Color.White) },
+                        value = tempo,
+                        onValueChange = { tempo = it },
+                        label = { Text("Tempo", color = Color.White) },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = albumName,
+                        onValueChange = { albumName = it },
+                        label = { Text("Album Name", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = albumReleaseYear,
+                        onValueChange = { albumReleaseYear = it },
+                        label = { Text("Album Release Year", color = Color.White) },
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = performerName,
+                        onValueChange = { performerName = it },
+                        label = { Text("Performer Name", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = genre,
+                        onValueChange = { genre = it },
+                        label = { Text("Genre", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = mood,
+                        onValueChange = { mood = it },
+                        label = { Text("Mood", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = instrument,
+                        onValueChange = { instrument = it },
+                        label = { Text("Instrument", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        OutlinedTextField(
+                            value = recordingType,
+                            onValueChange = { recordingType = it },
+                            label = { Text("Recording Type", color = Color.White) },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        OutlinedTextField(
+                            value = listens,
+                            onValueChange = { listens = it },
+                            label = { Text("Listens", color = Color.White) },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = releaseYear,
+                        onValueChange = { releaseYear = it },
+                        label = { Text("Release Year (YYYY-MM-DD)", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    OutlinedTextField(
+                        value = addedTimestamp,
+                        onValueChange = { addedTimestamp = it },
+                        label = { Text("Added Timestamp (HH:MM:SS)", color = Color.White) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = releaseYear,
-                    onValueChange = { releaseYear = it },
-                    label = { Text("Release Year (YYYY-MM-DD)", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = addedTimestamp,
-                    onValueChange = { addedTimestamp = it },
-                    label = { Text("Added Timestamp (HH:MM:SS)", color = Color.White) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // File Upload Section
@@ -258,6 +263,7 @@ fun HomeScreen(
                 ) {
                     Text("Select File", color = Color.White)
                 }
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Display selected file name
                 selectedFileUri?.let { uri ->
@@ -313,7 +319,48 @@ fun HomeScreen(
                 ) {
                     Text("Add Music", color = Color.White)
                 }
+                ExpandableCard(title = "Export Stuff") {
+                    Button(onClick = { /*TODO*/ }) {
+                        
+                    }
+                    Button(onClick = { /*TODO*/ }) {
+                        
+                    }
+                    Button(onClick = { /*TODO*/ }) {
+                        
+                    }
+                    
+                }
             }
 
         }
     }
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExpandableCard(title: String, content: @Composable () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        onClick = { expanded = !expanded }
+    ) {
+        Column {
+            Text(
+                text = title,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                color = Color.White
+            )
+
+            if (expanded) {
+                content()
+            }
+        }
+    }
+}
