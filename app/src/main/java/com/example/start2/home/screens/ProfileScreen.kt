@@ -104,7 +104,6 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
     var enteredUsername by rememberSaveable { mutableStateOf("") }
     val favoriteSongs = remember { mutableStateOf<List<Song>>(emptyList()) }
     var selectedImageFile by rememberSaveable { mutableStateOf<File?>(null) }
-    Circle(selectedImageUri = selectedImageUri.value)
 
     val openGalleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         // Handle the result of the gallery picker here
@@ -133,16 +132,22 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
         ) {
             Box(
                 modifier = Modifier
-                    .requiredWidth(width = 400.dp)
-                    .requiredHeight(height = 265.dp)
-                    .background(color = Color(7,26,46))
-            )
+                    .requiredWidth(400.dp)
+                    .requiredHeight(265.dp)
+                    .background(color = Color(7, 26, 46))
+            ) {
+                Image(
+                    painter = rememberImagePainter(data = selectedImageUri.toString()),
+                    contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .align(alignment = Alignment.TopStart)
+                        .offset(x = 205.dp, y = 50.dp)
+                        .requiredSize(120.dp)
+                        .clip(CircleShape)
+                        .background(color= Color.White)
+                )
+            }
 
-            Circle(selectedImageUri = selectedImageUri.value, modifier = Modifier
-                .align(alignment = Alignment.TopStart)
-                .offset(x = 205.dp, y = 50.dp)
-                .requiredWidth(width = 100.dp)
-                .requiredHeight(height = 100.dp))
             Text(
                 text = profile.username,
                 color = Color.White,
@@ -367,11 +372,9 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                 }
 
 
-
                 Box(
-                    modifier = Modifier.
-                    padding(start=40.dp,top=20.dp)
-
+                    modifier = Modifier
+                        .padding(start = 40.dp, top = 20.dp)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.rectangle_12__1_),
@@ -393,27 +396,23 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                         modifier = Modifier
                             .align(Alignment.CenterStart)
                     )
+
+                    Button(
+                        onClick = {
+                            navController.navigateToLeafScreen(LeafScreen.FriendScreen)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        Text("enter")
+                    }
+                }
+
                 }
                 }
             }
                 }
-                }
 
-@Composable
-fun Circle(selectedImageUri: Uri?, modifier: Modifier = Modifier) {
-    // Use selectedImageUri here
-    Box(
-        modifier = modifier
-            .background(color = Color(0xffd9d9d9))
-            .clip(CircleShape)
-            .requiredWidth(width=10.dp)
-    ) {
-        Image(
-            painter = rememberImagePainter(data = selectedImageUri.toString()), // Use selectedImageUri here
-            contentDescription = "Profile Image ",
-        )
-    }
-}
 
 
 
