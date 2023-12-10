@@ -719,7 +719,3 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
 
 
 }
-
-
-
-

@@ -2,6 +2,7 @@ package com.example.start2.home.screens
 
 import kotlin.random.Random
 import android.util.Log
+import android.widget.Spinner
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,7 +56,8 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
     val viewModel: SongViewModel = viewModel()
     val songs = viewModel.songs
     viewModel.generateDummyVM()
-    spotifyViewModel.getUserTopTracks()
+    spotifyViewModel.getUserTopTracksBatch()
+    spotifyViewModel.getUserTopArtistsBatch()
     //var sortingCriterion by remember { mutableStateOf(SortingCriterion.Default) }
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
     var displayMode by remember { mutableStateOf("TopTracks") } // New state for display mode
@@ -80,14 +82,6 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
                 topTracks?.let { tracks ->
                     val sortedTracks = getSortedTracks(tracks.items, sortState)
                     Column {
-                        Text(
-                            text = title,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            color = Color.Black,
-                            modifier = Modifier.padding(16.dp)
-                        )
-
                         FilterDropdowns(
                             selectedFilter = term ?: "Last Month",
                             onFilterSelected = { selectedFilter ->
@@ -98,8 +92,8 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
                                     else -> ""
                                 }
                                 spotifyViewModel.selectedTerm.postValue(termValue)
-                                spotifyViewModel.getUserTopTracks()
-                                spotifyViewModel.getUserTopArtists()
+                                spotifyViewModel.getUserTopTracksBatch()
+                                spotifyViewModel.getUserTopArtistsBatch()
                             })
                         AnalysisTableHeader(sortState, onSortChange = { attribute ->
                             if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
@@ -136,9 +130,30 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
             "TopArtists" -> {
                 topArtists?.let { artists ->
                     // Display artists without sorting options
+                    FilterDropdowns(
+                        selectedFilter = term ?: "Last Month",
+                        onFilterSelected = { selectedFilter ->
+                            val termValue = when (selectedFilter) {
+                                "Last Month" -> "short_term"
+                                "Last 6 Months" -> "medium_term"
+                                "Last Year" -> "long_term"
+                                else -> ""
+                            }
+                            spotifyViewModel.selectedTerm.postValue(termValue)
+                            spotifyViewModel.getUserTopTracksBatch()
+                            spotifyViewModel.getUserTopArtistsBatch()
+                        })
+                    AnalysisTableHeader(sortState, onSortChange = { attribute ->
+                        if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
+                            sortState =
+                                sortState.copy(order = SortOrder.values()[(sortState.order.ordinal + 1) % SortOrder.values().size])
+                        } else {
+                            sortState = SortState(attribute, SortOrder.ASCENDING)
+                        }
+                    })
                     AnalysisTableContentArtists(
                         artists = artists.items,
-                        onArtistSelect = {artistId ->
+                        onArtistSelect = { artistId ->
                         spotifyViewModel.saveSelectedArtist(artistId)
                         navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
                         }
@@ -207,6 +222,8 @@ fun AnalysisTableContentArtists(
         }
     }
 }
+
+/*
 @Preview(showBackground = true)
 @Composable
 fun AnalysisTableContentPreview() {
@@ -218,7 +235,7 @@ fun AnalysisTableContentPreview() {
         onAlbumSelect = {albumId-> },
         onArtistSelect = {artistId ->}
     )
-}
+}*/
 
 
 @Composable
@@ -229,14 +246,35 @@ fun ArtistItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(8.dp))
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .padding(16.dp)
+            .clickable {
+                val artistId = artist.id
+                onArtistSelect(artistId) },
+        verticalAlignment = Alignment.CenterVertically,
+
     ) {
+        val imageUrl = artist.images.firstOrNull()?.url ?: "" // Provide a default or error image URL if needed
+
+        androidx.compose.foundation.Image(
+            painter = rememberAsyncImagePainter(imageUrl),
+            contentDescription = "Album Art",
+            modifier = Modifier
+                .size(100.dp)
+                .padding(4.dp)
+                .padding(start = 0.dp, top = 0.dp, end = 4.dp, bottom = 0.dp)
+                .clip(CircleShape), // Adjust size as needed
+            contentScale = ContentScale.Crop // Adjust the scaling as needed
+        )
         Text(
             text = artist.name,
             fontWeight = FontWeight.Bold
             // Add other styling as required
         )
+
         // You can add more information about the artist here if needed
+
     }
 }
 @Composable
@@ -299,6 +337,7 @@ fun TrackItem(
             )
             // Add additional attributes here if needed
         }
+
     }
 }
 
@@ -425,7 +464,8 @@ fun DisplayModeDropdown(currentMode: String, onModeSelected: (String) -> Unit) {
     Column {
         Text(
             text = currentMode,
-            modifier = Modifier.clickable(onClick = { expanded = true })
+            modifier = Modifier.clickable(onClick = { expanded = true }),
+            fontSize = 30.sp,
         )
 
         DropdownMenu(
@@ -445,7 +485,7 @@ fun DisplayModeDropdown(currentMode: String, onModeSelected: (String) -> Unit) {
 }
 
 
-
+/*
 fun generateDummyTracks(numTracks: Int = 10): List<Track> {
     val albumNames = listOf("Summer Dreams", "Winter Tales", "Autumn Memories", "Spring Awakenings", "Timeless Notes")
     val artistNames = listOf("Alice Blue", "Ethan Sky", "Nora Fields", "Leo Storm", "Ivy Green")
@@ -482,7 +522,8 @@ fun generateDummyTracks(numTracks: Int = 10): List<Track> {
                         id = artistIds.random(),
                         name = artistNames.random(),
                         type = "artist",
-                        uri = "spotify:artist:${artistIds.random()}"
+                        uri = "spotify:artist:${artistIds.random()}",
+                        images = null
                     )
                 )
             ),
@@ -493,7 +534,8 @@ fun generateDummyTracks(numTracks: Int = 10): List<Track> {
                     id = artistIds.random(),
                     name = artistNames.random(),
                     type = "artist",
-                    uri = "spotify:artist:${artistIds.random()}"
+                    uri = "spotify:artist:${artistIds.random()}",
+                    images = null
                 )
             ),
             available_markets = listOf("US", "CA"),
@@ -515,7 +557,7 @@ fun generateDummyTracks(numTracks: Int = 10): List<Track> {
 
     }
 }
-
+*/
 
 private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
     navigate(leafScreen.route) {
@@ -549,6 +591,23 @@ fun getSortedTracks(tracks: List<Track>, sortState: SortState): List<Track> {
             SortOrder.DEFAULT -> tracks
         }
         SortAttribute.DEFAULT -> tracks
+
+    }
+}
+
+fun getSortedArtists(artists: List<Artist>, sortState: SortState) : List<Artist> {
+    return when(sortState.attribute) {
+        SortAttribute.DURATION_MS -> when (sortState.order) {
+            SortOrder.ASCENDING -> artists.sortedBy { it.name }
+            SortOrder.DESCENDING -> artists.sortedByDescending { it.name }
+            SortOrder.DEFAULT -> artists
+        }
+        SortAttribute.NAME -> when (sortState.order) {
+            SortOrder.ASCENDING -> artists.sortedBy { it.name }
+            SortOrder.DESCENDING -> artists.sortedByDescending { it.name }
+            SortOrder.DEFAULT -> artists
+        }
+        SortAttribute.DEFAULT -> artists
 
     }
 }

@@ -1,12 +1,12 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.databinding:viewbinding:8.1.2@aar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/fba1bf33ecc71df0d51be24ef4f8cf2d/transformed/viewbinding-8.1.2/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/fba1bf33ecc71df0d51be24ef4f8cf2d/transformed/viewbinding-8.1.2/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/fba1bf33ecc71df0d51be24ef4f8cf2d/transformed/viewbinding-8.1.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/fba1bf33ecc71df0d51be24ef4f8cf2d/transformed/viewbinding-8.1.2/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.databinding/viewbinding/8.1.2/b30efc305db352bcfafd4982b48b6040f3e3e53/viewbinding-8.1.2-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.databinding/viewbinding/8.1.2/b30efc305db352bcfafd4982b48b6040f3e3e53/viewbinding-8.1.2-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -20,6 +20,14 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.auth.LoginActivity.REQUEST_CODE
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 import java.security.MessageDigest
 import java.security.SecureRandom
 
@@ -202,7 +210,11 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
                 AuthorizationResponse.Type.TOKEN -> {
                     Log.d(TAG, "RESPONSEUMDUR BU BENİM:  ${response.toString()}")
                     registrationViewModel.saveSpotifyToken(response.accessToken)
+                    //exchangeCodeForToken(response.code().toString())
                     //registrationViewModel.saveRefreshToken(response.)
+                }
+                AuthorizationResponse.Type.CODE -> {
+
                 }
                 AuthorizationResponse.Type.ERROR -> {
                     Log.e(TAG, "Spotify login error: ${response.error}")
@@ -272,3 +284,46 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
                 println("No result returned")
             }
         }*/
+
+
+private fun exchangeCodeForToken(code: String) {
+    val url = "https://accounts.spotify.com/api/token"
+    val client = OkHttpClient()
+    val REQUEST_CODE = 1337
+    val REDIRECT_URI = "com.example.start2://callback"
+    val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
+    val CLIENT_SECRET = "118873683fc44590b3579c452bdcb3f1"
+
+    val requestBody = FormBody.Builder()
+        .add("grant_type", "authorization_code")
+        .add("code", code)
+        .add("redirect_uri", REDIRECT_URI)
+        .add("client_id", CLIENT_ID)
+        .add("client_secret", CLIENT_SECRET)  // Warning: Including the client secret in your app is insecure
+        .build()
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            // Handle failure
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            val responseBody = response.body?.string()
+            response.body?.close()
+
+            if (response.isSuccessful && responseBody != null) {
+                val jsonResponse = JSONObject(responseBody)
+                val accessToken = jsonResponse.getString("access_token")
+                val refreshToken = jsonResponse.getString("refresh_token")
+                // Store tokens securely and use them to access Spotify API
+            } else {
+                // Handle error
+            }
+        }
+    })
+}

@@ -8,7 +8,7 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface SpotifyTopArtistsService {
-    @GET("v1/me/top/tracks")
+    @GET("v1/me/top/artists")
     suspend fun getUserTopArtists(
         @Header("Authorization") authHeader: String,
         @Query("time_range") range: String = "short_term",

@@ -70,10 +70,67 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
             _selectedAlbumID.postValue(it)
         }
     }
+    open fun getUserTopTracksBatch() {
+        viewModelScope.launch {
+            var offset = 0
+            val accumulatedTracks = mutableListOf<Track>()
+            var lastResponse: TopTracksResponse? = null
+
+            repeat(6) {
+                val result = repository.getUserTopTracks(token, selectedTerm.value.toString(), offset)
+                lastResponse = result
+                result?.items?.let {
+                    accumulatedTracks.addAll(it)
+                } // Handle null results appropriately
+                offset += 50
+            }
+
+            lastResponse?.let {
+                topTracks.postValue(TopTracksResponse(
+                    href = it.href,
+                    limit = it.limit,
+                    next = it.next,
+                    offset = offset,
+                    previous = it.previous,
+                    total = offset,
+                    items = accumulatedTracks
+                ))
+            }
+        }
+    }
+    open fun getUserTopArtistsBatch() {
+        viewModelScope.launch {
+            var offset = 0
+            val accumulatedArtists = mutableListOf<Artist>()
+            var lastResponse: TopArtistsResponse? = null
+
+            repeat(6) {
+                val result = repository.getUserTopArtist(token, selectedTerm.value.toString(), offset)
+                lastResponse = result
+                result?.items?.let {
+                    Log.d("Mainhost", "${it.joinToString(separator = ",") }")
+                    accumulatedArtists.addAll(it)
+                } // Handle null results appropriately
+                offset += 50
+            }
+
+            lastResponse?.let {
+                topArtists.postValue(TopArtistsResponse(
+                    href = it.href,
+                    limit = it.limit,
+                    next = it.next,
+                    offset = offset,
+                    previous = it.previous,
+                    total = offset,
+                    items = accumulatedArtists
+                ))
+            }
+        }
+    }
 
     open fun getUserTopTracks() {
         viewModelScope.launch {
-            val result = repository.getUserTopTracks(token, selectedTerm.value.toString())
+            val result = repository.getUserTopTracks(token, selectedTerm.value.toString(), 0)
             result?.let {
                 topTracks.postValue(it)
             } // Add error handling if result is null
@@ -81,7 +138,7 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
     }
     open fun getUserTopArtists() {
         viewModelScope.launch {
-            val result = repository.getUserTopArtist(token, selectedTerm.value.toString())
+            val result = repository.getUserTopArtist(token, selectedTerm.value.toString(), 0)
             result?.let {
                 topArtists.postValue(it)
             } // Add error handling if result is null
@@ -180,9 +237,9 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
                              private val spotifyTrackInfoService: SpotifyTrackInfoService, private val spotifyAlbumInfoService : SpotifyAlbumInfoService,
                              private val spotifyArtistTopTrackService: SpotifyArtistTopTrackService, private val spotifyArtistAlbumsService: SpotifyArtistAlbumsService,
                              private val spotifyAlbumTracksService: SpotifyAlbumTracksService) {
-    open suspend fun getUserTopTracks(token: String?, term: String): TopTracksResponse? {
+    open suspend fun getUserTopTracks(token: String?, term: String , offset: Int): TopTracksResponse? {
         return try {
-            val response = spotifyTopTracksService.getUserTopTracks("Bearer $token" , range = term)
+            val response = spotifyTopTracksService.getUserTopTracks("Bearer $token" , range = term, limit = 50 , offset = offset)
             if (response.isSuccessful) {
                 response.body()
             } else {
@@ -193,9 +250,9 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
         }
     }
 
-    open suspend fun getUserTopArtist(token: String?, term: String) : TopArtistsResponse? {
+    open suspend fun getUserTopArtist(token: String?, term: String, offset: Int) : TopArtistsResponse? {
         return try {
-            val response = spotifyTopArtistsService.getUserTopArtists(authHeader = "Bearer $token", range = term)
+            val response = spotifyTopArtistsService.getUserTopArtists(authHeader = "Bearer $token", range = term, limit = 50, offset = offset)
             if(response.isSuccessful) {
                 response.body()
             } else{

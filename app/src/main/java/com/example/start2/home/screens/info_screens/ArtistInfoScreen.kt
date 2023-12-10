@@ -140,6 +140,7 @@ fun ArtistContent(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
+        Text(text = "Monthly Listeners: ${singer.popularity}")
     }
 }
 @Composable

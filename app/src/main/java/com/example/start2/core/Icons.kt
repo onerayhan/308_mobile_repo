@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddChart
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.rounded.AddTask
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -30,7 +32,7 @@ fun HomeIcon(
     modifier: Modifier = Modifier
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(id = R.drawable.ic_home),
+        imageVector =  Icons.Outlined.Home,
         contentDescription = stringResource(id = R.string.home),
         modifier = modifier
     )
@@ -90,7 +92,7 @@ fun RateIcon(
     modifier: Modifier = Modifier
 ) {
     Icon(
-        imageVector = Icons.Outlined.Person,
+        imageVector = Icons.Outlined.StarOutline,
         contentDescription = stringResource(id = R.string.rate),
         modifier = modifier
     )

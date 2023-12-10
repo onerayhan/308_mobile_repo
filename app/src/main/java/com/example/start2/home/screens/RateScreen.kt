@@ -36,7 +36,8 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
         TextField(
             value = rateQuery,
             onValueChange = { rateQuery = it },
-            label = { Text("Enter criteria for rate suggestions") }
+            label = { Text("Enter criteria for rate suggestions") },
+            modifier = Modifier.fillMaxWidth()
         )
         Button(onClick = { viewModelSpoti.getRecommendation(rateQuery) }) {
             Text("Get Suggestions")

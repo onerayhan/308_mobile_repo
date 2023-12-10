@@ -29,7 +29,6 @@ class ProfilePictureViewModel : ViewModel() {
                 val url = URL(apiUrl)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "POST"
-                connection.setRequestProperty("Content-Type", "application/json")
 
                 // Create JSON object with the username
                 val jsonInputString = "{\"username\":\"$username\"}"

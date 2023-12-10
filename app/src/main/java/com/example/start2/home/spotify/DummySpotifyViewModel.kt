@@ -9,7 +9,7 @@ class DummySpotifyViewModel(token: String) : SpotifyViewModel(token) {
 
     override fun getUserTopTracks() {
         viewModelScope.launch {
-            val result = dummyRepository.getUserTopTracks(token)
+            val result = dummyRepository.getUserTopTracks(token, "a", 0)
             result?.let {
                 topTracks.postValue(it)
             }
@@ -17,8 +17,8 @@ class DummySpotifyViewModel(token: String) : SpotifyViewModel(token) {
     }
 }
 
-class DummySpotifyRepository : SpotifyRepository(SpotifyServiceProvider.instance, SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance, SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance,SpotifyArtistAlbumsServiceProvider.instance, SpotifyAlbumTracksServiceProvider.instance) {
-    override suspend fun getUserTopTracks(token: String?): TopTracksResponse? {
+class DummySpotifyRepository : SpotifyRepository(SpotifyServiceProvider.instance, SpotifyTopArtistsServiceProvider.instance,SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance, SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance,SpotifyArtistAlbumsServiceProvider.instance, SpotifyAlbumTracksServiceProvider.instance) {
+    override suspend fun getUserTopTracks(token: String?, term: String , offset: Int): TopTracksResponse? {
         // Return dummy data
         return TopTracksResponse(
             href = "",
