@@ -46,6 +46,7 @@ import androidx.navigation.NavController
 import com.example.start2.ProfileViewModel
 import com.example.start2.ProfileViewModelFactory
 import com.example.start2.UserPreferences
+import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.viewmodels.MusicViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -57,14 +58,19 @@ import java.io.InputStreamReader
 fun HomeScreen(
     showDetail: () -> Unit,
     navController: NavController,
-    musicViewModel: MusicViewModel
+    musicViewModel: MusicViewModel,
+    spotifyViewModel: SpotifyViewModel
 ) {
 
     val batchResult by musicViewModel.batchResult.observeAsState()
     val context = LocalContext.current
     val userPreferences= remember{UserPreferences(context)}
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
-
+    /*
+    LaunchedEffect(Unit) {
+        Log.d("MainHost",  "here")
+        spotifyViewModel.exchangeCodeAndAddMobileToken()
+    }*/
 
 
     val contentResolver = LocalContext.current.contentResolver

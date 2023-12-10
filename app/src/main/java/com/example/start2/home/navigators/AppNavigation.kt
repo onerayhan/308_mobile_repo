@@ -38,7 +38,7 @@ fun AppNavGraph(
         navController = navController,
         startDestination = RootScreen.Home.route
     ) {
-        addHomeRoute(navController, musicViewModel)
+        addHomeRoute(navController, musicViewModel, spotifyViewModel)
         addRateRoute(navController,spotifyViewModel)
         addSearchRoute(navController, spotifyViewModel)
         //addFavoritesRoute(navController)
@@ -49,20 +49,21 @@ fun AppNavGraph(
 }
 
 //home navigation
-private fun NavGraphBuilder.addHomeRoute(navController: NavController, musicViewModel: MusicViewModel) {
+private fun NavGraphBuilder.addHomeRoute(navController: NavController, musicViewModel: MusicViewModel, spotifyViewModel: SpotifyViewModel) {
     navigation(
         route = RootScreen.Home.route,
         startDestination = LeafScreen.Home.route
     ) {
-        showHome(navController, musicViewModel)
+        showHome(navController, musicViewModel, spotifyViewModel)
         showHomeDetail(navController)
     }
 }
-private fun NavGraphBuilder.showHome(navController: NavController, musicViewModel: MusicViewModel) {
+private fun NavGraphBuilder.showHome(navController: NavController, musicViewModel: MusicViewModel, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.Home.route) {
         HomeScreen(
             navController = navController,
             musicViewModel = musicViewModel,
+            spotifyViewModel = spotifyViewModel,
             showDetail = {
                 navController.navigate(LeafScreen.HomeDetail.route)
             }

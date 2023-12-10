@@ -12,6 +12,19 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 class MainHostActivity : AppCompatActivity(), LoginListener {
 
@@ -20,6 +33,7 @@ class MainHostActivity : AppCompatActivity(), LoginListener {
     val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
     private val registrationViewModel by viewModels<RegistrationViewModel>()
     private val spotifyLoginResult = CompletableDeferred<Boolean>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -43,6 +57,7 @@ class MainHostActivity : AppCompatActivity(), LoginListener {
         val intent = Intent(this, NavigatorActivity::class.java)
         intent.putExtra("username", username)
         intent.putExtra( "SpotifyToken", registrationViewModel.spotifyToken.value.toString())
+        intent.putExtra("SpotifyCode", registrationViewModel.tokenCode.value.toString())
         startActivity(intent)
         finish()
     }
@@ -66,6 +81,7 @@ class MainHostActivity : AppCompatActivity(), LoginListener {
                 // registrationViewModel.sendSpotifyIntent()
         //AuthorizationClient.stopLoginActivity(this, REQUEST_CODE)
         return spotifyLoginResult.await()
+
         Log.d("MainHost", "Opening Spotify login activity with request: $request")
 
     }
@@ -84,7 +100,11 @@ class MainHostActivity : AppCompatActivity(), LoginListener {
                     Log.d("MainHost", "RESPONSEUMDUR BU BENİM:  ${response.toString()}")
 
                     registrationViewModel.saveSpotifyToken(response.accessToken)
+                    registrationViewModel.saveTokenCode(response.code)
                     spotifyLoginResult.complete(true)
+
+                    //exchangeCodeForToken(response.code.toString())
+
                 }
                 AuthorizationResponse.Type.ERROR -> {
                     Log.e("A", "Spotify login error: ${response.error}")
@@ -99,4 +119,52 @@ class MainHostActivity : AppCompatActivity(), LoginListener {
     }
 
 
+    private suspend fun exchangeCodeForToken(code: String) = withContext(Dispatchers.IO){
+        val url = "https://accounts.spotify.com/api/token"
+        val client = OkHttpClient()
+        val REQUEST_CODE = 1337
+        val REDIRECT_URI = "com.example.start2://callback"
+        val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
+        val CLIENT_SECRET = "118873683fc44590b3579c452bdcb3f1"
+
+        val requestBody = FormBody.Builder()
+            .add("grant_type", "authorization_code")
+            .add("code", code)
+            .add("redirect_uri", REDIRECT_URI)
+            .add("client_id", CLIENT_ID)
+            .add("client_secret", CLIENT_SECRET)  // Warning: Including the client secret in your app is insecure
+            .build()
+
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Handle failure
+                Log.d("MainHost", e.message.toString())
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseBody = response.body?.string()
+                Log.d("MainHost", responseBody.toString())
+                response.body?.close()
+
+                if (response.isSuccessful && responseBody != null) {
+                    val jsonResponse = JSONObject(responseBody)
+                    registrationViewModel.saveTokenData(jsonResponse)
+                    //registrationViewModel.addMobileToken()
+                    val accessToken = jsonResponse.getString("access_token")
+                    val refreshToken = jsonResponse.getString("refresh_token")
+                    // Store tokens securely and use them to access Spotify API
+                } else {
+                    // Handle error
+                }
+            }
+        })
+    }
+
+
 }
+

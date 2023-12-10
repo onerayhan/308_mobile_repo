@@ -60,6 +60,7 @@ class NavigatorActivity : ComponentActivity() {
         val  userPreferences = UserPreferences(this)
         userPreferences.username= username
         val token = intent.getStringExtra("SpotifyToken")
+        val code = intent.getStringExtra("SpotifyCode")
         if (token != null) {
             Log.d("token", token)
 
@@ -77,6 +78,9 @@ class NavigatorActivity : ComponentActivity() {
         } else {
             DummyMusicViewModel("dummy")
         }
+
+        viewModel.saveTokenCode(code)
+        viewModel.saveUsername(username!!)
         // Fetch top tracks
         //viewModel.getUserTopTracks()
         setContent {

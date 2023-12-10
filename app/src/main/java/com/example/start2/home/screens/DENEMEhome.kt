@@ -42,7 +42,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
             import com.example.start2.ProfileViewModel
             import com.example.start2.ProfileViewModelFactory
             import com.example.start2.UserPreferences
-            import com.example.start2.viewmodels.MusicViewModel
+import com.example.start2.home.spotify.SpotifyViewModel
+import com.example.start2.viewmodels.MusicViewModel
 
 @Composable
 fun HomeScreen2(
@@ -282,10 +283,11 @@ fun HomeScreen2(
 fun HomeScreenPreview() {
     val navController = rememberNavController() // Create a NavController
     val musicViewModel = MusicViewModel("aa")
-
+    val spotifyViewModel = SpotifyViewModel("aa")
     HomeScreen(
         showDetail = {},
         navController = navController,
-        musicViewModel = musicViewModel
+        musicViewModel = musicViewModel,
+        spotifyViewModel = spotifyViewModel
     )
 }

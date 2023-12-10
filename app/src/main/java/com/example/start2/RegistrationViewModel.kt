@@ -150,6 +150,11 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.start2.services_and_responses.AddMobileTokenResponse
+import com.example.start2.services_and_responses.AddMobileTokenService
+import com.example.start2.services_and_responses.AddMobileTokenServiceProvider
+import com.google.android.gms.auth.TokenData
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
@@ -160,7 +165,7 @@ import java.io.IOException
 import java.util.UUID
 
 class RegistrationViewModel : ViewModel() {
-
+    private val repository = RegistrationRepository(AddMobileTokenServiceProvider.instance)
 
 
 
@@ -218,6 +223,9 @@ class RegistrationViewModel : ViewModel() {
         _spotifyToken.value = token
     }
 
+    private val tokenData = MutableLiveData<JSONObject?>()
+    val tokenCode = MutableLiveData<String>()
+    private val addTokenResponse = MutableLiveData<AddMobileTokenResponse>()
     private val _response = MutableLiveData<String?>()
     private val _spotiResponse = MutableLiveData<String?>()
     val response: MutableLiveData<String?> = _response
@@ -309,11 +317,61 @@ class RegistrationViewModel : ViewModel() {
             }
         }
     }
+
+    fun saveTokenData(jsonResponse: JSONObject) {
+        val result = jsonResponse
+        result?.let{
+            tokenData.postValue(jsonResponse)
+        }
+    }
+
+    fun addMobileToken(){
+        viewModelScope.launch{
+            val result = repository.addMobileToken(username, tokenData.value!!)
+            result?.let{
+                Log.d("MusicViewModel", "${it.response}")
+                addTokenResponse.postValue(it)
+            }
+
+        }
+
+    }
+
+    fun saveTokenCode(code: String?) {
+        val result = code
+        result?.let{
+            tokenCode.postValue(it)
+        }
+
+    }
     /*
         fun sendSpotifyToken(string token) {
             val apiUrl = ""
         }
 
     */
+
+}
+
+open class RegistrationRepository(private val addMobileTokenService: AddMobileTokenService) {
+    open suspend fun addMobileToken(userName: String?, tokenData: JSONObject) : AddMobileTokenResponse? {
+        return try {
+            val jsonObject = JSONObject().apply {
+                put("username", userName)
+                put("token", tokenData)
+            }
+            val response = addMobileTokenService.addMobileToken(jsonObject)
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else {
+                null
+            }
+
+        } catch(e: Exception) {
+            null
+        }
+    }
+
 
 }

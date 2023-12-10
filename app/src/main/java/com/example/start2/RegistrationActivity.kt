@@ -210,7 +210,7 @@ class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
                 AuthorizationResponse.Type.TOKEN -> {
                     Log.d(TAG, "RESPONSEUMDUR BU BENİM:  ${response.toString()}")
                     registrationViewModel.saveSpotifyToken(response.accessToken)
-                    //exchangeCodeForToken(response.code().toString())
+
                     //registrationViewModel.saveRefreshToken(response.)
                 }
                 AuthorizationResponse.Type.CODE -> {

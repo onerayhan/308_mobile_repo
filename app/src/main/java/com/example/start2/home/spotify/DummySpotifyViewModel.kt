@@ -2,6 +2,7 @@ package com.example.start2.home.spotify
 
 import SpotifyArtistInfoServiceProvider
 import androidx.lifecycle.viewModelScope
+import com.example.start2.services_and_responses.AddMobileTokenServiceProvider
 import kotlinx.coroutines.launch
 
 class DummySpotifyViewModel(token: String) : SpotifyViewModel(token) {
@@ -17,7 +18,7 @@ class DummySpotifyViewModel(token: String) : SpotifyViewModel(token) {
     }
 }
 
-class DummySpotifyRepository : SpotifyRepository(SpotifyServiceProvider.instance, SpotifyTopArtistsServiceProvider.instance,SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance, SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance,SpotifyArtistAlbumsServiceProvider.instance, SpotifyAlbumTracksServiceProvider.instance) {
+class DummySpotifyRepository : SpotifyRepository(SpotifyServiceProvider.instance, SpotifyTopArtistsServiceProvider.instance,SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance, SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance,SpotifyArtistAlbumsServiceProvider.instance, SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance) {
     override suspend fun getUserTopTracks(token: String?, term: String , offset: Int): TopTracksResponse? {
         // Return dummy data
         return TopTracksResponse(

@@ -39,7 +39,7 @@ fun AlbumScreen(album: Album) {
                             color = Color.White
                         )
                     },
-                    backgroundColor = Color(0xFF2196F3)
+                    backgroundColor = Color(0xFF041D31)
                 )
             }
         ) { innerPadding ->

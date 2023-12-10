@@ -1,6 +1,7 @@
 package com.example.start2.services_and_responses
 
 import com.google.gson.JsonObject
+import org.json.JSONObject
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,11 +11,10 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 
-interface AddMobileTokenService {
-    @POST("/api/add_mobile_token/{username}")
+interface AddMobileTokenService{
+    @POST("/api/add_mobile_token/")
     suspend fun addMobileToken(
-        @Path("username") username: String,
-        @Body request: JsonObject
+        @Body request: JSONObject
     ) : Response<AddMobileTokenResponse>
 }
 

@@ -6,7 +6,14 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.start2.services_and_responses.AddMobileTokenResponse
+import com.example.start2.services_and_responses.AddMobileTokenService
+import com.example.start2.services_and_responses.AddMobileTokenServiceProvider
+import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import org.json.JSONObject
 
 
 open class SpotifyViewModel(protected val token: String) : ViewModel() {
@@ -14,9 +21,12 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
     private val repository = SpotifyRepository(SpotifyServiceProvider.instance,SpotifyTopArtistsServiceProvider.instance, SpotifySearchServiceProvider.instance,
         SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance,
         SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance, SpotifyArtistAlbumsServiceProvider.instance,
-        SpotifyAlbumTracksServiceProvider.instance)
+        SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance)
 
 
+    val username = MutableLiveData<String>()
+    val tokenCode = MutableLiveData<String>()
+    val tokenData = MutableLiveData<JsonObject>()
     val selectedTerm = MutableLiveData<String>("short_term")
     val topTracks = MutableLiveData<TopTracksResponse>()
 
@@ -39,6 +49,7 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
     val _selectedTrackID = MutableLiveData<String>()
     val _selectedAlbumID = MutableLiveData<String>()
 
+    private val addTokenResponse = MutableLiveData<AddMobileTokenResponse>()
 
 
     // Public immutable data which the UI can observe
@@ -48,6 +59,13 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
         val result = term
         result?.let {
             selectedTerm.postValue(it)
+        }
+    }
+
+    fun saveUsername(userName: String){
+        val result = userName
+        result?.let{
+            username.postValue(it)
         }
     }
 
@@ -230,13 +248,61 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
         }
 
     }
+
+    fun saveTokenCode(code: String?) {
+        val result = code
+        result?.let{
+            tokenCode.postValue(it)
+        }
+
+    }
+    fun exchangeCodeAndAddMobileToken() {
+        viewModelScope.launch{
+            Log.d("MainHost",  "here")
+            exchangeCodeForToken()
+            Log.d("MainHost",  "here")
+            Log.d("MainHost",  "here")
+            addMobileToken()
+            Log.d("MainHost",  "here")
+        }
+    }
+
+
+    fun exchangeCodeForToken() {
+        viewModelScope.launch{
+            val result = repository.exchangeCodeForToken(tokenCode.value.toString())
+            Log.d("MainHost",  "here112121")
+            Log.d("MainHost",  " aaaa ${result.toString()}")
+
+            result?.let{
+                tokenData.postValue(it)
+            }
+        }
+    }
+
+    fun addMobileToken(){
+        viewModelScope.launch{
+            Log.d("MainHost",  "here")
+            val result = repository.addMobileToken(username.value, tokenData.value!!)
+            Log.d("MainHost",  "here1")
+            Log.d("MainHost",  " aaaa ${result.toString()}")
+
+            result?.let{
+                Log.d("MainHost", "${it.response}")
+                addTokenResponse.postValue(it)
+            }
+
+        }
+
+    }
 }
 
 open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTracksService, private val spotifyTopArtistsService: SpotifyTopArtistsService, private val spotifySearchService: SpotifySearchService,
                              private val spotifyRecommendationsService: SpotifyRecommendationsService, private val spotifyArtistInfoService: SpotifyArtistInfoService,
                              private val spotifyTrackInfoService: SpotifyTrackInfoService, private val spotifyAlbumInfoService : SpotifyAlbumInfoService,
                              private val spotifyArtistTopTrackService: SpotifyArtistTopTrackService, private val spotifyArtistAlbumsService: SpotifyArtistAlbumsService,
-                             private val spotifyAlbumTracksService: SpotifyAlbumTracksService) {
+                             private val spotifyAlbumTracksService: SpotifyAlbumTracksService, private val spotifyTokenDataService: SpotifyTokenDataService,
+                             private val addMobileTokenService: AddMobileTokenService) {
     open suspend fun getUserTopTracks(token: String?, term: String , offset: Int): TopTracksResponse? {
         return try {
             val response = spotifyTopTracksService.getUserTopTracks("Bearer $token" , range = term, limit = 50 , offset = offset)
@@ -424,6 +490,66 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
     open suspend fun rateTrack(trackId: String, rating: Int): RateResponse? {
         return null
     }
+
+    open suspend fun exchangeCodeForToken(tokenCode: String): JsonObject? {
+        val url = "https://accounts.spotify.com/api/token"
+        val client = OkHttpClient()
+        val REQUEST_CODE = 1337
+        val REDIRECT_URI = "com.example.start2://callback"
+        val CLIENT_ID = "214ab19a5a85486489db0ae512195fca"
+        val CLIENT_SECRET = "118873683fc44590b3579c452bdcb3f1"
+
+
+// Construct the JsonObject using Gson
+        val jsonBody = JsonObject().apply {
+            addProperty("grant_type", "authorization_code")
+            addProperty("code", tokenCode)
+            addProperty("redirect_uri", REDIRECT_URI)
+            addProperty("client_id", CLIENT_ID)
+            addProperty("client_secret", CLIENT_SECRET) // Warning: Including the client secret in your app is insecure
+        }
+        Log.d("MainHost",  "here211")
+
+        return try {
+            Log.d("MainHost",  "here211")
+            val response = spotifyTokenDataService.getTokenData(jsonBody)
+            Log.d("MainHost",  "here211")
+            if(response.isSuccessful) {
+                Log.d("MainHost",  "${response.body()}")
+                response.body()
+            }
+            else{
+                Log.d("MainHost",  "here2")
+                null
+            }
+
+        } catch (e: Exception) {
+            Log.d("MainHost",  "${e.message.toString()}")
+            null
+        }
+
+    }
+    open suspend fun addMobileToken(userName: String?, tokenData: JsonObject) : AddMobileTokenResponse? {
+        return try {
+            val jsonObject = JSONObject().apply {
+                put("username", userName)
+                put("token", tokenData)
+            }
+            val response = addMobileTokenService.addMobileToken(jsonObject)
+            Log.d("MainHost",  "here1")
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else {
+                null
+            }
+
+        } catch(e: Exception) {
+            null
+        }
+    }
+
+
 }
 
 
