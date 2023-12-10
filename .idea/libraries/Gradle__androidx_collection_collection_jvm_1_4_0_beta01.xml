@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.collection:collection-jvm:1.4.0-beta01">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.4.0-beta01/e3439154eb1c9f4dae1dfb4ca0e28732aeb40bcb/collection-jvm-1.4.0-beta01.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.4.0-beta01/e3439154eb1c9f4dae1dfb4ca0e28732aeb40bcb/collection-jvm-1.4.0-beta01.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.4.0-beta01/e0a0101603d49dbad45cc40ac62fe2c425a3ca4/collection-jvm-1.4.0-beta01-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.collection/collection-jvm/1.4.0-beta01/e0a0101603d49dbad45cc40ac62fe2c425a3ca4/collection-jvm-1.4.0-beta01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
