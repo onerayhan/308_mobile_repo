@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import com.example.start2.services_and_responses.UserGenrePreferencesResponse
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -36,10 +37,13 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import com.google.gson.JsonParser
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
 
 
 class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
-
 
 
     private val _username = MutableLiveData<String>(usr.username)
@@ -61,6 +65,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     private val _event = mutableStateOf<ProfileEvent?>(null)
     val event: State<ProfileEvent?> get() = _event
 
+
     // Define a data class to represent the user profile
     data class UserProfile(
         val username: String,
@@ -79,7 +84,10 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                Log.d("NavigatorActivity", "fetchUserProfileaaa12111depedepedepe ${_username.value}")
+                Log.d(
+                    "NavigatorActivity",
+                    "fetchUserProfileaaa12111depedepedepe ${_username.value}"
+                )
                 Log.d("NavigatorActivity", "fetchUserProfileaaa12111depedepedepe ${_username}")
 
                 val request = UserInfoRequest(username = _username.value.orEmpty())
@@ -97,7 +105,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 _userProfile.value = UserProfile(
                     username = response.username,
                     email = response.email,
-                    follower_count= response.follower_count,
+                    follower_count = response.follower_count,
                     followed_count = response.followed_count
                     // Add more properties as needed
                 )
@@ -116,12 +124,247 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         }
     }
 
-    fun saveUsername(newUsername: String){
-        Log.d("NavigatorActivity", "fetchUserProfile111 $newUsername")
-        _username.value=newUsername
-        Log.d("NavigatorActivity", "fetchUserProfile222 ${_username.value}")
-        usr.username=newUsername
+
+    data class UserFollowingsGenrePreferencesResponse(val genres: List<FollowingsGenrePreference>)
+    data class FollowingsGenrePreference(val genre: String, val count: Int)
+
+    private val _userFollowingsGenrePreferences = MutableLiveData<UserFollowingsGenrePreferencesResponse>()
+    val userFollowingsGenrePreferences: LiveData<UserFollowingsGenrePreferencesResponse>
+        get() = _userFollowingsGenrePreferences
+
+    fun getUserFollowingsGenrePreferences(username: String) {
+        viewModelScope.launch {
+            try {
+                _loading.value = true  // Corrected
+                val url = "http://51.20.128.164/api/user_followings_genre_preference"
+                val requestBody = JSONObject().apply {
+                    put("username", username)
+                }.toString()
+
+                val mediaType = "application/json; charset=utf-8".toMediaType()
+                val request = Request.Builder()
+                    .url(url)
+                    .post(requestBody.toRequestBody(mediaType))
+                    .build()
+                Log.d("helloooo", "FOLLOWING")
+
+                val client = OkHttpClient()
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onResponse(call: Call, response: Response) {
+                        Log.d("helloooo", "FOLLOWING $response")
+
+                        if (response.isSuccessful) {
+                            val responseBody = response.body?.string()
+                            Log.d("followingRESPONSE", "FOLLOWING $responseBody")
+
+                            val followingsGenrePreferences = parseFollowingsGenrePreferencesResponse(responseBody)
+                            _userFollowingsGenrePreferences.postValue(followingsGenrePreferences)
+                        } else {
+                            Log.d("ERROR1", "FOLLOWING")
+
+                            _error.value = "Failed to retrieve followings genre preferences"
+                        }
+                        Log.d("ERROR2", "FOLLOWING")
+
+                        _loading.value = false
+                    }
+
+                    override fun onFailure(call: Call, e: IOException) {
+                        Log.d("ERROR3", "FOLLOWING")
+
+                        _error.value = "Network error: ${e.message}"
+                        _loading.value = false
+                    }
+                })
+            } catch (e: Exception) {
+                Log.d("ERROR4", "FOLLOWING")
+
+                _error.value = "An error occurred: ${e.message}"
+                _loading.value = false
+            }
+        }
     }
+
+
+    private fun parseFollowingsGenrePreferencesResponse(responseBody: String?): UserFollowingsGenrePreferencesResponse {
+        val json = JSONObject(responseBody ?: "")
+        Log.d("followingPARSE", "bakBUfollowing $json")
+
+        val genreList = json.getJSONArray("genres")
+        val followinggenrePreferences = mutableListOf<FollowingsGenrePreference>()
+        for (i in 0 until genreList.length()) {
+            val genreObj = genreList.getJSONObject(i)
+            val genreName = genreObj.getString("genre")
+            val songCount = genreObj.getInt("count")
+            followinggenrePreferences.add(FollowingsGenrePreference(genreName, songCount))
+        }
+        return UserFollowingsGenrePreferencesResponse(followinggenrePreferences)
+    }
+
+
+
+
+
+
+    private val _userperformerPreferences = MutableLiveData<UserPerformerPreferencesResponse>()
+    val userperformerPreferences: LiveData<UserPerformerPreferencesResponse>
+        get() = _userperformerPreferences
+    fun getUserPerformerPreferences(username: String) {
+        viewModelScope.launch {
+            try {
+                // Your existing loading and error handling LiveData
+                _loading.value = true
+
+                val url = "http://51.20.128.164/api/user_performer_preference"
+                val requestBody = JSONObject().apply {
+                    put("username", username)
+                }.toString()
+
+                val mediaType = "application/json; charset=utf-8".toMediaType()
+                val request = Request.Builder()
+                    .url(url)
+                    .post(requestBody.toRequestBody(mediaType))
+                    .build()
+
+                val client = OkHttpClient()
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.isSuccessful) {
+                            val responseBody = response.body?.string()
+                            val performerPreferences = parsePerformerPreferencesResponse(responseBody)
+                            _userperformerPreferences.postValue(performerPreferences)
+                        } else {
+                            _error.value = "Failed to retrieve performer preferences"
+                        }
+                        _loading.value = false
+                    }
+
+                    override fun onFailure(call: Call, e: IOException) {
+                        _error.value = "Network error: ${e.message}"
+                        _loading.value = false
+                    }
+                })
+            } catch (e: Exception) {
+                _error.value = "An error occurred: ${e.message}"
+                _loading.value = false
+            }
+        }
+    }
+    private fun parsePerformerPreferencesResponse(responseBody: String?): UserPerformerPreferencesResponse {
+        val json = JSONObject(responseBody ?: "")
+        val performerList = json.getJSONArray("performers")
+        val performerPreferences = mutableListOf<PerformerPreference>()
+
+        for (i in 0 until performerList.length()) {
+            val performerObj = performerList.getJSONObject(i)
+            val performerName = performerObj.getString("performer")
+            val songCount = performerObj.getInt("count")
+            performerPreferences.add(PerformerPreference(performerName, songCount))
+        }
+
+        return UserPerformerPreferencesResponse(performerPreferences)
+    }
+
+    // Data classes
+    data class UserPerformerPreferencesResponse(val performers: List<PerformerPreference>)
+    data class PerformerPreference(val performer: String, val count: Int)
+
+
+
+
+    private val _genrePreferences = MutableLiveData<UserGenrePreferencesResponse>()
+    val genrePreferences: LiveData<UserGenrePreferencesResponse>
+        get() = _genrePreferences
+    fun getUserGenrePreferences(username: String) {
+        Log.d("nonono", "1111NEOLDU123")
+
+        viewModelScope.launch {
+            try {
+                _loading.value = true
+
+                val url = "http://51.20.128.164/api/user_genre_preference"
+                Log.d("BAŞLANGIÇ", "NEOLDU123")
+
+                // Create a JSON request body
+                val requestBody = JSONObject().apply {
+                    put("username", username)
+                }.toString()
+
+                val mediaType = "application/json; charset=utf-8".toMediaType()
+                val request = Request.Builder()
+                    .url(url)
+                    .post(requestBody.toRequestBody(mediaType))
+                    .build()
+                Log.d("123GENREGENRELOOP123", "GENE $request")
+
+                val client = OkHttpClient()
+
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.isSuccessful) {
+                            Log.d("123GENREPORPORPORPORPORPOR1234", "GENE $response")
+
+                            val responseBody = response.body?.string()
+                            val genrePreferences = parseGenrePreferencesResponse(responseBody)
+
+                            _genrePreferences.postValue(genrePreferences)
+                            Log.d("555123GENREPORPORPORPORPORPOR123455", "GENE $_genrePreferences.value")
+
+                        }
+                        else {
+                            _error.value = "Failed to retrieve genre preferences"
+                        }
+
+                        _loading.value = false
+                    }
+
+                    override fun onFailure(call: Call, e: IOException) {
+                        _error.value = "Network error: ${e.message}"
+                        _loading.value = false
+                    }
+                })
+
+            } catch (e: Exception) {
+                _error.value = "An error occurred: ${e.message}"
+                _loading.value = false
+            }
+        }
+    }
+
+    private fun parseGenrePreferencesResponse(responseBody: String?): UserGenrePreferencesResponse {
+        val json = JSONObject(responseBody ?: "")
+        Log.d("jsonMUOneee", "bakBU $json")
+        val genreList = json.getJSONArray("genres")
+        val genrePreferences = mutableListOf<GenrePreference>()
+
+        for (i in 0 until genreList.length()) {
+            val genreObj = genreList.getJSONObject(i)
+
+            val genreName = genreObj.getString("genre")
+            val songCount = genreObj.getInt("count")
+            Log.d("GENREGENRELOOP", "GENE $genreName")
+            Log.d("GENREGENRELOOPAAA", "GENE $songCount")
+
+            genrePreferences.add(GenrePreference(genreName, songCount))
+        }
+
+        return UserGenrePreferencesResponse(genrePreferences)
+    }
+
+    data class UserGenrePreferencesResponse(val genre: List<GenrePreference>)
+
+    data class GenrePreference(val genre: String, val count: Int)
+
+
+
+
+    fun saveUsername(newUsername: String) {
+        Log.d("NavigatorActivity", "fetchUserProfile111 $newUsername")
+        _username.value = newUsername
+        Log.d("NavigatorActivity", "fetchUserProfile222 ${_username.value}")
+        usr.username = newUsername
+    }
+
     fun navigateToFollowers() {
         _event.value = ProfileEvent.NavigateToFollowers
     }
@@ -135,7 +378,10 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         viewModelScope.launch {
             try {
                 _loading.value = true
-                Log.d("NavigatorActivity", "fetchUserProfileaaa12111depedepedepe ${_username.value}")
+                Log.d(
+                    "NavigatorActivity",
+                    "fetchUserProfileaaa12111depedepedepe ${_username.value}"
+                )
                 Log.d("NavigatorActivity", "fetchUserProfileaaa12111depedepedepe ${_username}")
 
                 val request = UserInfoRequest(friendUsername)
@@ -172,16 +418,12 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         }
 
     }
+
     fun unfollowUser(followedUsername: String) {
         viewModelScope.launch {
             try {
                 _loading.value = true
                 val request = UnfollowRequest(_username.value.toString(), followedUsername)
-
-
-
-
-
 
 
                 // Assuming UnfollowRequest is a data class representing the request body
@@ -224,15 +466,17 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 itemsObject.put("followed_username", _username.value.toString())
                 itemsObject.put("follower_username", followedUsername)
                 val gson = Gson()
-                val json = gson.toJson(mapOf(
-                    "followed_username" to _username.value.orEmpty(),
-                    "follower_username" to followedUsername,
-                ))
+                val json = gson.toJson(
+                    mapOf(
+                        "followed_username" to _username.value.orEmpty(),
+                        "follower_username" to followedUsername,
+                    )
+                )
 
                 // Log statement before making the API request
                 Log.d("UserProfile", "Following user: $json")
 
-                val response = apiService.followUser(request )
+                val response = apiService.followUser(request)
 
                 // Log statement after a successful API response
                 Log.d("UserProfile", "Follow successful: $response")
@@ -261,9 +505,6 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     }
 
 
-
-
-
     fun getUserFollowings() {
         viewModelScope.launch {
             try {
@@ -284,7 +525,10 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                     // Handle success, update UI with followers and followed users
                     val followers = response.followed_username ?: emptyList()
                     val followedUsers = response.follower_username ?: emptyList()
-                    Log.d("UserProfile", "User followings fetched successfully12334: ${response.message}")
+                    Log.d(
+                        "UserProfile",
+                        "User followings fetched successfully12334: ${response.message}"
+                    )
 
                     // Do something with the followers and followedUsers lists
                 } else {
@@ -356,7 +600,11 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 // Create a multipart request body with photo and username parameters
                 val requestBody = MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("photo", "photo.jpg", RequestBody.create("image/jpeg".toMediaType(), base64Image.toByteArray()))
+                    .addFormDataPart(
+                        "photo",
+                        "photo.jpg",
+                        RequestBody.create("image/jpeg".toMediaType(), base64Image.toByteArray())
+                    )
                     .addFormDataPart("username", _username.value.orEmpty())
                     .build()
 
@@ -365,7 +613,6 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 requestBody.writeTo(buffer)
                 Log.d("ProfileViewModel", "Request Payload: ${buffer.readUtf8()}")
                 Log.d("ProfileViewModel", "Request Payload12345: $requestBody")
-
 
 
                 // Create a POST request
@@ -411,7 +658,6 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val mood: String? = null,
         val instrument: String? = null
     )
-
 
 
     fun addSong(songParams: SongParams) {
@@ -488,7 +734,8 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val requestBody = json.toRequestBody(mediaType)
 
         val client = OkHttpClient()
-        val url = "http://51.20.128.164/api/user_rate_batch"  // Replace with your actual API base URL
+        val url =
+            "http://51.20.128.164/api/user_rate_batch"  // Replace with your actual API base URL
         val postRequest = Request.Builder()
             .url(url)
             .post(requestBody)
@@ -504,25 +751,33 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             println("Success: ${response.body?.string()}")
         }
     }
+
     data class UserSongRatingRequest(
         val username: String,
         val song_name: String,
         val rating: Int
     )
 
-    fun addUserSongRating(songName: String, rating: Int) {
+    fun addUserSongRating(songId: Int, rating: Int) {
 
         GlobalScope.launch(Dispatchers.IO) {
             delay(3000)
             try {
                 val gson = Gson()
-                val json = gson.toJson(mapOf("username" to _username.value.toString(), "song_name" to songName, "rating" to rating))
+                val json = gson.toJson(
+                    mapOf(
+                        "username" to _username.value.toString(),
+                        "song_id" to songId,
+                        "rating" to rating
+                    )
+                )
 
                 val mediaType = "application/json; charset=utf-8".toMediaType()
                 val requestBody = json.toRequestBody(mediaType)
 
                 val client = OkHttpClient()
-                val url = "http://51.20.128.164/api/add_user_song_ratings"  // Replace with your actual API base URL
+                val url =
+                    "http://51.20.128.164/api/add_user_song_ratings"  // Replace with your actual API base URL
                 val postRequest = Request.Builder()
                     .url(url)
                     .post(requestBody)
@@ -547,48 +802,59 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             }
         }
     }
-    fun addSongtr( songName: String,
 
-                   ) {
-        try {
-            val gson = Gson()
-            val map = mutableMapOf(
-                "username" to _username.value.toString(),
-                "song_name" to songName,
-            )
+    fun addSongtr(songName: String, songId: String, rating: Int) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val gson = Gson()
+                val json = gson.toJson(
+                    mapOf(
+                        "username" to _username.value.toString(),
+                        "song_name" to songName,
+                        "external_song_id" to songId
+                    )
+                )
 
-            // Only include "artist" in the map if it's not null
+                val mediaType = "application/json; charset=utf-8".toMediaType()
+                val requestBody = json.toRequestBody(mediaType)
+
+                val client = OkHttpClient()
+                val url =
+                    "http://51.20.128.164/api/add_song"  // Replace with your actual API base URL
+                val postRequest = Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build()
+
+                Log.d("NetworkRequest", "Sending request to $url with JSON: $json")
+
+                val response = client.newCall(postRequest).execute()
+
+                if (response.isSuccessful) {
+                    // Handle the successful response here
+                    val responseBody = response.body?.string()
+                    Log.d("NetworkRequest", "Success: $responseBody")
+                    val jsonObject = JsonParser.parseString(responseBody).asJsonObject
+
+                    // Extract values from the JSON object
+                    val message = jsonObject.getAsJsonPrimitive("message").asString
+                    val songId = jsonObject.getAsJsonPrimitive("song_id").asInt
+
+                    // Now you can work with the extracted values
+                    Log.d("NetworkRequest", "Message: $message")
+                    Log.d("NetworkRequest", "Song ID: $songId")
+                    addUserSongRating(songId, rating)
 
 
-
-            val json = gson.toJson(map)
-
-            val mediaType = "application/json; charset=utf-8".toMediaType()
-            val requestBody = json.toRequestBody(mediaType)
-
-            val client = OkHttpClient()
-            val url = "http://51.20.128.164/api/add_song"  // Replace with your actual API base URL
-            val postRequest = Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build()
-
-            Log.d("NetworkRequestsong", "Sending request to $url with JSON: $json")
-
-            val response = client.newCall(postRequest).execute()
-
-            if (response.isSuccessful) {
-                // Handle the successful response here
-                val responseBody = response.body?.string()
-                Log.d("NetworkRequestsong", "Success: $responseBody")
-            } else {
-                // Handle other errors here
-                Log.e("NetworkRequestsong", "Error: ${response.code} - ${response.message}")
+                } else {
+                    // Handle other errors here
+                    Log.e("NetworkRequest", "Error: ${response.code} - ${response.message}")
+                }
+            } catch (e: Exception) {
+                // Handle exceptions here
+                Log.e("NetworkRequest", "Exception: ${e.message}")
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            // Handle exceptions here
-            Log.e("NetworkRequestsong", "Exception: ${e.message}")
-            e.printStackTrace()
         }
     }
 
@@ -598,15 +864,23 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val album_name: String,
         val rating: Int
     )
+
     fun addUserAlbumRating(username: String, albumName: String, rating: Int) {
         val gson = Gson()
-        val json = gson.toJson(mapOf("username" to username, "album_name" to albumName, "rating" to rating))
+        val json = gson.toJson(
+            mapOf(
+                "username" to username,
+                "album_name" to albumName,
+                "rating" to rating
+            )
+        )
 
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val requestBody = json.toRequestBody(mediaType)
 
         val client = OkHttpClient()
-        val url = "http://51.20.128.164/api/user_album_ratings"  // Replace with your actual API base URL
+        val url =
+            "http://51.20.128.164/api/user_album_ratings"  // Replace with your actual API base URL
         val postRequest = Request.Builder()
             .url(url)
             .post(requestBody)
@@ -620,10 +894,12 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 val responseBody = response.body?.string()
                 println("Success: $responseBody")
             }
+
             response.code == 400 -> {
                 // Handle Bad Request (Missing required parameters) here
                 println("Bad Request: ${response.body?.string()}")
             }
+
             else -> {
                 // Handle other errors here
                 println("Error: ${response.code} - ${response.message}")
@@ -665,47 +941,8 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         val rating: Int
     )
 
-    fun addUserPerformerRating(request: UserPerformerRatingRequest) {
-        val gson = Gson()
-        val json = gson.toJson(request)
 
-        val mediaType = "application/json; charset=utf-8".toMediaType()
-        val requestBody = json.toRequestBody(mediaType)
 
-        val client = OkHttpClient()
-        val url = "http://51.20.128.164/api/user_performer_ratings"  // Replace with your actual API base URL
-        val postRequest = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .build()
-
-        try {
-            val response = client.newCall(postRequest).execute()
-
-            when {
-                response.isSuccessful -> {
-                    // Handle the successful response here
-                    val responseBody = response.body?.string()
-                    println("Success: $responseBody")
-                }
-                response.code == 400 -> {
-                    // Handle Bad Request (Missing required parameters) here
-                    println("Bad Request: ${response.body?.string()}")
-                }
-                else -> {
-                    // Handle other errors here
-                    println("Error: ${response.code} - ${response.message}")
-                }
-            }
-        } catch (e: IOException) {
-            // Handle network-related exceptions here
-            println("Error: ${e.message}")
-        } finally {
-            // Close the OkHttpClient to release resources
-            client.dispatcher.executorService.shutdown()
-            client.connectionPool.evictAll()
-        }
-    }
 
     data class Song(
         val songName: String,
@@ -835,9 +1072,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 val song = Song(
                     title = songObject.getString("song_name"),
                     artist = songObject.getString("performer_name"),
-                    album = songObject.getString("album_name"),
-                    duration = songObject.getString("length")
-
+                    album = songObject.getString("album_name")
 
                     // Add other properties as needed
                 )

@@ -194,7 +194,6 @@ private fun NavGraphBuilder.addAnalysisRoute(navController: NavController, spoti
 //
 private fun NavGraphBuilder.showAnalysis(navController: NavController, spotifyViewModel: SpotifyViewModel) {
     composable(route = LeafScreen.Analysis.route) {
-        val selectedOption = AnalysisOption.SongPopularity // Provide a default option
         AnalysisScreen(navController, spotifyViewModel)
     }
 }

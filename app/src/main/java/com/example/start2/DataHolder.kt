@@ -1,7 +1,8 @@
 package com.example.start2
 
-import MyData
-/*
+
+data class MyData(val value: String)
+
 object DataHolder {
     var myData: MyData? = null
-}*/
+}

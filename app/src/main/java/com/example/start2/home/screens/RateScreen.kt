@@ -19,25 +19,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.start2.ProfileViewModel
+import com.example.start2.ProfileViewModelFactory
 import com.example.start2.R
+import com.example.start2.UserPreferences
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.swipecomponents.Item
+import kotlinx.coroutines.delay
+
 @Composable
 fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
     var rateQuery: String by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val userPreferences= remember{ UserPreferences(context) }
+    val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
+
 
     Column {
         TextField(
             value = rateQuery,
             onValueChange = { rateQuery = it },
-            label = { Text("Enter criteria for rate suggestions") },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Enter criteria for rate suggestions") }
         )
         Button(onClick = { viewModelSpoti.getRecommendation(rateQuery, "", "") }) {
             Text("Get Suggestions")
@@ -53,10 +63,15 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
             ) { trackId, rating ->
                 rateSuggestions!!.tracks.find { it.id == trackId }?.let { track ->
                     // Handle rating change, if needed
+                    profileViewModel.addSongtr(track.name,track.id,rating)
+
+
+
                 }
                 //viewModelSpoti.rateTrack(trackId, rating)
+
                 viewModelSpoti.removeRatedTrack(trackId)
-                 // Implement this in your ViewModel
+                // Implement this in your ViewModel
             }
         }
     }
@@ -136,8 +151,3 @@ fun TrackRateItem(
         }
     }
 }
-
-
-
-
-
