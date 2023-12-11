@@ -152,8 +152,8 @@ fun AnalysisTableScreen(navController: NavController, spotifyViewModel: SpotifyV
                     AnalysisTableContentArtists(
                         artists = artists.items,
                         onArtistSelect = { artistId ->
-                        spotifyViewModel.saveSelectedArtist(artistId)
-                        navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
+                            spotifyViewModel.saveSelectedArtist(artistId)
+                            navController.navigateToLeafScreen(LeafScreen.ArtistInfo)
                         }
                     )
                 }
@@ -244,7 +244,7 @@ fun AnalysisTableContentPreview() {
 fun ArtistItem(
     artist: Artist,
     onArtistSelect: (String) -> Unit,
-    ) {
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -257,7 +257,7 @@ fun ArtistItem(
             },
         verticalAlignment = Alignment.CenterVertically,
 
-    ) {
+        ) {
         val imageUrl = artist.images.firstOrNull()?.url ?: "" // Provide a default or error image URL if needed
 
         androidx.compose.foundation.Image(

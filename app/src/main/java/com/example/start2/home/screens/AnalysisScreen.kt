@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -138,18 +140,19 @@ fun AnalysisScreen(
 ) {
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
+    val scrollState = rememberScrollState()
     // State to keep track of the selected chart option
     var selectedOption by remember { mutableStateOf(AnalysisOption.PopularGenres) }
     val profileViewModel =
         viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     val username by profileViewModel.username.observeAsState()
-    //username?.let { profileViewModel.getUserGenrePreferences(it) }
-    // username?.let{  profileViewModel.getUserGenrePreferences(it)}
-    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences(it)}
+    username?.let { profileViewModel.getUserFollowingsGenrePreferences() }
+    username?.let{  profileViewModel.getUserGenrePreferences()}
+    username?.let{ profileViewModel.getUserFollowingsGenrePreferences()}
 
-    username?.let { profileViewModel.getUserGenrePreferences(it) }
-    username?.let { profileViewModel.getUserPerformerPreferences(it) }
-    //profileViewModel.getUserFollowingsGenrePreferences(username)
+    //username?.let { profileViewModel.getUserGenrePreferences() }
+    //username?.let { profileViewModel.getUserPerformerPreferences() }
+    //profileViewModel.getUserFollowingsGenrePreferences()
 
     val genrePreferences by profileViewModel.genrePreferences.observeAsState()
     val performerPreferences by profileViewModel.userperformerPreferences.observeAsState()
@@ -157,12 +160,16 @@ fun AnalysisScreen(
     Scaffold(
         topBar = { AnalysisTopBar(title = "Your Song Activity") }
     ) { contentPadding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
                 .background(Color.White)
-        ) {
+                .verticalScroll(scrollState)
+
+        )
+     {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -184,7 +191,8 @@ fun AnalysisScreen(
             followingGenrePreferences?.let {
                 val horizontalAxisValueFormatter1 = createFollowingGenreNameFormatter(it)
                 val chartData = convertFollowingGenrePreferencesToChartData(it)
-                // createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
+                Text(text = "Following Genre Preferences", fontWeight = FontWeight.Bold)
+                createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
 
             }
             Spacer(modifier = Modifier.height(50.dp))
@@ -192,7 +200,8 @@ fun AnalysisScreen(
             performerPreferences?.let {
                 val horizontalAxisValueFormatter1 = createPerformerNameFormatter(it)
                 val chartData = convertPerformerPreferencesToChartData(it)
-                //  createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
+                 Text(text = "Performer Preferences", fontWeight = FontWeight.Bold)
+                 createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
 
             }
             genrePreferences?.let {
@@ -200,6 +209,7 @@ fun AnalysisScreen(
                 val horizontalAxisValueFormatter = createGenreNameFormatter(it)
 
                 val chartData = convertGenrePreferencesToChartData(it)
+                Text(text = "Genre Preferences", fontWeight = FontWeight.Bold)
                 createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter)
             }
         }
@@ -222,4 +232,3 @@ fun AnalysisTopBar(title: String) {
         )
     })
 }
-
