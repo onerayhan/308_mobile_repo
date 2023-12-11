@@ -23,7 +23,7 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
     private val repository = SpotifyRepository(SpotifyServiceProvider.instance,SpotifyTopArtistsServiceProvider.instance, SpotifySearchServiceProvider.instance,
         SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance,
         SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance, SpotifyArtistAlbumsServiceProvider.instance,
-        SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance)
+        SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance, SpotifyGetSeveralTracksServiceProvider.instance)
 
 
     val username = MutableLiveData<String>()
@@ -322,7 +322,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
                              private val spotifyTrackInfoService: SpotifyTrackInfoService, private val spotifyAlbumInfoService : SpotifyAlbumInfoService,
                              private val spotifyArtistTopTrackService: SpotifyArtistTopTrackService, private val spotifyArtistAlbumsService: SpotifyArtistAlbumsService,
                              private val spotifyAlbumTracksService: SpotifyAlbumTracksService, private val spotifyTokenDataService: SpotifyTokenDataService,
-                             private val addMobileTokenService: AddMobileTokenService) {
+                             private val addMobileTokenService: AddMobileTokenService, private val spotifyGetSeveralTracksService: SpotifyGetSeveralTracksService) {
     open suspend fun getUserTopTracks(token: String?, term: String , offset: Int): TopTracksResponse? {
         return try {
             val response = spotifyTopTracksService.getUserTopTracks("Bearer $token" , range = term, limit = 50 , offset = offset)
@@ -413,6 +413,20 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             }
 
         } catch(e:Exception){
+            null
+        }
+    }
+
+    open suspend fun getSeveralTracks(token: String?, selectedTracks: String) : SpotifyGetSeveralTracksResponse? {
+        return try {
+            val response = spotifyGetSeveralTracksService.getSeveralTracks("Bearer $token", ids= selectedTracks)
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else {
+                null
+            }
+        } catch(e : Exception) {
             null
         }
     }

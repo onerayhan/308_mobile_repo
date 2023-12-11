@@ -18,7 +18,7 @@ class DummySpotifyViewModel(token: String) : SpotifyViewModel(token) {
     }
 }
 
-class DummySpotifyRepository : SpotifyRepository(SpotifyServiceProvider.instance, SpotifyTopArtistsServiceProvider.instance,SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance, SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance,SpotifyArtistAlbumsServiceProvider.instance, SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance) {
+class DummySpotifyRepository : SpotifyRepository(SpotifyServiceProvider.instance, SpotifyTopArtistsServiceProvider.instance,SpotifySearchServiceProvider.instance, SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance, SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance,SpotifyArtistAlbumsServiceProvider.instance, SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance, SpotifyGetSeveralTracksServiceProvider.instance) {
     override suspend fun getUserTopTracks(token: String?, term: String , offset: Int): TopTracksResponse? {
         // Return dummy data
         return TopTracksResponse(
