@@ -2,11 +2,21 @@ package com.example.start2.home.screens
 
 
 
+import android.Manifest
+import android.app.Activity
 import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.Context
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +49,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewModelScope
 
@@ -49,11 +61,16 @@ import com.example.start2.UserPreferences
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.viewmodels.MusicViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun HomeScreen(
     showDetail: () -> Unit,
@@ -66,12 +83,53 @@ fun HomeScreen(
     val context = LocalContext.current
     val userPreferences= remember{UserPreferences(context)}
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
+    var fileUriToWrite by remember { mutableStateOf<Uri?>(null) }
+    var jsonContentToWrite by remember { mutableStateOf<String?>(null) }
     /*
     LaunchedEffect(Unit) {
         Log.d("MainHost",  "here")
         spotifyViewModel.exchangeCodeAndAddMobileToken()
     }*/
+    // Inside HomeScreen Composable
+    val coroutineScope = rememberCoroutineScope()
+    //val context = LocalContext.current
 
+    val writeRequestLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // Permission granted, proceed with writing to the file
+                fileUriToWrite?.let { uri ->
+                    jsonContentToWrite?.let { json ->
+                        coroutineScope.launch {
+                            writeToFile(uri, json, context)
+                        }
+                    }
+                }
+            } else {
+                // Permission denied
+                // Handle the denial case
+            }
+        }
+    )
+
+    // Modify requestWritePermission to use the launcher
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun requestWritePermission(uri: Uri) {
+        val request = MediaStore.createWriteRequest(context.contentResolver, listOf(uri))
+        try {
+            writeRequestLauncher.launch(
+                IntentSenderRequest.Builder(request.intentSender).build()
+            )
+        } catch (e: Exception) {
+            // Handle exception
+        }
+    }
+
+
+
+    spotifyViewModel.getUserTopTracksBatch()
+    spotifyViewModel.getUserTopArtistsBatch()
 
     val contentResolver = LocalContext.current.contentResolver
     var songName by remember { mutableStateOf("") }
@@ -89,6 +147,7 @@ fun HomeScreen(
     var genre by remember { mutableStateOf("") }
     var mood by remember { mutableStateOf("") }
     var instrument by remember { mutableStateOf("") }
+
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -326,11 +385,33 @@ fun HomeScreen(
                     Text("Add Music", color = Color.White)
                 }
                 ExpandableCard(title = "Export Stuff") {
-                    Button(onClick = { /*TODO*/ }) {
-                        
+
+                    Button(onClick = {
+                        Log.d("Mainhost" , "sd112")
+
+                        coroutineScope.launch{
+                            Log.d("Mainhost" , "sd112")
+                            val topTracksJson = spotifyViewModel.exportTopTracksToJson()
+                            val fileUri = insertFileIntoMediaStore("myFile.json", "application/json", context)
+                            fileUri?.let {
+                                fileUriToWrite = fileUri
+                                jsonContentToWrite = topTracksJson
+                                // Request permission
+                                requestWritePermission(fileUri)
+                            }
+                        }
+
+
+                    }) {
+                        Text("Export Top Tracks")
                     }
-                    Button(onClick = { /*TODO*/ }) {
-                        
+                    Button(onClick = {
+                        coroutineScope.launch {
+                            val topArtistsJson = spotifyViewModel.exportTopArtistsToJson()
+                            saveToFile("topArtists.json", topArtistsJson, context)
+                        }
+                    }) {
+                        Text("Export Top Artists")
                     }
                     Button(onClick = { /*TODO*/ }) {
                         
@@ -368,5 +449,55 @@ fun ExpandableCard(title: String, content: @Composable () -> Unit) {
                 content()
             }
         }
+    }
+}
+
+
+suspend fun saveToFile(fileName: String, jsonContent: String, context: Context) = withContext(Dispatchers.IO) {
+    try {
+        Log.d("MainHost", "nojıj1")
+
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED) {
+            val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileName)
+            // Write to the file
+            file.writeText(jsonContent)
+            }
+
+         else {
+            // Handle the absence of permission
+            Log.d("MainHost", "nojıj2")
+
+        }
+    } catch (e: Exception) {
+        // Handle exceptions, e.g., log error or notify user
+        Log.d("MainHost", "nojıj3")
+
+    }
+}
+
+suspend fun insertFileIntoMediaStore(displayName: String, mimeType: String, context: Context): Uri? = withContext(Dispatchers.IO) {
+    Log.d("MainHost", "nojıj3")
+
+    val values = ContentValues().apply {
+        put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+        put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+        // Add more properties as needed
+    }
+    Log.d("MainHost", "nojıj312")
+
+    return@withContext context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+}
+
+@RequiresApi(Build.VERSION_CODES.R)
+fun requestWritePermission(context: Context, uri: Uri) {
+
+    val request = MediaStore.createWriteRequest(context.contentResolver, listOf(uri))
+    // Start the request. You might need to use `startIntentSenderForResult` if in an Activity
+}
+
+suspend fun writeToFile(uri: Uri, content: String, context: Context) = withContext(Dispatchers.IO) {
+    context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+        outputStream.write(content.toByteArray())
     }
 }

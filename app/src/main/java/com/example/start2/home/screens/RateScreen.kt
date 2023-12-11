@@ -39,7 +39,7 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
             label = { Text("Enter criteria for rate suggestions") },
             modifier = Modifier.fillMaxWidth()
         )
-        Button(onClick = { viewModelSpoti.getRecommendation(rateQuery) }) {
+        Button(onClick = { viewModelSpoti.getRecommendation(rateQuery, "", "") }) {
             Text("Get Suggestions")
         }
 

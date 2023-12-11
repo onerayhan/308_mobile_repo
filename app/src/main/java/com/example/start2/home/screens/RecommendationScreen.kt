@@ -37,6 +37,7 @@ import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.spotify.Track
 import androidx.lifecycle.viewModelScope
+import com.example.start2.home.spotify.SpotifySearchItem
 import com.example.start2.viewmodels.MusicViewModel
 import java.util.Locale
 
@@ -48,22 +49,18 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
     var expanded by remember { mutableStateOf(false) }
     var genresString: String by remember{ mutableStateOf("") }
     var artistsString: String by remember{ mutableStateOf("") }
+    var artistId: String by remember{ mutableStateOf("") }
 
     val options = listOf("getGenrePrefs", "getAlbumPrefs", "getPerformerPrefs")
     val selectedOptions = remember { mutableStateListOf<String>() }
     val userGenrePreferences by musicViewModel.userGenrePreferences.observeAsState()
     val userAlbumPreferences by musicViewModel.userAlbumPreferences.observeAsState()
     val userPerformerPreferences by musicViewModel.userPerformerPreferences.observeAsState()
+    val searchResults by viewModelSpoti.searchResults.observeAsState()
     //viewModelSpoti.
     Column {
-        TextField(
-            value = recommendationQuery,
-            onValueChange = { recommendationQuery = it },
-            label = { Text("Pick one or more Genre(s) for a recommendation(Comma separated)") }
-        )
-        Button(onClick = { viewModelSpoti.getRecommendation(genresString) }) {
-            Text("Search")
-        }
+
+
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
@@ -100,11 +97,17 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
                 }
             }
         }
-        Button(onClick = {
-            musicViewModel.onOptionSelected(options)
-        }) {
-            Text("Fetch Preferences")
+        Row (modifier = Modifier.fillMaxWidth()){
+            Button(onClick = {
+                musicViewModel.onOptionSelected(options)
+            }) {
+                Text("Fetch Preferences")
+            }
+            Button(onClick = { viewModelSpoti.getRecommendation(genresString, artistId, "") }) {
+                Text("Search")
+            }
         }
+
 
         userGenrePreferences?.let{ response ->
             Log.d("RecomScreen", response.genres.joinToString(separator = ",") { it.genre.lowercase() })
@@ -118,7 +121,17 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
         }
         userPerformerPreferences?.let{ response ->
             Log.d("RecomScreen",response.toString())
-            artistsString = response.performers.take(1).joinToString (separator = "," ) {it.performer.lowercase()}
+
+            artistsString = response.performers.random().performer.lowercase()
+            //val randomPerformer = response.performers.random().performer.lowercase()
+
+            viewModelSpoti.search(artistsString)
+            searchResults?.let{spotiResponse ->
+                Log.d("MainHost",spotiResponse.toString())
+                artistId= spotiResponse.items.filterIsInstance<SpotifySearchItem.ArtistItem>().firstOrNull()?.artist!!.id
+
+            }
+
         }
         val recommendationResults by viewModelSpoti.recommendationResults.observeAsState()
         recommendationResults?.let { tracks ->

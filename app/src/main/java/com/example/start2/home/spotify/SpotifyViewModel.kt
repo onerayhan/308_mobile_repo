@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import org.json.JSONObject
+import com.google.gson.Gson
+
 
 
 open class SpotifyViewModel(protected val token: String) : ViewModel() {
@@ -54,6 +56,16 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
 
     // Public immutable data which the UI can observe
 
+
+    fun exportTopTracksToJson(): String {
+        val topTracksData = topTracks.value
+        return Gson().toJson(topTracksData)
+    }
+
+    fun exportTopArtistsToJson(): String {
+        val topArtistsData = topArtists.value
+        return Gson().toJson(topArtistsData)
+    }
 
     fun saveSelectedTerm(term: String) {
         val result = term
@@ -230,9 +242,9 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
         }
     }
 
-    open fun getRecommendation(recommendationQuery: String) {
+    open fun getRecommendation(recommendationQuery: String, trackQuery: String, artistsQuery: String) {
         viewModelScope.launch {
-            val result = repository.getRecommendation(token,recommendationQuery,"","")
+            val result = repository.getRecommendation(token,recommendationQuery,artistsQuery,trackQuery)
             result?.let {
                 recommendationResults.postValue(it)
             }
@@ -411,6 +423,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             null
         }
     }
+
 
     open suspend fun getSelectedAlbumInfo(token: String?, selectedAlbumId: String) : Album? {
         return try {
