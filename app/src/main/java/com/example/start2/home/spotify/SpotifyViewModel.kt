@@ -233,6 +233,14 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
             recommendationResults.postValue(recommendationResults.value?.copy(tracks = it))
         }
     }
+
+    open fun removeRatedTrackSearch(trackId: String) {
+        val currentTracks = searchResults.value?.items?.filterIsInstance<SpotifySearchItem.TrackItem>()?.toMutableList()
+        currentTracks?.let {
+            it.removeAll { track -> track.track.id == trackId }
+            searchResults.postValue(searchResults.value?.copy(items = it))
+        }
+    }
     open fun search(searchQuery: String) {
         viewModelScope.launch { 
             val result = repository.search(token, searchQuery)
