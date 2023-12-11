@@ -143,17 +143,15 @@ fun AnalysisScreen(
     val profileViewModel =
         viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     val username by profileViewModel.username.observeAsState()
-    //username?.let { profileViewModel.getUserGenrePreferences(it) }
-    // username?.let{  profileViewModel.getUserGenrePreferences(it)}
-    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences(it)}
+    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences()}
 
-    username?.let { profileViewModel.getUserGenrePreferences(it) }
-    username?.let { profileViewModel.getUserPerformerPreferences(it) }
-    //profileViewModel.getUserFollowingsGenrePreferences(username)
+    username?.let { profileViewModel.getUserGenrePreferences() }
+    username?.let { profileViewModel.getUserPerformerPreferences() }
+   // profileViewModel.getUserFollowingsGenrePreferences()
 
     val genrePreferences by profileViewModel.genrePreferences.observeAsState()
     val performerPreferences by profileViewModel.userperformerPreferences.observeAsState()
-    val followingGenrePreferences by profileViewModel.userFollowingsGenrePreferences.observeAsState()
+    //val followingGenrePreferences by profileViewModel.userFollowingsGenrePreferences.observeAsState()
     Scaffold(
         topBar = { AnalysisTopBar(title = "Your Song Activity") }
     ) { contentPadding ->
@@ -181,23 +179,19 @@ fun AnalysisScreen(
                     Text(text = "Go to Analysis Table")
                 }
             }
-            followingGenrePreferences?.let {
-                val horizontalAxisValueFormatter1 = createFollowingGenreNameFormatter(it)
-                val chartData = convertFollowingGenrePreferencesToChartData(it)
-                // createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
 
-            }
             Spacer(modifier = Modifier.height(50.dp))
 
             performerPreferences?.let {
                 val horizontalAxisValueFormatter1 = createPerformerNameFormatter(it)
                 val chartData = convertPerformerPreferencesToChartData(it)
-                //  createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
+                createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
 
             }
             genrePreferences?.let {
                 // Ensure genrePreferences is not null before passing it
                 val horizontalAxisValueFormatter = createGenreNameFormatter(it)
+
                 val chartData = convertGenrePreferencesToChartData(it)
                 createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter)
             }

@@ -117,7 +117,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
     var selectedImageFile by rememberSaveable { mutableStateOf<File?>(null) }
 
 
-    profileViewModel.getUserGenrePreferences("aa")
+    profileViewModel.getUserGenrePreferences()
 
 
 
