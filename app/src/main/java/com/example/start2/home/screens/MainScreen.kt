@@ -1,5 +1,6 @@
 package com.example.start2.home.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -38,7 +40,7 @@ fun MainScreen(viewModel: SpotifyViewModel, musicViewModel: MusicViewModel) {
         bottomBar = {
             BottomNavBar(navController = navController, currentSelectedScreen = currentSelectedScreen)
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(color = Color(61,24,81)),
     ) {
         Box(
             modifier = Modifier
@@ -55,7 +57,7 @@ private fun BottomNavBar(
     navController: NavController,
     currentSelectedScreen: RootScreen
 ) {
-    NavigationBar {
+    NavigationBar(modifier = Modifier.background(color = Color(61,24,81))) {
         NavigationBarItem(
             selected = currentSelectedScreen == RootScreen.Home,
             onClick = { navController.navigateToRootScreen(RootScreen.Home) },

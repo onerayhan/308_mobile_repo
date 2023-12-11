@@ -164,7 +164,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFD62964)) // Dark background color
+            .background(color = Color(31,44,71)) // Dark background color
             .padding(16.dp)
     )  {
             Column(
@@ -176,27 +176,29 @@ fun HomeScreen(
                 // Song Name and Username
                 ExpandableCard(title = "Add Song Manually") {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth()
+                            .background(color = Color(61,24,81)),
                         horizontalArrangement = Arrangement.SpaceBetween
+
                     ) {
                         OutlinedTextField(
                             value = songName,
                             onValueChange = { songName = it },
                             label = { Text("Song Name", color = Color.White) },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f).background(color = Color(61,24,81)),
                         )
 
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(16.dp).background(color = Color(61,24,81)),)
 
                         OutlinedTextField(
                             value = username,
                             onValueChange = { username = it },
                             label = { Text("Username", color = Color.White) },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f).background(color = Color(61,24,81)),
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)),)
 
                     // Other Text Fields...
 
@@ -204,10 +206,10 @@ fun HomeScreen(
                         value = length,
                         onValueChange = { length = it },
                         label = { Text("Length (HH:MM:SS)", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
 
 
                     OutlinedTextField(
@@ -215,101 +217,101 @@ fun HomeScreen(
                         onValueChange = { tempo = it },
                         label = { Text("Tempo", color = Color.White) },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
                     OutlinedTextField(
                         value = albumName,
                         onValueChange = { albumName = it },
                         label = { Text("Album Name", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
 
                     OutlinedTextField(
                         value = albumReleaseYear,
                         onValueChange = { albumReleaseYear = it },
                         label = { Text("Album Release Year", color = Color.White) },
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
                     OutlinedTextField(
                         value = performerName,
                         onValueChange = { performerName = it },
                         label = { Text("Performer Name", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
                     OutlinedTextField(
                         value = genre,
                         onValueChange = { genre = it },
                         label = { Text("Genre", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
 
                     OutlinedTextField(
                         value = mood,
                         onValueChange = { mood = it },
                         label = { Text("Mood", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
 
                     OutlinedTextField(
                         value = instrument,
                         onValueChange = { instrument = it },
                         label = { Text("Instrument", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81)),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         OutlinedTextField(
                             value = recordingType,
                             onValueChange = { recordingType = it },
                             label = { Text("Recording Type", color = Color.White) },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f).background(color = Color(61,24,81))
                         )
 
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(16.dp).background(color = Color(61,24,81)))
 
                         OutlinedTextField(
                             value = listens,
                             onValueChange = { listens = it },
                             label = { Text("Listens", color = Color.White) },
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f).background(color = Color(61,24,81))
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
 
                     OutlinedTextField(
                         value = releaseYear,
                         onValueChange = { releaseYear = it },
                         label = { Text("Release Year (YYYY-MM-DD)", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81))
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp).background(color = Color(61,24,81)))
 
                     OutlinedTextField(
                         value = addedTimestamp,
                         onValueChange = { addedTimestamp = it },
                         label = { Text("Added Timestamp (HH:MM:SS)", color = Color.White) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().background(color = Color(61,24,81))
                     )
 
 
@@ -325,6 +327,7 @@ fun HomeScreen(
                          modifier = Modifier
                              .fillMaxWidth()
                              .height(50.dp)
+
                 ) {
                     Text("Select File", color = Color.White)
                 }
@@ -433,15 +436,17 @@ fun ExpandableCard(title: String, content: @Composable () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .background(color = Color(61,24,81)),
         onClick = { expanded = !expanded }
     ) {
-        Column {
+        Column (modifier = Modifier.background(color = Color(61,24,81))){
             Text(
                 text = title,
                 modifier = Modifier
                     .padding(16.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                ,
                 color = Color.White
             )
 

@@ -3,7 +3,10 @@ package com.example.start2.home.navigators
 import AnalysisScreen
 import FollowersScreen
 import SingerScreen
+import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -36,7 +39,8 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = RootScreen.Home.route
+        startDestination = RootScreen.Home.route,
+        modifier = Modifier.background(color = Color(61,24,81))
     ) {
         addHomeRoute(navController, musicViewModel, spotifyViewModel)
         addRateRoute(navController,spotifyViewModel)

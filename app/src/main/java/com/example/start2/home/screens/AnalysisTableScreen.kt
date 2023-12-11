@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -170,12 +171,12 @@ fun AnalysisTableHeader(sortState: SortState, onSortChange: (SortAttribute) -> U
 
     Row (modifier = Modifier
         .fillMaxWidth()
-        .background(Color.Red)){
+        .background(color = Color(31, 44, 71))){
 
         // Create clickable text for each sortable attribute
-        Text("Name", Modifier.clickable { onSortChange(SortAttribute.NAME) })
+        Text("Name", Modifier.clickable { onSortChange(SortAttribute.NAME) },  color = Color.White,)
         Spacer(Modifier.width(8.dp))
-        Text("Duration", Modifier.clickable { onSortChange(SortAttribute.DURATION_MS) })
+        Text("Duration", Modifier.clickable { onSortChange(SortAttribute.DURATION_MS) }, color = Color.White,)
         // Add more attributes as needed
     }
 }
@@ -189,7 +190,9 @@ fun AnalysisTableContentTracks(
     onArtistSelect: (String) -> Unit
 ) {
 
-    Column (modifier = Modifier.fillMaxWidth()){
+    Column (modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Color(31, 44, 71))){
         // Implement filter dropdowns
         //FilterDropdowns(selectedFilter, onFilterChange)
 
@@ -197,6 +200,8 @@ fun AnalysisTableContentTracks(
         LazyColumn (){
             items(songs) { song ->
                 TrackItem(song, onSongSelect, onAlbumSelect, onArtistSelect)
+                Spacer(modifier = Modifier.fillMaxWidth().height(2.dp))
+
             }
         }
     }
@@ -213,7 +218,7 @@ fun AnalysisTableContentArtists(
         LazyColumn {
             items(artists) { artist ->
                 ArtistItem(artist = artist, onArtistSelect)
-
+                Spacer(modifier = Modifier.fillMaxWidth().height(2.dp))
 
             }
         }
@@ -243,12 +248,13 @@ fun ArtistItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(8.dp))
+            .background(color = Color(31,44,71), RoundedCornerShape(8.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .padding(16.dp)
             .clickable {
                 val artistId = artist.id
-                onArtistSelect(artistId) },
+                onArtistSelect(artistId)
+            },
         verticalAlignment = Alignment.CenterVertically,
 
     ) {
@@ -266,7 +272,8 @@ fun ArtistItem(
         )
         Text(
             text = artist.name,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.White
             // Add other styling as required
         )
 
@@ -284,7 +291,7 @@ fun TrackItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White, RoundedCornerShape(8.dp))
+            .background(color = Color(31,44,71), RoundedCornerShape(8.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -306,14 +313,14 @@ fun TrackItem(
                 text = "${track.name}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = Color.Black,
+                color = Color.White,
                 modifier = Modifier
                     .padding(bottom = 4.dp)
                     .clickable(onClick = { onSongSelect(track.id) }),
             )
             Text(
                 text = "${track.artists.joinToString { it.name }}",
-                color = Color.Black.copy(alpha = 0.7f),
+                color = Color.White.copy(alpha = 0.7f),
                 modifier = Modifier
                     .padding(bottom = 4.dp)
                     .clickable {
@@ -323,14 +330,14 @@ fun TrackItem(
             )
             Text(
                 text = "${track.album.name}",
-                color = Color.Black.copy(alpha = 0.7f),
+                color = Color.White.copy(alpha = 0.7f),
                 modifier = Modifier
                     .padding(bottom = 4.dp)
                     .clickable { onAlbumSelect(track.album.id) }
             )
             Text(
                 text = "${track.duration_ms.millisecondsToMinutes()} min",
-                color = Color.Black.copy(alpha = 0.7f)
+                color = Color.White.copy(alpha = 0.7f)
             )
             // Add additional attributes here if needed
         }
@@ -433,7 +440,8 @@ fun FilterDropdowns(selectedFilter: String, onFilterSelected: (String) -> Unit) 
             text = selectedFilter,
             modifier = Modifier
                 .clickable(onClick = { expanded = true })
-                .padding(16.dp)
+                .padding(16.dp),
+            color = Color.White
         )
 
         DropdownMenu(
@@ -462,6 +470,7 @@ fun DisplayModeDropdown(currentMode: String, onModeSelected: (String) -> Unit) {
         Text(
             text = currentMode,
             modifier = Modifier.clickable(onClick = { expanded = true }),
+            color = Color.White,
             fontSize = 30.sp,
         )
 
