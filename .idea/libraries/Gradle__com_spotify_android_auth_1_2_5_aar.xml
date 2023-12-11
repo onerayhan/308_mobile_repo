@@ -1,15 +1,15 @@
 <component name="libraryTable">
   <library name="Gradle: com.spotify.android:auth:1.2.5@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d74194873745a5d443a234203eb0c9a3/transformed/auth-1.2.5/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/d74194873745a5d443a234203eb0c9a3/transformed/auth-1.2.5/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d74194873745a5d443a234203eb0c9a3/transformed/auth-1.2.5/AndroidManifest.xml" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/d74194873745a5d443a234203eb0c9a3/transformed/auth-1.2.5/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/d74194873745a5d443a234203eb0c9a3/transformed/auth-1.2.5/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/d74194873745a5d443a234203eb0c9a3/transformed/auth-1.2.5/res" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.spotify.android/auth/1.2.5/6eb2e20a3b961df0dfeffffe28708b827fa858b6/auth-1.2.5-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/com.spotify.android/auth/1.2.5/6eb2e20a3b961df0dfeffffe28708b827fa858b6/auth-1.2.5-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.spotify.android/auth/1.2.5/1a9dfab55d7aa1a23f89e96f9b20ffca86c4975/auth-1.2.5-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/com.spotify.android/auth/1.2.5/1a9dfab55d7aa1a23f89e96f9b20ffca86c4975/auth-1.2.5-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

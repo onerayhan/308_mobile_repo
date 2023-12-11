@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.compose.animation:animation-android:1.6.0-beta01@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/fa932532552463f401a544e565a33760/transformed/animation-release/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/fa932532552463f401a544e565a33760/transformed/animation-release/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/fa932532552463f401a544e565a33760/transformed/animation-release/res" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/fa932532552463f401a544e565a33760/transformed/animation-release/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/fa932532552463f401a544e565a33760/transformed/animation-release/res" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/fa932532552463f401a544e565a33760/transformed/animation-release/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.compose.animation/animation-android/1.6.0-beta01/27aa2d32e041aea52984494d495501e8a8c753da/animation-android-1.6.0-beta01-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.compose.animation/animation-android/1.6.0-beta01/27aa2d32e041aea52984494d495501e8a8c753da/animation-android-1.6.0-beta01-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
