@@ -1,15 +1,15 @@
 <component name="libraryTable">
   <library name="Gradle: com.patrykandpatrick.vico:views:1.12.0@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/bced7cc381e572911b523026a8562a5c/transformed/views-1.12.0/AndroidManifest.xml" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/bced7cc381e572911b523026a8562a5c/transformed/views-1.12.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/bced7cc381e572911b523026a8562a5c/transformed/views-1.12.0/jars/classes.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/bced7cc381e572911b523026a8562a5c/transformed/views-1.12.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/bced7cc381e572911b523026a8562a5c/transformed/views-1.12.0/res" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/bced7cc381e572911b523026a8562a5c/transformed/views-1.12.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/views/1.12.0/2ce053058db28fe284e0ae149d76cf9f234e7ab2/views-1.12.0-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/com.patrykandpatrick.vico/views/1.12.0/2ce053058db28fe284e0ae149d76cf9f234e7ab2/views-1.12.0-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.patrykandpatrick.vico/views/1.12.0/720d3767d103dc152ad0518e0d723e120c6c6c7a/views-1.12.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/com.patrykandpatrick.vico/views/1.12.0/720d3767d103dc152ad0518e0d723e120c6c6c7a/views-1.12.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

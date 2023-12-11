@@ -242,7 +242,7 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
         }
     }
     open fun search(searchQuery: String) {
-        viewModelScope.launch { 
+        viewModelScope.launch {
             val result = repository.search(token, searchQuery)
             result?.let {
                 searchResults.postValue(it)
@@ -476,9 +476,9 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
         } catch(e: Exception) {
             null
         }
-        
+
     }
-//TODO:: Implement user entry recommendation
+    //TODO:: Implement user entry recommendation
     open suspend fun getRecommendation(token: String?, recommendationQuery: String , artistsQuery: String, trackQuery: String) : SpotifyRecommendationsResponse? {
         return try {
             Log.d("RegistrationActivity", "big in japan")

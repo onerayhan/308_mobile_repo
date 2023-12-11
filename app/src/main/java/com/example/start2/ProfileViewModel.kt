@@ -764,20 +764,13 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             delay(3000)
             try {
                 val gson = Gson()
-                val json = gson.toJson(
-                    mapOf(
-                        "username" to _username.value.toString(),
-                        "song_id" to songId,
-                        "rating" to rating
-                    )
-                )
+                val json = gson.toJson(mapOf("username" to _username.value.toString(), "song_id" to songId, "rating" to rating))
 
                 val mediaType = "application/json; charset=utf-8".toMediaType()
                 val requestBody = json.toRequestBody(mediaType)
 
                 val client = OkHttpClient()
-                val url =
-                    "http://51.20.128.164/api/add_user_song_ratings"  // Replace with your actual API base URL
+                val url = "http://51.20.128.164/api/add_user_song_ratings"  // Replace with your actual API base URL
                 val postRequest = Request.Builder()
                     .url(url)
                     .post(requestBody)
@@ -802,25 +795,17 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             }
         }
     }
-
-    fun addSongtr(songName: String, songId: String, rating: Int) {
+    fun addSongtr(songName: String, songId: String,rating: Int) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val gson = Gson()
-                val json = gson.toJson(
-                    mapOf(
-                        "username" to _username.value.toString(),
-                        "song_name" to songName,
-                        "external_song_id" to songId
-                    )
-                )
+                val json = gson.toJson(mapOf("username" to _username.value.toString(), "song_name" to songName, "external_song_id" to songId))
 
                 val mediaType = "application/json; charset=utf-8".toMediaType()
                 val requestBody = json.toRequestBody(mediaType)
 
                 val client = OkHttpClient()
-                val url =
-                    "http://51.20.128.164/api/add_song"  // Replace with your actual API base URL
+                val url = "http://51.20.128.164/api/add_song"  // Replace with your actual API base URL
                 val postRequest = Request.Builder()
                     .url(url)
                     .post(requestBody)
@@ -843,7 +828,9 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                     // Now you can work with the extracted values
                     Log.d("NetworkRequest", "Message: $message")
                     Log.d("NetworkRequest", "Song ID: $songId")
-                    addUserSongRating(songId, rating)
+                    addUserSongRating(songId,rating)
+
+
 
 
                 } else {
@@ -1072,7 +1059,9 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 val song = Song(
                     title = songObject.getString("song_name"),
                     artist = songObject.getString("performer_name"),
-                    album = songObject.getString("album_name")
+                    album = songObject.getString("album_name"),
+                    duration = songObject.getString("length")
+
 
                     // Add other properties as needed
                 )

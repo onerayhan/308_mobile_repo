@@ -221,4 +221,3 @@ fun AnalysisTopBar(title: String) {
         )
     })
 }
-

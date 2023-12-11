@@ -18,8 +18,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,42 +38,61 @@ import com.example.start2.ProfileViewModelFactory
 import com.example.start2.R
 import com.example.start2.UserPreferences
 
+// https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1200px-Google_Images_2015_logo.svg.png
 
+/*
 data class Follower(val username: String, val profilePic: String)
+
 
 @Composable
 fun FollowersScreen() {
-
-    val context = LocalContext.current
-    val userPreferences= remember{ UserPreferences(context) }
-    val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
-
-
-    val m= profileViewModel.getUserFollowings()
-
     val followers = listOf(
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
-        Follower("Serhat Akın", "https://example.com/profile1.jpg"),
-        Follower("Serdar Ali", "https://example.com/profile2.jpg"),
+        Follower("user1", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1200px-Google_Images_2015_logo.svg.png"),
+        Follower("user2", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1200px-Google_Images_2015_logo.svg.png"),
         // Add more dummy followers
     )
 
     LazyColumn {
         items(followers) { follower ->
             FollowerItem(follower)
+        }
+    }
+}
+
+@Composable
+fun FollowerItem(follower: Follower) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(painter = rememberAsyncImagePainter(follower.profilePic), contentDescription = null)
+        Text(text = follower.username)
+    }
+}
+
+
+@Composable
+@Preview
+fun FollowersScreenPreview() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        FollowersScreen()
+    }
+}
+*/
+
+data class Follower(val username: String, val profilePic: String)
+
+@Composable
+fun FollowersScreen() {
+    val context = LocalContext.current
+    val userPreferences= remember{ UserPreferences(context) }
+    val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
+
+    val followers = profileViewModel.getUserFollowings()
+
+    LazyColumn {
+        items(6) { follower ->
+            followers
         }
     }
 }

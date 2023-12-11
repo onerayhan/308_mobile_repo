@@ -8,11 +8,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface UserFollowingsAlbumPreferencesService {
+interface UserFallowingsAlbumPreferencesService {
     @POST("/api/user_followings_album_preference")
     suspend fun getUserFallowingsAlbumPreferences(
         @Body request: JsonObject
-    ): Response<UserAlbumPreferencesResponse>
+    ): Response<UserFallowingsAlbumPreferencesResponse>
 }
 
 object UserFallowingsAlbumPreferencesServiceProvider {
@@ -20,7 +20,7 @@ object UserFallowingsAlbumPreferencesServiceProvider {
         .baseUrl("http://51.20.128.164/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    val instance: UserAlbumPreferencesService by lazy {
-        retrofit.create(UserAlbumPreferencesService::class.java)
+    val instance: UserFallowingsAlbumPreferencesService by lazy {
+        retrofit.create(UserFallowingsAlbumPreferencesService::class.java)
     }
 }
