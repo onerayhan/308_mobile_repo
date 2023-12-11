@@ -4,7 +4,6 @@ package com.example.start2
 data class Song(
     val title: String,
     val artist: String,
-    val duration: String,
     val album: String
     // Add other properties as needed
 )
