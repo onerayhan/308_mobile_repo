@@ -63,7 +63,7 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
             ) { trackId, rating ->
                 rateSuggestions!!.tracks.find { it.id == trackId }?.let { track ->
                     // Handle rating change, if needed
-                    profileViewModel.addSongtr(track.name,track.id,rating)
+                    profileViewModel.addSongtr(track.name,track.id,rating,track.album.name,track.artists.first().name.toString(),track.album.type)
 
 
 
