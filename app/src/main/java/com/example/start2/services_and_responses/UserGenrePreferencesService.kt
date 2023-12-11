@@ -12,6 +12,7 @@ interface UserGenrePreferencesService {
     suspend fun getUserGenrePreferences(
         @Body request: JsonObject
     ): Response<UserGenrePreferencesResponse>
+
 }
 
 object UserGenrePreferencesServiceProvider {

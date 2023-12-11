@@ -52,6 +52,11 @@ android {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-client-core:1.6.6")
+    implementation("io.ktor:ktor-client-json:1.6.6")
+    implementation("io.ktor:ktor-client-serialization:1.6.6")
+    implementation("io.ktor:ktor-client-logging:1.6.6")
+    implementation ("com.spotify.android:auth:1.2.5")
     implementation ("androidx.compose.ui:ui:1.0.0")
     implementation ("androidx.compose.material:material:1.0.0")
     implementation ("androidx.activity:activity-compose:1.3.0")

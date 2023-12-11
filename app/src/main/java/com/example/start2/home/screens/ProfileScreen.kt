@@ -71,13 +71,9 @@ fun ProfileScreen(navController: NavController) {
     val username by profileViewModel.username.observeAsState()
 
 
-
-
-
     LaunchedEffect(Unit) {
         profileViewModel.fetchUserProfile()
     }
-
 
     // Observing the state from the ViewModel
     val userProfile by profileViewModel.userProfile
@@ -104,23 +100,14 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
     val context = LocalContext.current
     val userPreferences= remember { UserPreferences(context) }
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
-    val songListLiveData = profileViewModel.songList
-    val genrePref by profileViewModel.genrePreferences.observeAsState()
 
-    val favoriteSongs = songListLiveData.observeAsState(initial = emptyList())
 
 
     val selectedImageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
 
     var enteredUsername by rememberSaveable { mutableStateOf("") }
-
+    val favoriteSongs = remember { mutableStateOf<List<Song>>(emptyList()) }
     var selectedImageFile by rememberSaveable { mutableStateOf<File?>(null) }
-
-
-    profileViewModel.getUserGenrePreferences("aa")
-
-
-
 
     val openGalleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         // Handle the result of the gallery picker here
@@ -129,10 +116,14 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
         }
     }
 
-    profileViewModel.fetchUserSongs()
-
-
     userProfile?.let { profile ->
+
+        // Favori şarkıları ve şarkıları ekleyin (Örnek şarkı bilgileri)
+        favoriteSongs.value = listOf(
+
+
+        )
+        profileViewModel.fetchUserSongs()
 
         Box(
             modifier = Modifier
@@ -222,7 +213,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                             .align(alignment = Alignment.TopStart)
                             .offset(
                                 x = 27.5.dp,
-                                y = 144.5.dp
+                                y = 193.5.dp
                             )
                             .requiredWidth(width = 140.dp)
                             .requiredHeight(height = 140.dp)
@@ -303,45 +294,8 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     }
             )
 
-            Box(
-                modifier = Modifier
-                    .padding(start = 40.dp, top = 350.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.rectangle_12__1_),
-                    contentDescription = "Rectangle 12",
-                    modifier = Modifier
-                        .align(alignment = Alignment.TopStart)
-                        .clip(shape = RoundedCornerShape(16.dp))
-                )
-
-                OutlinedTextField(
-                    value = enteredUsername,
-                    onValueChange = { enteredUsername = it },
-                    textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
-                    placeholder = { Text("Search friend", color = Color.White) },
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                )
-                val dataToSend = MyData(enteredUsername)
-
-                // Assign the data to the singleton object
-                DataHolder.myData = dataToSend
-
-                Button(
-                    onClick = {
-                        navController.navigateToLeafScreen(LeafScreen.FriendScreen)
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                ) {
-                    Text("enter")
-                }
-            }
-
-
             Column(
-                modifier = Modifier.padding(top=100.dp)
+                modifier = Modifier.padding(top=30.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -365,14 +319,11 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     )
                 }
 
-
                 LazyColumn(
                     modifier = Modifier
                         .padding(top=30.dp)
                         .fillMaxWidth()
                 ) {
-
-
                     items(favoriteSongs.value) { song ->
                         Row(
                             modifier = Modifier
@@ -401,7 +352,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                                     .padding(8.dp)
                             )
                             Text(
-                                text = song.album,
+                                text = song.duration,
                                 color = Color.White,
                                 style = TextStyle(fontSize = 16.sp),
                                 modifier = Modifier
@@ -413,7 +364,45 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                 }
 
 
+                Box(
+                    modifier = Modifier
+                        .padding(start = 40.dp, top = 20.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.rectangle_12__1_),
+                        contentDescription = "Rectangle 12",
+                        modifier = Modifier
+                            .align(alignment = Alignment.TopStart)
+                            .offset(
+                                x = 43.dp,
+                                y = 518.dp
+                            )
+                            .clip(shape = RoundedCornerShape(16.dp))
+                    )
 
+                    OutlinedTextField(
+                        value = enteredUsername,
+                        onValueChange = { enteredUsername = it },
+                        textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
+                        placeholder = { Text("Search friend", color = Color.White) },
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                    )
+                    val dataToSend = MyData(enteredUsername)
+
+                    // Assign the data to the singleton object
+                    DataHolder.myData = dataToSend
+
+                    Button(
+                        onClick = {
+                            navController.navigateToLeafScreen(LeafScreen.FriendScreen)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        Text("enter")
+                    }
+                }
 
             }
         }
