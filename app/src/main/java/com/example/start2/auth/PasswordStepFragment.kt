@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.auth
 import android.content.Context
 import android.widget.EditText
 import android.widget.Button
@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.start2.R
 
 class PasswordStepFragment : Fragment() {
 

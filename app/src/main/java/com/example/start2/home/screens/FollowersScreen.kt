@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
@@ -26,17 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.size.Scale
-import com.example.start2.ProfileViewModel
-import com.example.start2.ProfileViewModelFactory
+import com.example.start2.home.Profile.ProfileViewModel
+import com.example.start2.home.Profile.ProfileViewModelFactory
 import com.example.start2.R
-import com.example.start2.UserPreferences
+import com.example.start2.home.Profile.UserPreferences
 
 // https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Google_Images_2015_logo.svg/1200px-Google_Images_2015_logo.svg.png
 

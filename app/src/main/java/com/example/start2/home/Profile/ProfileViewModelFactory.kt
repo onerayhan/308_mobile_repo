@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.home.Profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

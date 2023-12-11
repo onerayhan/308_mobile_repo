@@ -1,6 +1,4 @@
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,18 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -33,9 +27,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import com.example.start2.ProfileViewModel
-import com.example.start2.ProfileViewModelFactory
-import com.example.start2.UserPreferences
+import com.example.start2.home.Profile.ProfileViewModel
+import com.example.start2.home.Profile.ProfileViewModelFactory
+import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.ui.createColumnChart
@@ -75,7 +69,7 @@ fun convertPerformerPreferencesToChartData(performerPreferences: ProfileViewMode
     }
 }
 // Convert GenrePreferences to Chart Data
-fun convertGenrePreferencesToChartData(genrePreferences: com.example.start2.ProfileViewModel.UserGenrePreferencesResponse): List<FloatEntry> {
+fun convertGenrePreferencesToChartData(genrePreferences: ProfileViewModel.UserGenrePreferencesResponse): List<FloatEntry> {
     // Convert the genre preferences data to the format required by your chart
     return genrePreferences.genre.mapIndexed { index, genrePreference ->
         FloatEntry(x = index.toFloat(), y = genrePreference.count.toFloat())
@@ -143,17 +137,15 @@ fun AnalysisScreen(
     val profileViewModel =
         viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     val username by profileViewModel.username.observeAsState()
-    //username?.let { profileViewModel.getUserGenrePreferences(it) }
-    // username?.let{  profileViewModel.getUserGenrePreferences(it)}
-    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences(it)}
+    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences()}
 
-    username?.let { profileViewModel.getUserGenrePreferences(it) }
-    username?.let { profileViewModel.getUserPerformerPreferences(it) }
-    //profileViewModel.getUserFollowingsGenrePreferences(username)
+    username?.let { profileViewModel.getUserGenrePreferences() }
+    username?.let { profileViewModel.getUserPerformerPreferences() }
+   // profileViewModel.getUserFollowingsGenrePreferences()
 
     val genrePreferences by profileViewModel.genrePreferences.observeAsState()
     val performerPreferences by profileViewModel.userperformerPreferences.observeAsState()
-    val followingGenrePreferences by profileViewModel.userFollowingsGenrePreferences.observeAsState()
+    //val followingGenrePreferences by profileViewModel.userFollowingsGenrePreferences.observeAsState()
     Scaffold(
         topBar = { AnalysisTopBar(title = "Your Song Activity") }
     ) { contentPadding ->
@@ -181,23 +173,19 @@ fun AnalysisScreen(
                     Text(text = "Go to Analysis Table")
                 }
             }
-            followingGenrePreferences?.let {
-                val horizontalAxisValueFormatter1 = createFollowingGenreNameFormatter(it)
-                val chartData = convertFollowingGenrePreferencesToChartData(it)
-                // createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
 
-            }
             Spacer(modifier = Modifier.height(50.dp))
 
             performerPreferences?.let {
                 val horizontalAxisValueFormatter1 = createPerformerNameFormatter(it)
                 val chartData = convertPerformerPreferencesToChartData(it)
-                //  createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
+                createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
 
             }
             genrePreferences?.let {
                 // Ensure genrePreferences is not null before passing it
                 val horizontalAxisValueFormatter = createGenreNameFormatter(it)
+
                 val chartData = convertGenrePreferencesToChartData(it)
                 createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter)
             }

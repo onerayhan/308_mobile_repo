@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -25,21 +23,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.start2.DataHolder
+import com.example.start2.viewmodels.DataHolder
 
-import com.example.start2.ProfileViewModel
-import com.example.start2.ProfileViewModelFactory
-import com.example.start2.R
-import com.example.start2.UserPreferences
-import com.example.start2.home.UserProfileContent
-import com.example.start2.home.navigators.LeafScreen
+import com.example.start2.home.Profile.ProfileViewModel
+import com.example.start2.home.Profile.ProfileViewModelFactory
+import com.example.start2.home.Profile.UserPreferences
 import java.io.File
 
 @Composable
@@ -48,7 +41,7 @@ fun FriendScreen(
 ) {
 
     val context = LocalContext.current
-    val userPreferences= remember{UserPreferences(context)}
+    val userPreferences= remember{ UserPreferences(context) }
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     val username by profileViewModel.username.observeAsState()
 
@@ -72,7 +65,7 @@ fun FriendScreen(
 @Composable
 fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?) {
     val context = LocalContext.current
-    val userPreferences= remember{UserPreferences(context)}
+    val userPreferences= remember{ UserPreferences(context) }
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
 
 

@@ -4,7 +4,6 @@ package com.example.start2.home.screens
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
@@ -47,27 +46,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewModelScope
 
 import androidx.navigation.NavController
-import com.example.start2.ProfileViewModel
-import com.example.start2.ProfileViewModelFactory
-import com.example.start2.UserPreferences
+import com.example.start2.home.Profile.ProfileViewModel
+import com.example.start2.home.Profile.ProfileViewModelFactory
+import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.viewmodels.MusicViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
 
 
 @RequiresApi(Build.VERSION_CODES.R)
@@ -81,7 +74,7 @@ fun HomeScreen(
 
     val batchResult by musicViewModel.batchResult.observeAsState()
     val context = LocalContext.current
-    val userPreferences= remember{UserPreferences(context)}
+    val userPreferences= remember{ UserPreferences(context) }
     val profileViewModel = viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     var fileUriToWrite by remember { mutableStateOf<Uri?>(null) }
     var jsonContentToWrite by remember { mutableStateOf<String?>(null) }

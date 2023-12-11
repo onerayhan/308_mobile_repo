@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.auth
 
 interface LoginListener {
     suspend fun onSpotify(): Boolean

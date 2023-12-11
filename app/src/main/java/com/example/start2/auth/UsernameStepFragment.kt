@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.auth
 
 import android.content.Context
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.start2.auth.RegistrationStepsListener
 import com.example.start2.databinding.FragmentUsernameStepBinding
 
 

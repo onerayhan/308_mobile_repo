@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.home.Profile
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.example.start2.services_and_responses.UserGenrePreferencesResponse
+import com.example.start2.ApiManager
+import com.example.start2.auth.Song
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -132,13 +133,13 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     val userFollowingsGenrePreferences: LiveData<UserFollowingsGenrePreferencesResponse>
         get() = _userFollowingsGenrePreferences
 
-    fun getUserFollowingsGenrePreferences(username: String) {
+    fun getUserFollowingsGenrePreferences() {
         viewModelScope.launch {
             try {
                 _loading.value = true  // Corrected
                 val url = "http://51.20.128.164/api/user_followings_genre_preference"
                 val requestBody = JSONObject().apply {
-                    put("username", username)
+                    put("username",  _username.value.orEmpty())
                 }.toString()
 
                 val mediaType = "application/json; charset=utf-8".toMediaType()
@@ -209,7 +210,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     private val _userperformerPreferences = MutableLiveData<UserPerformerPreferencesResponse>()
     val userperformerPreferences: LiveData<UserPerformerPreferencesResponse>
         get() = _userperformerPreferences
-    fun getUserPerformerPreferences(username: String) {
+    fun getUserPerformerPreferences() {
         viewModelScope.launch {
             try {
                 // Your existing loading and error handling LiveData
@@ -217,7 +218,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
 
                 val url = "http://51.20.128.164/api/user_performer_preference"
                 val requestBody = JSONObject().apply {
-                    put("username", username)
+                    put("username", _username.value.orEmpty())
                 }.toString()
 
                 val mediaType = "application/json; charset=utf-8".toMediaType()
@@ -275,7 +276,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     private val _genrePreferences = MutableLiveData<UserGenrePreferencesResponse>()
     val genrePreferences: LiveData<UserGenrePreferencesResponse>
         get() = _genrePreferences
-    fun getUserGenrePreferences(username: String) {
+    fun getUserGenrePreferences() {
         Log.d("nonono", "1111NEOLDU123")
 
         viewModelScope.launch {
@@ -287,7 +288,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
 
                 // Create a JSON request body
                 val requestBody = JSONObject().apply {
-                    put("username", username)
+                    put("username",  _username.value.orEmpty())
                 }.toString()
 
                 val mediaType = "application/json; charset=utf-8".toMediaType()
@@ -795,11 +796,11 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             }
         }
     }
-    fun addSongtr(songName: String, songId: String,rating: Int) {
+    fun addSongtr(songName: String, songId: String,rating: Int,alb: String,artist: String,genre: String) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val gson = Gson()
-                val json = gson.toJson(mapOf("username" to _username.value.toString(), "song_name" to songName, "external_song_id" to songId))
+                val json = gson.toJson(mapOf("username" to _username.value.toString(), "song_name" to songName, "external_song_id" to songId, "album_name" to alb, "performer_name" to artist,"genre" to genre))
 
                 val mediaType = "application/json; charset=utf-8".toMediaType()
                 val requestBody = json.toRequestBody(mediaType)
@@ -993,8 +994,8 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         }
     }
 
-    private val _songList = MutableLiveData<List<com.example.start2.Song>>()
-    val songList: LiveData<List<com.example.start2.Song>> get() = _songList
+    private val _songList = MutableLiveData<List<com.example.start2.auth.Song>>()
+    val songList: LiveData<List<com.example.start2.auth.Song>> get() = _songList
 
 
 
@@ -1053,7 +1054,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         try {
             val jsonArray = JSONArray(response)
 
-            val songs = mutableListOf<com.example.start2.Song>()
+            val songs = mutableListOf<com.example.start2.auth.Song>()
             for (i in 0 until jsonArray.length()) {
                 val songObject = jsonArray.getJSONObject(i)
                 val song = Song(

@@ -32,7 +32,7 @@
             android:theme="@style/Theme.Start2" />
 
         <!-- WelcomeActivity, initial activity -->
-        <activity android:name=".WelcomeActivity"
+        <activity android:name=".auth.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +41,7 @@
         </activity>
 
         <activity
-            android:name=".MainHostActivity"
+            android:name=".auth.MainHostActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.Start2"
             android:exported="true">
@@ -54,7 +54,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".RegistrationActivity"
+        <activity android:name=".auth.RegistrationActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

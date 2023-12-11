@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.viewmodels
 
 object DataHolder {
     var myData: MyData? = null

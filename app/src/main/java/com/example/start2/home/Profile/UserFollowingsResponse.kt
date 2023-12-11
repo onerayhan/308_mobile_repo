@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.home.Profile
 
 data class UserFollowingsResponse(
     val success: Boolean,

@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
             import androidx.navigation.NavController
             import androidx.navigation.compose.rememberNavController
-            import com.example.start2.ProfileViewModel
-            import com.example.start2.ProfileViewModelFactory
-            import com.example.start2.UserPreferences
+            import com.example.start2.home.Profile.ProfileViewModel
+            import com.example.start2.home.Profile.ProfileViewModelFactory
+            import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.viewmodels.MusicViewModel
 

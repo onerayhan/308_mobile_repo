@@ -1,5 +1,6 @@
 package com.example.start2.home.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,19 +23,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.start2.ProfileViewModel
-import com.example.start2.ProfileViewModelFactory
+import com.example.start2.home.Profile.ProfileViewModel
+import com.example.start2.home.Profile.ProfileViewModelFactory
 import com.example.start2.R
-import com.example.start2.UserPreferences
+import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.spotify.SpotifySearchItem
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.swipecomponents.Item
-import kotlinx.coroutines.delay
 
 
 enum class DisplayContent {
@@ -55,7 +54,7 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
     var contentToShow by remember { mutableStateOf(DisplayContent.RateSuggestions) }
 
 
-    Column {
+    Column(modifier = Modifier.background(color = Color(61,24,81)).fillMaxWidth()) {
         TextField(
             value = rateQuery,
             onValueChange = { rateQuery = it },
@@ -87,7 +86,8 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
                     ) { trackId, rating ->
                         rateSuggestions!!.tracks.find { it.id == trackId }?.let { track ->
                             // Handle rating change, if needed
-                            profileViewModel.addSongtr(track.name, track.id, rating)
+                            profileViewModel.addSongtr(track.name,track.id,rating,track.album.name,track.artists.first().name.toString(),rateQuery)
+
 
 
                         }
@@ -110,7 +110,8 @@ fun RateScreen(navController: NavController, viewModelSpoti: SpotifyViewModel) {
                         trackId, rating ->
                         searchResults!!.items.filterIsInstance<SpotifySearchItem.TrackItem>().find { it.track.id == trackId }?.let { track ->
                             // Handle rating change, if needed
-                            profileViewModel.addSongtr(track.track.name, track.track.id, rating)
+                            profileViewModel.addSongtr(track.track.name,track.track.id,rating,track.track.album.name,track.track.artists.first().name.toString(),rateQuery)
+
 
 
                         }

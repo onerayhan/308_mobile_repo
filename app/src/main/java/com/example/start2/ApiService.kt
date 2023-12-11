@@ -1,7 +1,14 @@
 package com.example.start2
 
-import com.example.start2.services_and_responses.AddSongsBatchRequest
-import org.json.JSONObject
+import com.example.start2.home.Profile.FollowRequest
+import com.example.start2.home.Profile.FollowResponse
+import com.example.start2.home.Profile.ProfilePictureRequest
+import com.example.start2.home.Profile.ProfilePictureResponse
+import com.example.start2.home.Profile.UnfollowRequest
+import com.example.start2.home.Profile.UserFollowingsRequest
+import com.example.start2.home.Profile.UserFollowingsResponse
+import com.example.start2.home.Profile.UserInfoRequest
+import com.example.start2.home.Profile.UserProfile
 import retrofit2.http.Body
 import retrofit2.http.POST
 

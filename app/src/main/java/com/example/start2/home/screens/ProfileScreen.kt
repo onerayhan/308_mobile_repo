@@ -1,7 +1,6 @@
 package com.example.start2.home
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -23,15 +22,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import com.example.start2.ProfileViewModel
-import com.example.start2.ProfileViewModelFactory
-import com.example.start2.UserPreferences
+import com.example.start2.home.Profile.ProfileViewModel
+import com.example.start2.home.Profile.ProfileViewModelFactory
+import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.navigators.LeafScreen
 import coil.compose.rememberImagePainter
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,26 +34,19 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.start2.R
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.start2.DataHolder
-import com.example.start2.MyData
-import com.example.start2.Song
+import com.example.start2.viewmodels.DataHolder
+import com.example.start2.viewmodels.MyData
 import java.io.File
 
 
@@ -117,7 +105,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
     var selectedImageFile by rememberSaveable { mutableStateOf<File?>(null) }
 
 
-    profileViewModel.getUserGenrePreferences("aa")
+    profileViewModel.getUserGenrePreferences()
 
 
 

@@ -1,6 +1,6 @@
-package com.example.start2
+package com.example.start2.auth
 /*
-import com.example.start2.OnCommitContentListener
+import com.example.start2.auth.OnCommitContentListener
 import com.example.start2.RegistrationStepsListener
 import android.content.Context
 import android.os.Bundle
@@ -134,17 +134,7 @@ class RegistrationViewModel : ViewModel() {
 
 
  */
-import com.example.start2.OnCommitContentListener
-import com.example.start2.RegistrationStepsListener
-import android.content.Context
-import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.EditText
-import android.view.inputmethod.InputConnection
-import android.view.inputmethod.InputMethodManager
-import androidx.core.view.inputmethod.InputConnectionCompat
-import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -153,8 +143,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.start2.services_and_responses.AddMobileTokenResponse
 import com.example.start2.services_and_responses.AddMobileTokenService
 import com.example.start2.services_and_responses.AddMobileTokenServiceProvider
-import com.google.android.gms.auth.TokenData
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
@@ -162,7 +150,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
-import java.util.UUID
 
 class RegistrationViewModel : ViewModel() {
     private val repository = RegistrationRepository(AddMobileTokenServiceProvider.instance)

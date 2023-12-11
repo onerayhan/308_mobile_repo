@@ -1,4 +1,4 @@
-package com.example.start2
+package com.example.start2.auth
 
 // SongViewModel.kt
 import android.util.Log

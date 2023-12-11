@@ -1,25 +1,19 @@
-package com.example.start2
+package com.example.start2.auth
 
-import android.app.Activity
-import android.app.Instrumentation
 import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.widget.ImageButton
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-import com.example.start2.auth.BirthdayStepFragment
+import com.example.start2.R
 import com.example.start2.home.NavigatorActivity
-import com.spotify.sdk.android.auth.AccountsQueryParameters.CLIENT_ID
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
-import com.spotify.sdk.android.auth.LoginActivity.REQUEST_CODE
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -33,7 +27,7 @@ import java.security.SecureRandom
 
 
 
-class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener{
+class RegistrationActivity : AppCompatActivity(), RegistrationStepsListener {
 
     private val TAG = "RegistrationActivity"
     val REQUEST_CODE = 1337

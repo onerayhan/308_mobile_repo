@@ -1,8 +1,9 @@
-package com.example.start2
+package com.example.start2.auth
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
+import com.example.start2.R
 
 class WelcomeActivity : AppCompatActivity() {
 
