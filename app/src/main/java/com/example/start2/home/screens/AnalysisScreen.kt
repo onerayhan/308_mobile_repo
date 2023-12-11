@@ -131,13 +131,6 @@ enum class AnalysisOption(val displayName: String) {
     FollowingGenrePreferences("Follower's Most Popular Genres"),
 }
 
-enum class ChartOption {
-    GenrePreferences,
-    PerformerPreferences,
-    FollowingGenrePreferences
-}
-
-
 @Composable
 fun AnalysisScreen(
     navController: NavController,
@@ -147,8 +140,6 @@ fun AnalysisScreen(
     val userPreferences = remember { UserPreferences(context) }
     // State to keep track of the selected chart option
     var selectedOption by remember { mutableStateOf(AnalysisOption.PopularGenres) }
-    var selectedChartOption by remember { mutableStateOf(ChartOption.GenrePreferences) }
-    val expanded = remember { mutableStateOf(false) }
     val profileViewModel =
         viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
     val username by profileViewModel.username.observeAsState()
@@ -178,7 +169,6 @@ fun AnalysisScreen(
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-
                 Button(
                     onClick = {
                         // Handle button click here
@@ -208,7 +198,6 @@ fun AnalysisScreen(
             genrePreferences?.let {
                 // Ensure genrePreferences is not null before passing it
                 val horizontalAxisValueFormatter = createGenreNameFormatter(it)
-
                 val chartData = convertGenrePreferencesToChartData(it)
                 createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter)
             }
