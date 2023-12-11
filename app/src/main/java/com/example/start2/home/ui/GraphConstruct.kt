@@ -3,8 +3,8 @@ package com.example.start2.home.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.start2.services_and_responses.UserGenrePreferencesResponse
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -15,31 +15,12 @@ import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
-
-
-// Convert RatingData to FloatEntry
-fun convertToFloatEntryForRating(data: List<RatingData>): List<FloatEntry> {
-    return data.mapIndexed { index, item ->
-        FloatEntry(x = index.toFloat(), y = item.rating.toFloat())
-    }
-}
-
-// Mock data
-private val mockRatingData = listOf(
-    RatingData(rating = 5, reviewerId = "Reviewer1"),
-    RatingData(rating = 4, reviewerId = "Reviewer2"),
-    RatingData(rating = 4, reviewerId = "Reviewer3")
-)
-
-//@Preview(showBackground = true)
-@Composable
-fun PreviewRatingDistributionChart() {
-    val mockData = convertToFloatEntryForRating(mockRatingData)
-    RatingDistributionChart(data = mockData)
-}
+import createGenreNameFormatter
 
 
 // Convert SongPopularityData to FloatEntry
@@ -85,8 +66,13 @@ private fun createLineChart(data: List<FloatEntry>, lineColor: Color) {
     )
 }
 
+
 @Composable
-private fun createColumnChart(data: List<FloatEntry>, columnColor: Color) {
+fun createColumnChart(
+    data: List<FloatEntry>,
+    columnColor: Color,
+    horizontalAxisValueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom>
+) {
     val lineComponents = List(data.size) {
         LineComponent(color = columnColor.toArgb(), thicknessDp = 10f) // Customize as needed
     }
@@ -109,7 +95,10 @@ private fun createColumnChart(data: List<FloatEntry>, columnColor: Color) {
         chart = columnChart,
         chartModelProducer = chartEntryModel,
         startAxis = rememberStartAxis(axisLabelComponent(color = Color.Red)),
-        bottomAxis = rememberBottomAxis(axisLabelComponent(color = Color.DarkGray))
+        bottomAxis = rememberBottomAxis(
+            axisLabelComponent(color = Color.DarkGray),
+            valueFormatter = horizontalAxisValueFormatter // Use the custom formatter here
+        )
     )
 }
 data class SongPopularityData(
@@ -146,13 +135,9 @@ fun SongPopularityTrendChart(data: List<FloatEntry>) {
 
 @Composable
 fun RatingDistributionChart(data: List<FloatEntry>) {
-    createColumnChart(data, Color.Black)
+    //createColumnChart(data, Color.Black)
 }
 
-@Composable
-fun GenrePopularityChart(data: List<FloatEntry>) {
-    createColumnChart(data, Color.Black)
-}
 
 @Composable
 fun ArtistProductivityChart(data: List<FloatEntry>) {
