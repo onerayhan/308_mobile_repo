@@ -112,7 +112,7 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
         userGenrePreferences?.let{ response ->
             Log.d("RecomScreen", response.genres.joinToString(separator = ",") { it.genre.lowercase() })
 
-            genresString = response.genres.take(2).joinToString(separator = ",") { it.genre.lowercase() }
+            genresString = response.genres.take(1).joinToString(separator = ",") { it.genre.lowercase() }
         }
         userAlbumPreferences?.let{ response ->
             Log.d("RecomScreen", response.toString())

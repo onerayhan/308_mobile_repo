@@ -5,12 +5,16 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface UserGenrePreferencesService {
-    @POST("/api/user_genre_preference")
+    @GET("/api/user_genre_preference/{username}")
     suspend fun getUserGenrePreferences(
-        @Body request: JsonObject
+        @Path("username") username : String
     ): Response<UserGenrePreferencesResponse>
 
 }

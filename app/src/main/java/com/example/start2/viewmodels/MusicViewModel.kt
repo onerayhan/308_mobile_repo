@@ -12,9 +12,23 @@ import com.example.start2.services_and_responses.AddSongsBatchRequest
 import com.example.start2.services_and_responses.AddSongsBatchResponse
 import com.example.start2.services_and_responses.AddSongsBatchService
 import com.example.start2.services_and_responses.AddSongsBatchServiceProvider
+import com.example.start2.services_and_responses.GroupAlbumPreferencesService
+import com.example.start2.services_and_responses.GroupAlbumPreferencesServiceProvider
+import com.example.start2.services_and_responses.GroupGenrePreferencesService
+import com.example.start2.services_and_responses.GroupGenrePreferencesServiceProvider
+import com.example.start2.services_and_responses.GroupPerformerPreferencesService
+import com.example.start2.services_and_responses.GroupPerformerPreferencesServiceProvider
+import com.example.start2.services_and_responses.RecommendationsService
+import com.example.start2.services_and_responses.RecommendationsServiceProvider
 import com.example.start2.services_and_responses.UserAlbumPreferencesResponse
 import com.example.start2.services_and_responses.UserAlbumPreferencesService
 import com.example.start2.services_and_responses.UserAlbumPreferencesServiceProvider
+import com.example.start2.services_and_responses.UserFollowingsAlbumPreferencesService
+import com.example.start2.services_and_responses.UserFollowingsAlbumPreferencesServiceProvider
+import com.example.start2.services_and_responses.UserFollowingsGenrePreferencesService
+import com.example.start2.services_and_responses.UserFollowingsGenrePreferencesServiceProvider
+import com.example.start2.services_and_responses.UserFollowingsPerformerPreferencesService
+import com.example.start2.services_and_responses.UserFollowingsPerformerPreferencesServiceProvider
 import com.example.start2.services_and_responses.UserGenrePreferencesResponse
 import com.example.start2.services_and_responses.UserGenrePreferencesService
 import com.example.start2.services_and_responses.UserGenrePreferencesServiceProvider
@@ -66,7 +80,11 @@ data class MusicBatch(
 )
 open class MusicViewModel(protected val username: String): ViewModel(){
     private val repository = MusicRepository(AddSongsBatchServiceProvider.instance, UserGenrePreferencesServiceProvider.instance, UserAlbumPreferencesServiceProvider.instance,
-        UserPerformerPreferencesServiceProvider.instance, UserGetSongRatingsServiceProvider.instance, UserGetAlbumRatingsServiceProvider.instance, UserGetPerformerRatingsServiceProvider.instance)
+        UserPerformerPreferencesServiceProvider.instance, UserGetSongRatingsServiceProvider.instance, UserGetAlbumRatingsServiceProvider.instance, UserGetPerformerRatingsServiceProvider.instance,
+        GroupGenrePreferencesServiceProvider.instance, GroupAlbumPreferencesServiceProvider.instance, GroupPerformerPreferencesServiceProvider.instance,
+        UserFollowingsGenrePreferencesServiceProvider.instance,UserFollowingsAlbumPreferencesServiceProvider.instance, UserFollowingsPerformerPreferencesServiceProvider.instance,RecommendationsServiceProvider.instance,
+
+        )
     val parsedMusics = MutableLiveData<List<Music>>()
     val batchResult = MutableLiveData<Boolean>()
 
@@ -242,32 +260,80 @@ open class MusicViewModel(protected val username: String): ViewModel(){
 
 open class MusicRepository(private val addSongsBatchService: AddSongsBatchService, private val userGenrePreferencesService: UserGenrePreferencesService, private val userAlbumPreferencesService: UserAlbumPreferencesService,
                            private val userPerformerPreferencesService: UserPerformerPreferencesService, private val userGetSongRatingsService: UserGetSongRatingsService, private val userGetAlbumRatingsService: UserGetAlbumRatingsService,
-                           private val userGetPerformerRatingsService: UserGetPerformerRatingsService
+                           private val userGetPerformerRatingsService: UserGetPerformerRatingsService, private val groupGenrePreferencesService: GroupGenrePreferencesService, private val groupAlbumPreferencesService: GroupAlbumPreferencesService,
+                           private val groupPerformerPreferencesService: GroupPerformerPreferencesService,private val userFollowingsGenrePreferencesService: UserFollowingsGenrePreferencesService,
+                           private val userFollowingsAlbumPreferencesService: UserFollowingsAlbumPreferencesService, private val userFollowingsPerformerPreferencesService: UserFollowingsPerformerPreferencesService , private val recommendationsService: RecommendationsService
 ) {
 
+
+    open suspend fun getGroupGenrePreferences(token: String): UserGenrePreferencesResponse? {
+        return try {
+            val response = groupGenrePreferencesService.getGroupGenrePreferences(token)
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else{
+                null
+            }
+        } catch( e: Exception) {
+            null
+        }
+    }
+
+    open suspend fun getGroupAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
+        return try {
+            val response = groupAlbumPreferencesService.getGroupAlbumPreferences(token)
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else{
+                null
+            }
+        } catch( e: Exception) {
+            null
+        }
+    }
+
+    open suspend fun getGroupPerformerPreferences(token: String) : UserPerformerPreferencesResponse? {
+        return try {
+            val response = groupPerformerPreferencesService.getGroupPerformerPreferences(token)
+            if(response.isSuccessful){
+                response.body()
+            }
+            else{
+                null
+            }
+        } catch(e: Exception) {
+            null
+        }
+    }
     open suspend fun getUserGenrePreferences(token: String) : UserGenrePreferencesResponse? {
         return try {
-            val gson = Gson()
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("username", token)
-            val response = userGenrePreferencesService.getUserGenrePreferences(jsonObject)
+
+
+            Log.d("MainHost", "Bura calisti efenim")
+
+            val response = userGenrePreferencesService.getUserGenrePreferences(token)
+            Log.d("MainHost", response.body().toString())
+
             if(response.isSuccessful) {
+                Log.d("MainHost", "Bura calisti efenim")
                 response.body()
             }
             else {
                 null
             }
         }catch (e: Exception) {
+            Log.d("MainHost", "Bura calisti efenim")
+            Log.d("MainHost", e.message.toString())
+
             null
         }
     }
 
     open suspend fun getUserAlbumPreferences(token: String) : UserAlbumPreferencesResponse? {
         return try{
-            val gson = Gson()
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("username", token)
-            val response = userAlbumPreferencesService.getUserAlbumPreferences(jsonObject)
+            val response = userAlbumPreferencesService.getUserAlbumPreferences(token)
             if(response.isSuccessful) {
                 response.body()
             }
@@ -281,10 +347,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
 
     open suspend fun getUserPerformerPreferences(token: String) : UserPerformerPreferencesResponse? {
         return try {
-            val gson = Gson()
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("username", token)
-            val response = userPerformerPreferencesService.getUserPerformerPreferences(jsonObject)
+            val response = userPerformerPreferencesService.getUserPerformerPreferences(token)
             if(response.isSuccessful) {
                 response.body()
             }
