@@ -366,25 +366,17 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
     }
     open suspend fun getSelectedArtistTopTracks(token: String?, selectedArtistId: String) : SpotifyArtistTopTrackResponse? {
         return try {
-            Log.d("RegistrationActivity", "Hello There buradayım")
             val response = spotifyArtistTopTrackService.getArtistTopTracks("Bearer $token", selectedArtistId)
-            Log.d("RegistrationActivity", response.code().toString())
             if(response.isSuccessful) {
-                Log.d("RegistrationActivity", "Hello There satoptracks")
-                Log.d("RegistrationActivity", response.body().toString())
-                Log.d("RegistrationActivity", "Hello There satoptracks")
                 response.body()
-
             }
             else {
-                Log.d("Registration Activity", "Hello There")
                 null
             }
 
         }
         catch (e: Exception) {
 
-            Log.d("RegistrationActivity", "ao")
             null
         }
     }

@@ -28,11 +28,14 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.start2.home.Profile.ProfileViewModel
-import com.example.start2.home.Profile.ProfileViewModelFactory
 import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.ui.createColumnChart
+import com.example.start2.services_and_responses.UserFollowingsGenrePreferencesResponse
+import com.example.start2.services_and_responses.UserGenrePreferencesResponse
+import com.example.start2.services_and_responses.UserPerformerPreferencesResponse
+import com.example.start2.viewmodels.MusicViewModel
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.entry.FloatEntry
@@ -52,32 +55,29 @@ private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
 }
 
 
-fun convertFollowingGenrePreferencesToChartData(followingGenrePreferences: ProfileViewModel.UserFollowingsGenrePreferencesResponse): List<FloatEntry> {
+fun convertFollowingGenrePreferencesToChartData(followingGenrePreferences: UserFollowingsGenrePreferencesResponse): List<FloatEntry> {
     // Convert the following genre preferences data to the format required by your chart
     return followingGenrePreferences.genres.mapIndexed { index, genrePreference ->
         FloatEntry(x = index.toFloat(), y = genrePreference.count.toFloat())
     }
 }
 
-data class PerformerPreference(val performer: String, val count: Int)
-data class UserFollowingGenrePreferencesResponse(val genres: List<ProfileViewModel.GenrePreference>)
-
-fun convertPerformerPreferencesToChartData(performerPreferences: ProfileViewModel.UserPerformerPreferencesResponse): List<FloatEntry> {
+fun convertPerformerPreferencesToChartData(performerPreferences: UserPerformerPreferencesResponse): List<FloatEntry> {
     // Convert the performer preferences data to the format required by your chart
     return performerPreferences.performers.mapIndexed { index, performerPreference ->
         FloatEntry(x = index.toFloat(), y = performerPreference.count.toFloat())
     }
 }
 // Convert GenrePreferences to Chart Data
-fun convertGenrePreferencesToChartData(genrePreferences: ProfileViewModel.UserGenrePreferencesResponse): List<FloatEntry> {
+fun convertGenrePreferencesToChartData(genrePreferences: UserGenrePreferencesResponse): List<FloatEntry> {
     // Convert the genre preferences data to the format required by your chart
-    return genrePreferences.genre.mapIndexed { index, genrePreference ->
+    return genrePreferences.genres.mapIndexed { index, genrePreference ->
         FloatEntry(x = index.toFloat(), y = genrePreference.count.toFloat())
     }
 }
 // Create a custom AxisValueFormatter for the x-axis
-fun createGenreNameFormatter(genrePreferences: ProfileViewModel.UserGenrePreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
-    val indexToGenreName = genrePreferences.genre.mapIndexed { index, genrePreference ->
+fun createGenreNameFormatter(genrePreferences: UserGenrePreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
+    val indexToGenreName = genrePreferences.genres.mapIndexed { index, genrePreference ->
         index.toFloat() to genrePreference.genre
     }.toMap()
 
@@ -86,7 +86,7 @@ fun createGenreNameFormatter(genrePreferences: ProfileViewModel.UserGenrePrefere
     }
 }
 
-fun createFollowingGenreNameFormatter(followingGenrePreferences: ProfileViewModel.UserFollowingsGenrePreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
+fun createFollowingGenreNameFormatter(followingGenrePreferences: UserFollowingsGenrePreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
     // Map index (Float) to genre names
     val indexToGenreName = followingGenrePreferences.genres.mapIndexed { index, genrePreference ->
         index.toFloat() to genrePreference.genre
@@ -98,7 +98,7 @@ fun createFollowingGenreNameFormatter(followingGenrePreferences: ProfileViewMode
     }
 }
 
-fun createPerformerNameFormatter(performerPreferences: ProfileViewModel.UserPerformerPreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
+fun createPerformerNameFormatter(performerPreferences: UserPerformerPreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
     // Map index (Float) to performer names
     val indexToPerformerName = performerPreferences.performers.mapIndexed { index, performerPreference ->
         index.toFloat() to performerPreference.performer
@@ -111,13 +111,6 @@ fun createPerformerNameFormatter(performerPreferences: ProfileViewModel.UserPerf
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun AnalysisScreenPreview() {
-    val dummyNavController = rememberNavController()
-    AnalysisScreen(dummyNavController,null)
-}
-
 // Enum class for analysis options
 enum class AnalysisOption(val displayName: String) {
     PopularGenres("Most Popular Genres"),
@@ -129,22 +122,21 @@ enum class AnalysisOption(val displayName: String) {
 fun AnalysisScreen(
     navController: NavController,
     viewModel: SpotifyViewModel?,
+    musicViewModel: MusicViewModel,
 ) {
     val context = LocalContext.current
     val userPreferences = remember { UserPreferences(context) }
     // State to keep track of the selected chart option
     var selectedOption by remember { mutableStateOf(AnalysisOption.PopularGenres) }
-    val profileViewModel =
-        viewModel<ProfileViewModel>(factory = ProfileViewModelFactory(userPreferences))
-    val username by profileViewModel.username.observeAsState()
-    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences()}
 
-    username?.let { profileViewModel.getUserGenrePreferences() }
-    username?.let { profileViewModel.getUserPerformerPreferences() }
+    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences()}
+    musicViewModel.getUserGenrePreferences()
+    musicViewModel.getUserPerformerPreferences()
+
    // profileViewModel.getUserFollowingsGenrePreferences()
 
-    val genrePreferences by profileViewModel.genrePreferences.observeAsState()
-    val performerPreferences by profileViewModel.userperformerPreferences.observeAsState()
+    val genrePreferences by musicViewModel.userGenrePreferences.observeAsState()
+    val performerPreferences by musicViewModel.userPerformerPreferences.observeAsState()
     //val followingGenrePreferences by profileViewModel.userFollowingsGenrePreferences.observeAsState()
     Scaffold(
         topBar = { AnalysisTopBar(title = "Your Song Activity") }

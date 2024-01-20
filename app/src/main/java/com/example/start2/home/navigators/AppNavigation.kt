@@ -48,7 +48,7 @@ fun AppNavGraph(
         //addFavoritesRoute(navController)
         addRecommendationRoute(navController, spotifyViewModel, musicViewModel)
         addProfileRoute(navController,spotifyViewModel)
-        addAnalysisRoute(navController, spotifyViewModel)
+        addAnalysisRoute(navController, spotifyViewModel, musicViewModel)
     }
 }
 
@@ -179,12 +179,12 @@ private fun NavGraphBuilder.showFollowers(navController: NavController) {
 //end of profile navigation
 //favorites navigation
 
-private fun NavGraphBuilder.addAnalysisRoute(navController: NavController, spotifyViewModel: SpotifyViewModel) {
+private fun NavGraphBuilder.addAnalysisRoute(navController: NavController, spotifyViewModel: SpotifyViewModel, musicViewModel: MusicViewModel) {
     navigation(
         route = RootScreen.Analysis.route,
         startDestination = LeafScreen.Analysis.route
     ) {
-        showAnalysis(navController, spotifyViewModel)
+        showAnalysis(navController, spotifyViewModel, musicViewModel)
         showAnalysisChart(navController, spotifyViewModel)
         showSongInfo(navController, spotifyViewModel)
         showAlbumInfo(navController, spotifyViewModel)
@@ -192,9 +192,9 @@ private fun NavGraphBuilder.addAnalysisRoute(navController: NavController, spoti
     }
 }
 //
-private fun NavGraphBuilder.showAnalysis(navController: NavController, spotifyViewModel: SpotifyViewModel) {
+private fun NavGraphBuilder.showAnalysis(navController: NavController, spotifyViewModel: SpotifyViewModel, musicViewModel: MusicViewModel) {
     composable(route = LeafScreen.Analysis.route) {
-        AnalysisScreen(navController, spotifyViewModel)
+        AnalysisScreen(navController, spotifyViewModel, musicViewModel)
     }
 }
 

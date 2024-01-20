@@ -11,7 +11,7 @@ interface RecommendationsService {
     @POST("/api/recommendations")
     suspend fun getRecommendation(
         @Body request: JsonObject
-    ): Response<UserAlbumPreferencesResponse>
+    ): Response<RecommendationsResponse>
 }
 
 object RecommendationsServiceProvider {

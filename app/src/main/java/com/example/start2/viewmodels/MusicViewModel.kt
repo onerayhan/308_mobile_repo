@@ -24,6 +24,7 @@ import com.example.start2.services_and_responses.GroupGenrePreferencesService
 import com.example.start2.services_and_responses.GroupGenrePreferencesServiceProvider
 import com.example.start2.services_and_responses.GroupPerformerPreferencesService
 import com.example.start2.services_and_responses.GroupPerformerPreferencesServiceProvider
+import com.example.start2.services_and_responses.RecommendationsResponse
 import com.example.start2.services_and_responses.RecommendationsService
 import com.example.start2.services_and_responses.RecommendationsServiceProvider
 import com.example.start2.services_and_responses.UserAlbumPreferencesResponse
@@ -104,6 +105,8 @@ open class MusicViewModel(protected val username: String): ViewModel(){
     val userSongRatings = MutableLiveData<UserGetSongRatingsResponse>()
     val userAlbumRatings = MutableLiveData<UserGetAlbumRatingsResponse>()
     val userPerformerRatings = MutableLiveData<UserGetPerformerRatingsResponse>()
+    val recommendationResults = MutableLiveData<RecommendationsResponse>()
+
 
     private val options = listOf(
         "MyGenrePrefs",
@@ -164,6 +167,14 @@ open class MusicViewModel(protected val username: String): ViewModel(){
         }
     }
 
+    open fun getRecommendation(token: String){
+        viewModelScope.launch {
+            val result = repository.getRecommendationsFromDB()
+            result?.let{
+                recommendationResults.postValue(it)
+            }
+        }
+    }
     open fun saveSelectedMusics(musics: List<Music>) {
         val result = musics
         result?.let{
@@ -299,7 +310,21 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
                            private val recommendationsService: RecommendationsService
 ) {
 
-
+    open suspend fun getRecommendationsFromDB(): RecommendationsResponse? {
+        return try {
+            val gson = Gson()
+            val jsonObject = JsonObject()
+            //jsonObject.addProperty("username", token)
+            val response = recommendationsService.getRecommendation(jsonObject)
+            if(response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
     open suspend fun getAllGenrePreferences(): UserGenrePreferencesResponse? {
         return try {
             val response = allGenrePreferencesService.getAllGenrePreferences()
