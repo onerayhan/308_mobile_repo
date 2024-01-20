@@ -14,7 +14,7 @@ interface UserFollowingsAlbumPreferencesService {
     @GET("/api/user_followings_album_preference/{username}")
     suspend fun getUserFollowingsAlbumPreferences(
         @Path("username") username : String
-    ): Response<UserFollowingsAlbumPreferencesResponse>
+    ): Response<UserAlbumPreferencesResponse>
 }
 
 object UserFollowingsAlbumPreferencesServiceProvider {

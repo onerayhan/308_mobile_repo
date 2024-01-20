@@ -11,7 +11,7 @@ import retrofit2.http.Path
 
 interface UserFollowingsPerformerPreferencesService{
     @GET("/api/user_followings_performer_preference/{username}")
-    suspend fun getFollowingsUserPerformerPreferences(
+    suspend fun getUserFollowingsPerformerPreferences(
         @Path("username") username : String
     ): Response<UserPerformerPreferencesResponse>
 }

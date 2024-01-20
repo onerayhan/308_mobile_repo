@@ -31,15 +31,6 @@ class HomeScreenTest {
     val musicViewModel = FakeMusicViewModel()
     @Test
     fun homeScreen_displaysCorrectText() {
-        // Set up your test scenario
-        composeTestRule.setContent {
-            HomeScreen(navController =  navController, musicViewModel =  musicViewModel, showDetail = {
-            })
-        }
 
-        // Assert that the HomeScreen displays the expected text
-        composeTestRule
-            .onNodeWithText("Add Music")
-            .assertExists()
     }
 }

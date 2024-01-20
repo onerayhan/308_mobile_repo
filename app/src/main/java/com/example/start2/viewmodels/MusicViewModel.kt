@@ -12,6 +12,12 @@ import com.example.start2.services_and_responses.AddSongsBatchRequest
 import com.example.start2.services_and_responses.AddSongsBatchResponse
 import com.example.start2.services_and_responses.AddSongsBatchService
 import com.example.start2.services_and_responses.AddSongsBatchServiceProvider
+import com.example.start2.services_and_responses.AllAlbumPreferencesService
+import com.example.start2.services_and_responses.AllAlbumPreferencesServiceProvider
+import com.example.start2.services_and_responses.AllGenrePreferencesService
+import com.example.start2.services_and_responses.AllGenrePreferencesServiceProvider
+import com.example.start2.services_and_responses.AllPerformerPreferencesService
+import com.example.start2.services_and_responses.AllPerformerPreferencesServiceProvider
 import com.example.start2.services_and_responses.GroupAlbumPreferencesService
 import com.example.start2.services_and_responses.GroupAlbumPreferencesServiceProvider
 import com.example.start2.services_and_responses.GroupGenrePreferencesService
@@ -25,6 +31,7 @@ import com.example.start2.services_and_responses.UserAlbumPreferencesService
 import com.example.start2.services_and_responses.UserAlbumPreferencesServiceProvider
 import com.example.start2.services_and_responses.UserFollowingsAlbumPreferencesService
 import com.example.start2.services_and_responses.UserFollowingsAlbumPreferencesServiceProvider
+import com.example.start2.services_and_responses.UserFollowingsGenrePreferencesResponse
 import com.example.start2.services_and_responses.UserFollowingsGenrePreferencesService
 import com.example.start2.services_and_responses.UserFollowingsGenrePreferencesServiceProvider
 import com.example.start2.services_and_responses.UserFollowingsPerformerPreferencesService
@@ -82,7 +89,9 @@ open class MusicViewModel(protected val username: String): ViewModel(){
     private val repository = MusicRepository(AddSongsBatchServiceProvider.instance, UserGenrePreferencesServiceProvider.instance, UserAlbumPreferencesServiceProvider.instance,
         UserPerformerPreferencesServiceProvider.instance, UserGetSongRatingsServiceProvider.instance, UserGetAlbumRatingsServiceProvider.instance, UserGetPerformerRatingsServiceProvider.instance,
         GroupGenrePreferencesServiceProvider.instance, GroupAlbumPreferencesServiceProvider.instance, GroupPerformerPreferencesServiceProvider.instance,
-        UserFollowingsGenrePreferencesServiceProvider.instance,UserFollowingsAlbumPreferencesServiceProvider.instance, UserFollowingsPerformerPreferencesServiceProvider.instance,RecommendationsServiceProvider.instance,
+        UserFollowingsGenrePreferencesServiceProvider.instance,UserFollowingsAlbumPreferencesServiceProvider.instance,
+        UserFollowingsPerformerPreferencesServiceProvider.instance, AllGenrePreferencesServiceProvider.instance,AllAlbumPreferencesServiceProvider.instance,
+        AllPerformerPreferencesServiceProvider.instance, RecommendationsServiceProvider.instance,
 
         )
     val parsedMusics = MutableLiveData<List<Music>>()
@@ -96,7 +105,19 @@ open class MusicViewModel(protected val username: String): ViewModel(){
     val userAlbumRatings = MutableLiveData<UserGetAlbumRatingsResponse>()
     val userPerformerRatings = MutableLiveData<UserGetPerformerRatingsResponse>()
 
-    private val options = listOf("getGenrePrefs", "getAlbumPrefs", "getPerformerPrefs")
+    private val options = listOf(
+        "MyGenrePrefs",
+        "MyAlbumPrefs",
+        "MyPerformerPrefs",
+        "FollowingsGenrePrefs",
+        "FollowingsAlbumPrefs",
+        "FollowingsPerformerPrefs",
+        "GroupGenrePrefs",
+        "GroupAlbumPrefs",
+        "GroupPerformerPrefs",
+        "AllGenrePrefs",
+        "AllAlbumPrefs",
+        "AllPerformerPrefs")
     private var selectedOptions = mutableSetOf<String>()
 
 
@@ -110,13 +131,24 @@ open class MusicViewModel(protected val username: String): ViewModel(){
         }
         fetchPreferencesBasedOnSelection()
     }
+
+    //Since only one genre can be active at a  moment we dont need to wait for more than 3 responses and all of their responses are of the same type
     private fun fetchPreferencesBasedOnSelection() {
         viewModelScope.launch {
             val deferredResponses = selectedOptions.map { option ->
                 when (option) {
-                    "getGenrePrefs" -> async { repository.getUserGenrePreferences(username) }
-                    "getAlbumPrefs" -> async { repository.getUserAlbumPreferences(username) }
-                    "getPerformerPrefs" -> async { repository.getUserPerformerPreferences(username) }
+                    "MyGenrePrefs" -> async { repository.getUserGenrePreferences(username) }
+                    "MyAlbumPrefs" -> async { repository.getUserAlbumPreferences(username) }
+                    "MyPerformerPrefs" -> async { repository.getUserPerformerPreferences(username) }
+                    "FollowingsGenrePrefs" -> async { repository.getUserFollowingsGenrePreferences(username) }
+                    "FollowingsAlbumPrefs" -> async { repository.getUserFollowingsAlbumPreferences(username) }
+                    "FollowingsPerformerPrefs" -> async { repository.getUserFollowingsPerformerPreferences(username) }
+                    "GroupGenrePrefs" -> async { repository.getGroupGenrePreferences(username) }
+                    "GroupAlbumPrefs" -> async { repository.getGroupAlbumPreferences(username) }
+                    "GroupPerformerPrefs" -> async { repository.getGroupPerformerPreferences(username) }
+                    "AllGenrePrefs" -> async { repository.getAllGenrePreferences() }
+                    "AllAlbumPrefs" -> async { repository.getAllAlbumPreferences() }
+                    "AllPerformerPrefs" -> async { repository.getAllPerformerPreferences() }
 
                     else -> async { null }
                 }
@@ -261,14 +293,16 @@ open class MusicViewModel(protected val username: String): ViewModel(){
 open class MusicRepository(private val addSongsBatchService: AddSongsBatchService, private val userGenrePreferencesService: UserGenrePreferencesService, private val userAlbumPreferencesService: UserAlbumPreferencesService,
                            private val userPerformerPreferencesService: UserPerformerPreferencesService, private val userGetSongRatingsService: UserGetSongRatingsService, private val userGetAlbumRatingsService: UserGetAlbumRatingsService,
                            private val userGetPerformerRatingsService: UserGetPerformerRatingsService, private val groupGenrePreferencesService: GroupGenrePreferencesService, private val groupAlbumPreferencesService: GroupAlbumPreferencesService,
-                           private val groupPerformerPreferencesService: GroupPerformerPreferencesService,private val userFollowingsGenrePreferencesService: UserFollowingsGenrePreferencesService,
-                           private val userFollowingsAlbumPreferencesService: UserFollowingsAlbumPreferencesService, private val userFollowingsPerformerPreferencesService: UserFollowingsPerformerPreferencesService , private val recommendationsService: RecommendationsService
+                           private val groupPerformerPreferencesService: GroupPerformerPreferencesService, private val userFollowingsGenrePreferencesService: UserFollowingsGenrePreferencesService,
+                           private val userFollowingsAlbumPreferencesService: UserFollowingsAlbumPreferencesService, private val userFollowingsPerformerPreferencesService: UserFollowingsPerformerPreferencesService,
+                           private val allGenrePreferencesService: AllGenrePreferencesService, private val allAlbumPreferencesService: AllAlbumPreferencesService, private val allPerformerPreferencesService: AllPerformerPreferencesService,
+                           private val recommendationsService: RecommendationsService
 ) {
 
 
-    open suspend fun getGroupGenrePreferences(token: String): UserGenrePreferencesResponse? {
+    open suspend fun getAllGenrePreferences(): UserGenrePreferencesResponse? {
         return try {
-            val response = groupGenrePreferencesService.getGroupGenrePreferences(token)
+            val response = allGenrePreferencesService.getAllGenrePreferences()
             if(response.isSuccessful) {
                 response.body()
             }
@@ -276,6 +310,106 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
                 null
             }
         } catch( e: Exception) {
+            null
+        }
+    }
+    open suspend fun getAllAlbumPreferences(): UserAlbumPreferencesResponse? {
+        return try {
+            val response = allAlbumPreferencesService.getAllAlbumPreferences()
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else{
+                null
+            }
+        } catch( e: Exception) {
+            null
+        }
+    }
+
+    open suspend fun getAllPerformerPreferences(): UserPerformerPreferencesResponse? {
+        return try {
+            val response = allPerformerPreferencesService.getAllPerformerPreferences()
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else{
+                null
+            }
+        } catch( e: Exception) {
+            null
+        }
+    }
+
+
+    open suspend fun  getUserFollowingsPerformerPreferences(token: String): UserPerformerPreferencesResponse? {
+        return try {
+            val response = userFollowingsPerformerPreferencesService.getUserFollowingsPerformerPreferences(token)
+            if(response.isSuccessful) {
+                response.body()
+            }
+            else{
+                null
+            }
+        } catch( e: Exception) {
+            null
+        }
+    }
+    open suspend fun getUserFollowingsAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
+        return try {
+            Log.d("MainHost", "1")
+
+            val response = userFollowingsAlbumPreferencesService.getUserFollowingsAlbumPreferences(token)
+            Log.d("MainHost", "2")
+
+            if(response.isSuccessful) {
+                Log.d("MainHost", "3")
+
+                response.body()
+            }
+            else{
+                Log.d("MainHost", "4")
+                null
+            }
+        } catch( e: Exception) {
+            Log.d("MainHost", e.message.toString())
+
+            null
+        }
+    }
+    open suspend fun  getUserFollowingsGenrePreferences(token: String): UserGenrePreferencesResponse? {
+        return try {
+            //Log.d("MainHost", "1")
+            val response = userFollowingsGenrePreferencesService.getUserFollowingsGenrePreferences(token)
+            //Log.d("MainHost", "aa " + response.body().toString())
+            if(response.isSuccessful) {
+                //Log.d("MainHost", "a" + response.body().toString())
+                response.body()
+            }
+            else{
+                //Log.d("MainHost", "4")
+                null
+            }
+        } catch( e: Exception) {
+            //Log.d("MainHost", e.message.toString())
+            null
+        }
+    }
+    open suspend fun getGroupGenrePreferences(token: String): UserGenrePreferencesResponse? {
+        return try {
+            Log.d("MainHost", "1")
+            val response = groupGenrePreferencesService.getGroupGenrePreferences(token)
+            Log.d("MainHost", "aa " + response.body().toString())
+            if(response.isSuccessful) {
+                Log.d("MainHost", "a" + response.body().toString())
+                response.body()
+            }
+            else{
+                Log.d("MainHost", "4")
+                null
+            }
+        } catch( e: Exception) {
+            Log.d("MainHost", e.message.toString())
             null
         }
     }

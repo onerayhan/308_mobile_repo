@@ -46,13 +46,18 @@ import java.util.Locale
 fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyViewModel ,musicViewModel: MusicViewModel) {
     var sortState by remember { mutableStateOf(SortState(SortAttribute.DEFAULT)) }
     var recommendationQuery: String by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
     var genresString: String by remember{ mutableStateOf("") }
     var artistsString: String by remember{ mutableStateOf("") }
     var artistId: String by remember{ mutableStateOf("") }
 
+
+    var expanded by remember { mutableStateOf(false) }
+    var expandedFirst by remember { mutableStateOf(false) }
+    val firstOptions = listOf("MyPrefs", "FollowingsPrefs", "GroupPrefs", "AllPrefs")
     val options = listOf("getGenrePrefs", "getAlbumPrefs", "getPerformerPrefs")
+    var selectedFirstOption by remember { mutableStateOf("") }
     val selectedOptions = remember { mutableStateListOf<String>() }
+
     val userGenrePreferences by musicViewModel.userGenrePreferences.observeAsState()
     val userAlbumPreferences by musicViewModel.userAlbumPreferences.observeAsState()
     val userPerformerPreferences by musicViewModel.userPerformerPreferences.observeAsState()
@@ -60,7 +65,33 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
     //viewModelSpoti.
     Column {
 
-
+        ExposedDropdownMenuBox(
+            expanded = expandedFirst,
+            onExpandedChange = { expandedFirst = !expandedFirst }
+        ) {
+            TextField(
+                readOnly = true,
+                value = selectedFirstOption,
+                onValueChange = { },
+                label = { Text("Select Preference Type") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedFirst) }
+            )
+            ExposedDropdownMenu(
+                expanded = expandedFirst,
+                onDismissRequest = { expandedFirst = false }
+            ) {
+                firstOptions.forEach { option ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedFirstOption = option
+                            expandedFirst = false
+                        }
+                    ) {
+                        Text(option)
+                    }
+                }
+            }
+        }
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = {
@@ -99,7 +130,10 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
         }
         Row (modifier = Modifier.fillMaxWidth()){
             Button(onClick = {
-                musicViewModel.onOptionSelected(options)
+                val tempOptions = selectedOptions.map { opt ->
+                    "${selectedFirstOption.replace("Prefs", "")}${opt.replace("get", "")}"
+                }
+                musicViewModel.onOptionSelected(tempOptions)
             }) {
                 Text("Fetch Preferences")
             }
@@ -110,9 +144,9 @@ fun RecommendationScreen(navController: NavController, viewModelSpoti: SpotifyVi
 
 
         userGenrePreferences?.let{ response ->
-            Log.d("RecomScreen", response.genres.joinToString(separator = ",") { it.genre.lowercase() })
+            Log.d("RecomScreen", response.genres.maxByOrNull { it.count }?.genre?.lowercase() ?: "")
+            genresString = response.genres.maxByOrNull { it.count }?.genre?.lowercase() ?: ""
 
-            genresString = response.genres.take(1).joinToString(separator = ",") { it.genre.lowercase() }
         }
         userAlbumPreferences?.let{ response ->
             Log.d("RecomScreen", response.toString())

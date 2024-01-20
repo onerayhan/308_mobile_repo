@@ -11,7 +11,7 @@ import retrofit2.http.Path
 
 interface UserFollowingsGenrePreferencesService {
     @GET("/api/user_followings_genre_preference/{username}")
-    suspend fun getFollowingsUserGenrePreferences(
+    suspend fun getUserFollowingsGenrePreferences(
         @Path("username") username : String
     ): Response<UserGenrePreferencesResponse>
 }
