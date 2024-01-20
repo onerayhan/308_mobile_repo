@@ -39,7 +39,15 @@ import java.net.HttpURLConnection
 import java.net.URL
 import com.google.gson.JsonParser
 import io.ktor.client.HttpClient
+import io.ktor.client.features.get
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType
@@ -1209,6 +1217,60 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         })
     }
 
+    fun displayUserGroup() {
+        GlobalScope.launch(Dispatchers.IO) {
+            val apiUrl = "http://51.20.128.164/api/display_user_group/${_username.value}"
+
+            try {
+                val url = URL(apiUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "POST"
+                connection.setRequestProperty("Content-Type", "application/json")
+
+                val jsonInputString = JSONObject().apply {
+                    put("username", _username.value.orEmpty())
+                }.toString()
+
+                connection.doOutput = true
+                connection.outputStream.use { os ->
+                    os.write(jsonInputString.toByteArray(charset("utf-8")))
+                }
+
+                val responseCode = connection.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val reader = BufferedReader(InputStreamReader(connection.inputStream))
+                    val response = StringBuilder()
+
+                    var line: String?
+                    while (reader.readLine().also { line = it } != null) {
+                        response.append(line)
+                    }
+                    reader.close()
+
+                    withContext(Dispatchers.Main) {
+                        Log.d("GroupViewModel", "API Response: $response")
+                        parseSongsResponse(response.toString())
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        val errorMessage = "Error: ${connection.responseMessage}"
+                        Log.e("GroupViewModel", errorMessage)
+                        _error.value = errorMessage
+                    }
+                }
+
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    val errorMessage = "Error: ${e.message}"
+                    Log.e("GroupViewModel", errorMessage)
+                    _error.value = errorMessage
+                }
+            }
+        }
+    }
+
+
+
 
 
 
@@ -1218,6 +1280,8 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
 
 
 }
+
+
 
 
 
