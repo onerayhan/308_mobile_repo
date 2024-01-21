@@ -167,9 +167,10 @@ open class MusicViewModel(protected val username: String): ViewModel(){
         }
     }
 
-    open fun getRecommendation(token: String){
+    open fun getRecommendation(criteriaString: String,targetAudience: String ){
         viewModelScope.launch {
-            val result = repository.getRecommendationsFromDB()
+
+            val result = repository.getRecommendationsFromDB(username,criteriaString, targetAudience)
             result?.let{
                 recommendationResults.postValue(it)
             }
@@ -310,18 +311,47 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
                            private val recommendationsService: RecommendationsService
 ) {
 
-    open suspend fun getRecommendationsFromDB(): RecommendationsResponse? {
+    open suspend fun getRecommendationsFromDB(token: String,criteriaString: String, targetAudience: String): RecommendationsResponse? {
         return try {
             val gson = Gson()
             val jsonObject = JsonObject()
-            //jsonObject.addProperty("username", token)
-            val response = recommendationsService.getRecommendation(jsonObject)
+            // Transform the targetAudience into the required format
+            val transformedTargetAudience = when (targetAudience) {
+                "FollowingsPrefs" -> "followings"
+                "GroupPrefs" -> "group"
+                "AllPrefs" -> "all"
+                else -> targetAudience
+            }
+            jsonObject.addProperty("target_audience", transformedTargetAudience)
+
+            // Split the criteriaString into a list and add it to the JSON object
+            val criteriaList = criteriaString.split(",").map { criteria ->
+                when (criteria.trim()) {
+                    "getGenrePrefs" -> "genre"
+                    "getAlbumPrefs" -> "album"
+                    "getPerformerPrefs" -> "performer"
+                    else -> criteria.trim()
+                }
+            }
+            jsonObject.add("criteria_list", gson.toJsonTree(criteriaList))
+
+            // Add the targetAudience to the JSON object
+            Log.d("MainHost", "1")
+            Log.d("MainHost", jsonObject.toString())
+
+            val response = recommendationsService.getRecommendation(username = token,jsonObject)
+            //Log.d("MainHost", response.body().)
+
             if(response.isSuccessful) {
+                //Log.d("MainHost", response.body().toString())
                 response.body()
             } else {
+                Log.d("MainHost", "1")
+
                 null
             }
         } catch (e: Exception) {
+            Log.d("MainHost", e.message.toString())
             null
         }
     }

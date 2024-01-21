@@ -23,6 +23,7 @@ import com.example.start2.home.screens.HomeDetailScreen
 import com.example.start2.home.screens.HomeScreen
 import com.example.start2.home.screens.RateScreen
 import com.example.start2.home.screens.RecommendationScreen
+import com.example.start2.home.screens.RecommendationScreen2
 import com.example.start2.home.screens.SearchScreen
 import com.example.start2.home.screens.info_screens.AlbumInfoScreen
 import com.example.start2.home.screens.info_screens.ArtistInfoScreen
@@ -120,7 +121,7 @@ private fun NavGraphBuilder.addRecommendationRoute(navController: NavController,
 
 private fun NavGraphBuilder.showRecommendation(navController: NavController, spotifyViewModel: SpotifyViewModel, musicViewModel: MusicViewModel) {
     composable(route = LeafScreen.Recommendation.route) {
-        RecommendationScreen(navController, spotifyViewModel, musicViewModel )
+        RecommendationScreen2(navController, spotifyViewModel, musicViewModel )
     }
 }
 

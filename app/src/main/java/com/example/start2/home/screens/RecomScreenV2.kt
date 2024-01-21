@@ -2,14 +2,19 @@ package com.example.start2.home.screens
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -30,16 +35,23 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.start2.home.navigators.LeafScreen
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.home.spotify.Track
 import androidx.lifecycle.viewModelScope
+import coil.compose.rememberAsyncImagePainter
 import com.example.start2.home.spotify.SpotifySearchItem
+import com.example.start2.services_and_responses.RecommendationsResponseItem
 import com.example.start2.viewmodels.MusicViewModel
 import java.util.Locale
 
@@ -143,7 +155,16 @@ fun RecommendationScreen2(navController: NavController, viewModelSpoti: SpotifyV
             }) {
                 Text("Fetch Preferences")
             }
-            Button(onClick = { viewModelSpoti.getRecommendation(genresString, artistId, "") }) {
+            Button(onClick = {
+                when(selectedTabIndex) {
+                    0 -> {
+                        viewModelSpoti.getRecommendation(genresString, artistId, "")
+                    }
+                    1 -> {
+                        musicViewModel.getRecommendation(selectedOptions.joinToString(separator = ","),selectedFirstOption.toString() )
+                    }
+                }
+            }) {
                 Text("Search")
             }
         }
@@ -223,6 +244,36 @@ fun RecommendationScreen2(navController: NavController, viewModelSpoti: SpotifyV
                 } ?: run{}
             }
             1 -> {
+                val recommendationResults by musicViewModel.recommendationResults.observeAsState()
+                recommendationResults?.let { tracks ->
+                    Column {
+                        RecommendationsTableDbHeader2(sortState, onSortChange = { attribute ->
+                            if (sortState.attribute == attribute && sortState.order != SortOrder.DESCENDING) {
+                                sortState = sortState.copy(order = SortOrder.values()[(sortState.order.ordinal + 1) % SortOrder.values().size])
+                            } else {
+                                sortState = SortState(attribute, SortOrder.ASCENDING)
+                            }
+                        })
+                        RecommendationsTableDbContent2(
+
+                            songs = tracks, // Assuming items is a list of Song in your TopTracksResponse
+                            selectedFilter = "All", // Or your implementation of filter
+                            onFilterChange = { /* Implement filter logic */ },
+                            onSongSelect = { songId  ->
+                                Log.d("analysisParalysis", songId)
+                                //viewModelScope.launch {
+                                viewModelSpoti.saveSelectedTrack(songId)
+                                navController.navigateToLeafScreen(LeafScreen.SongInfo)
+                            },
+                            onAlbumSelect = {albumId->
+                                viewModelSpoti.saveSelectedAlbum(albumId)
+                                navController.navigateToLeafScreen(LeafScreen.AlbumInfo)
+                            },
+
+                        )
+                    }
+
+                } ?: run{}
 
             }
         }
@@ -248,7 +299,18 @@ fun RecommendationsTableHeader2(sortState: SortState, onSortChange: (SortAttribu
     }
 }
 
+@Composable
+fun RecommendationsTableDbHeader2(sortState: SortState, onSortChange: (SortAttribute) -> Unit) {
 
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.Red)){
+
+        // Create clickable text for each sortable attribute
+        androidx.compose.material3.Text("Name", Modifier.clickable { onSortChange(SortAttribute.NAME) })
+        Spacer(Modifier.width(8.dp))
+    }
+}
 @Composable
 fun RecommendationsTableContent2(
     songs: List<Track>,
@@ -273,6 +335,75 @@ fun RecommendationsTableContent2(
 
 }
 
+@Composable
+fun RecommendationsTableDbContent2(
+    songs: List<RecommendationsResponseItem>,
+    selectedFilter: String,
+    onFilterChange: (String) -> Unit,
+    onSongSelect: (String) -> Unit,
+    onAlbumSelect: (String) -> Unit,
+) {
+
+    Column (modifier = Modifier.fillMaxWidth()){
+        // Implement filter dropdowns
+        //FilterDropdowns(selectedFilter, onFilterChange)
+
+        // Display songs in a LazyColumn
+        LazyColumn (){
+            items(songs) { song ->
+                RecomItem(song, onSongSelect, onAlbumSelect)
+            }
+        }
+    }
+
+}
+
+
+@Composable
+fun RecomItem(
+    track: RecommendationsResponseItem,
+    onSongSelect: (String) -> Unit,
+    onAlbumSelect: (String) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color(31,44,71), RoundedCornerShape(8.dp))
+            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Column {
+            androidx.compose.material3.Text(
+                text = "${track.songsName}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .clickable(onClick = { onSongSelect(track.songId.toString()) }),
+            )
+            androidx.compose.material3.Text(
+                text = "${track.performer}",
+                color = Color.White.copy(alpha = 0.7f),
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+
+            )
+            androidx.compose.material3.Text(
+                text = "${track.album}",
+                color = Color.White.copy(alpha = 0.7f),
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .clickable { onAlbumSelect(track.album) }
+            )
+            // Add additional attributes here if needed
+        }
+
+    }
+
+}
 private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
     navigate(leafScreen.route) {
         launchSingleTop = true

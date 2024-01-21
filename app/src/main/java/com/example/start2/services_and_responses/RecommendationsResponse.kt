@@ -1,6 +1,11 @@
 package com.example.start2.services_and_responses
 
-data class RecommendationsResponse (
+
+typealias RecommendationsResponse = List<RecommendationsResponseItem>
+
+
+
+data class RecommendationsResponseItem (
     val album: String,
     val genre: String,
     val performer: String,

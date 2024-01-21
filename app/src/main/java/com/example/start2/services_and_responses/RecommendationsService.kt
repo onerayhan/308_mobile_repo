@@ -6,10 +6,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface RecommendationsService {
-    @POST("/api/recommendations")
+    @POST("/api/recommendations/{username}")
     suspend fun getRecommendation(
+        @Path("username") username: String,
         @Body request: JsonObject
     ): Response<RecommendationsResponse>
 }
