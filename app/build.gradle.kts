@@ -124,10 +124,16 @@ dependencies {
     // All other dependencies for your app should also be here:
     implementation ("androidx.browser:browser:1.6.0")
     testImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
+
+    androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    implementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation ("org.mockito:mockito-android:3.11.0")
+    androidTestImplementation ("org.mockito:mockito-android:3.11.0")
+
+    androidTestImplementation ("org.mockito:mockito-android:3.11.0")
     testImplementation ("org.robolectric:robolectric:4.9.1")
-
-
+    androidTestImplementation ("org.robolectric:robolectric:4.9.1")
 
 
     testImplementation("junit:junit:4.13.2")

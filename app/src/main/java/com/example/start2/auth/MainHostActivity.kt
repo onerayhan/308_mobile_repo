@@ -115,7 +115,7 @@ class MainHostActivity : AppCompatActivity(), LoginListener {
     }
 
 
-    private suspend fun exchangeCodeForToken(code: String) = withContext(Dispatchers.IO){
+    suspend fun exchangeCodeForToken(code: String) = withContext(Dispatchers.IO){
         val url = "https://accounts.spotify.com/api/token"
         val client = OkHttpClient()
         val REQUEST_CODE = 1337
