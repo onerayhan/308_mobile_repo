@@ -3,10 +3,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
             import androidx.activity.result.contract.ActivityResultContracts
-            import androidx.compose.foundation.background
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
             import androidx.compose.foundation.layout.Arrangement
             import androidx.compose.foundation.layout.Box
             import androidx.compose.foundation.layout.Column
@@ -39,8 +41,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
             import androidx.navigation.NavController
             import androidx.navigation.compose.rememberNavController
-            import com.example.start2.home.Profile.ProfileViewModel
-            import com.example.start2.home.Profile.ProfileViewModelFactory
+import com.example.start2.home.Profile.ProfileViewModel
+import com.example.start2.home.Profile.ProfileViewModelFactory
             import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.spotify.SpotifyViewModel
 import com.example.start2.viewmodels.MusicViewModel
@@ -278,6 +280,7 @@ fun HomeScreen2(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 @Preview
 fun HomeScreenPreview() {

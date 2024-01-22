@@ -2,6 +2,7 @@ package com.example.start2.home.Profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.start2.home.Profile.ProfileViewModel
 
 class ProfileViewModelFactory(private val userPreferences: UserPreferences) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

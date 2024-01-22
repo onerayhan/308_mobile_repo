@@ -31,4 +31,7 @@ sealed class LeafScreen(val route: String) {
     object FriendScreen: LeafScreen("friendscreen")
 
     object AlbumInfo : LeafScreen("album_info")
+
+    object UserGroupScreen: LeafScreen("groupscreen")
+
 }
