@@ -3,7 +3,7 @@ package com.example.start2.viewmodels
 import com.example.start2.services_and_responses.UserAlbumPreferencesResponse
 import com.example.start2.services_and_responses.UserGenrePreferencesResponse
 
-class FakeMusicViewModel(username: String) : MusicViewModel(username) {
+class FakeMusicViewModel(username: String) : MusicViewModel(username, isTest = true) {
 
     // Mock data for testing
     private val fakeMusics = listOf(

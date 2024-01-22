@@ -126,12 +126,16 @@ dependencies {
     testImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
 
     androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation ("org.mockito:mockito-core:4.0.0")
+    testImplementation ("org.mockito:mockito-inline:4.0.0")
     testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
     implementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
     testImplementation ("org.mockito:mockito-android:3.11.0")
     androidTestImplementation ("org.mockito:mockito-android:3.11.0")
-
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
     androidTestImplementation ("org.mockito:mockito-android:3.11.0")
+    testImplementation ("io.mockk:mockk:1.12.0")
     testImplementation ("org.robolectric:robolectric:4.9.1")
     androidTestImplementation ("org.robolectric:robolectric:4.9.1")
 

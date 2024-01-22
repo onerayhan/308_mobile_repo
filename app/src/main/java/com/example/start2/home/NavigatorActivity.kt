@@ -46,7 +46,7 @@ class NavigatorActivity : ComponentActivity() {
             DummySpotifyViewModel("dummy")
         }
         val musicViewModel: MusicViewModel = if (username != null) {
-            ViewModelProvider(this, MusicViewModelFactory(username)).get(MusicViewModel::class.java)
+            ViewModelProvider(this, MusicViewModelFactory(username, false)).get(MusicViewModel::class.java)
         } else {
             DummyMusicViewModel("dummy")
         }

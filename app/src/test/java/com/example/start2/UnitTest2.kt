@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
 val navController = mock(NavController::class.java)
 
 
-class FakeMusicViewModel : MusicViewModel("oneryhan") {
+class FakeMusicViewModel : MusicViewModel("oneryhan", isTest = true) {
     // override members and functions as needed for testing
 }
 

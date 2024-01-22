@@ -156,6 +156,26 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     .offset(x = (-81).dp, y = 88.dp)
             )
 
+            // Display Group Name
+            Text(
+                text = "Group: ",
+                color = Color.White,
+                style = TextStyle(fontSize = 20.sp),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = 48.dp, y = 320.dp)
+            )
+
+            // Display Member Count
+            Text(
+                text = "Members: ",
+                color = Color.White,
+                style = TextStyle(fontSize = 16.sp),
+                modifier = Modifier
+                    .align(alignment = Alignment.TopStart)
+                    .offset(x = 48.dp, y = 350.dp)
+            )
+
             Image(
                 painter = painterResource(id = R.drawable.rectangle_9),
                 contentDescription = "Rectangle 14",
@@ -169,7 +189,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     .requiredHeight(height = 44.dp)
                     .clip(shape = RoundedCornerShape(15.dp)))
             Text(
-                text = "Share profile",
+                text = "Group",
                 color = Color(0xFFF1F5F1),
                 style = TextStyle(
                     fontSize = 18.sp),
@@ -188,7 +208,8 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     .clip(shape = RoundedCornerShape(15.dp))
                     .clickable {
                         // Galeriyi aç
-                        openGalleryLauncher.launch("image/*")
+                        navController.navigateToLeafScreen(LeafScreen.UserGroupScreen)
+
                     }
             ) {
                 if (selectedImageUri.value != null) {
@@ -287,7 +308,7 @@ fun UserProfileContent(userProfile: ProfileViewModel.UserProfile?, navController
                     .align(alignment = Alignment.TopStart)
                     .offset(x = 53.dp, y = 293.dp)
                     .clickable {
-                        navController.navigateToLeafScreen(LeafScreen.Followers)
+                        navController.navigateToLeafScreen123(LeafScreen.Followers)
                     }
             )
 
@@ -427,8 +448,33 @@ private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
                 }
             }
         }
-
         else -> {
+            navigate(leafScreen.route){
+                launchSingleTop = true
+                restoreState = true
+                popUpTo(graph.findStartDestination().id) {
+                    saveState = true
+                }
+            }
+        }
+    }
+}
+
+private fun NavController.navigateToLeafScreen123(leafScreen: LeafScreen) {
+    when (leafScreen) {
+        is LeafScreen.UserGroupScreen -> {
+            // Navigate to the UserGroupScreen
+            navigate(leafScreen.route) {
+                launchSingleTop = true
+                restoreState = true
+                popUpTo(graph.findStartDestination().id) {
+                    saveState = true
+                }
+            }
+        }
+        // Handle other LeafScreen cases if needed
+        else -> {
+            // Navigate to other screens
             navigate(leafScreen.route) {
                 launchSingleTop = true
                 restoreState = true
@@ -439,6 +485,9 @@ private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
         }
     }
 }
+
+
+
 
 
 

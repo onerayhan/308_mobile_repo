@@ -86,15 +86,25 @@ data class Music(
 data class MusicBatch(
     val songs: List<Music>
 )
-open class MusicViewModel(protected val username: String): ViewModel(){
-    private val repository = MusicRepository(AddSongsBatchServiceProvider.instance, UserGenrePreferencesServiceProvider.instance, UserAlbumPreferencesServiceProvider.instance,
-        UserPerformerPreferencesServiceProvider.instance, UserGetSongRatingsServiceProvider.instance, UserGetAlbumRatingsServiceProvider.instance, UserGetPerformerRatingsServiceProvider.instance,
-        GroupGenrePreferencesServiceProvider.instance, GroupAlbumPreferencesServiceProvider.instance, GroupPerformerPreferencesServiceProvider.instance,
-        UserFollowingsGenrePreferencesServiceProvider.instance,UserFollowingsAlbumPreferencesServiceProvider.instance,
-        UserFollowingsPerformerPreferencesServiceProvider.instance, AllGenrePreferencesServiceProvider.instance,AllAlbumPreferencesServiceProvider.instance,
-        AllPerformerPreferencesServiceProvider.instance, RecommendationsServiceProvider.instance,
+open class MusicViewModel(protected val username: String, protected val isTest: Boolean): ViewModel(){
+    private var repository = when(isTest){
+        true -> {
+            MockMusicRepository()
+        }
+        false -> {
+            MusicRepository(AddSongsBatchServiceProvider.instance, UserGenrePreferencesServiceProvider.instance, UserAlbumPreferencesServiceProvider.instance,
+                UserPerformerPreferencesServiceProvider.instance, UserGetSongRatingsServiceProvider.instance, UserGetAlbumRatingsServiceProvider.instance, UserGetPerformerRatingsServiceProvider.instance,
+                GroupGenrePreferencesServiceProvider.instance, GroupAlbumPreferencesServiceProvider.instance, GroupPerformerPreferencesServiceProvider.instance,
+                UserFollowingsGenrePreferencesServiceProvider.instance,UserFollowingsAlbumPreferencesServiceProvider.instance,
+                UserFollowingsPerformerPreferencesServiceProvider.instance, AllGenrePreferencesServiceProvider.instance,AllAlbumPreferencesServiceProvider.instance,
+                AllPerformerPreferencesServiceProvider.instance, RecommendationsServiceProvider.instance,
+                )
+        }
 
-        )
+    }
+    fun setRepository(repo: IMusicRepository) {
+        repository = repo
+    }
     val parsedMusics = MutableLiveData<List<Music>>()
     val batchResult = MutableLiveData<Boolean>()
 
@@ -122,6 +132,7 @@ open class MusicViewModel(protected val username: String): ViewModel(){
         "AllAlbumPrefs",
         "AllPerformerPrefs")
     private var selectedOptions = mutableSetOf<String>()
+
 
 
     fun onOptionSelected(options: List<String>) {
@@ -182,14 +193,7 @@ open class MusicViewModel(protected val username: String): ViewModel(){
             parsedMusics.postValue(it)
         }
     }
-    open fun getUserAlbumPreferences() {
-        viewModelScope.launch{
-            val result = repository.getUserAlbumPreferences(username)
-            result?.let{
-                userAlbumPreferences.postValue(it)
-            }
-        }
-    }
+
     open fun getUserGenrePreferences() {
         viewModelScope.launch{
             val result = repository.getUserGenrePreferences(username)
@@ -198,10 +202,91 @@ open class MusicViewModel(protected val username: String): ViewModel(){
             }
         }
     }
+    open fun getUserAlbumPreferences() {
+        viewModelScope.launch{
+            val result = repository.getUserAlbumPreferences(username)
+            result?.let{
+                userAlbumPreferences.postValue(it)
+            }
+        }
+    }
 
     open fun getUserPerformerPreferences() {
         viewModelScope.launch{
             val result = repository.getUserPerformerPreferences(username)
+            result?.let{
+                userPerformerPreferences.postValue(it)
+            }
+        }
+    }
+    open fun getGroupGenrePreferences() {
+        viewModelScope.launch{
+            val result = repository.getGroupGenrePreferences(username)
+            result?.let{
+                userGenrePreferences.postValue(it)
+            }
+        }
+    }
+    open fun getGroupAlbumPreferences() {
+        viewModelScope.launch{
+            val result = repository.getGroupAlbumPreferences(username)
+            result?.let{
+                userAlbumPreferences.postValue(it)
+            }
+        }
+    }
+    open fun getGroupPerformerPreferences() {
+        viewModelScope.launch{
+            val result = repository.getGroupPerformerPreferences(username)
+            result?.let{
+                userPerformerPreferences.postValue(it)
+            }
+        }
+    }
+    open fun getAllGenrePreferences() {
+        viewModelScope.launch{
+            val result = repository.getAllGenrePreferences()
+            result?.let{
+                userGenrePreferences.postValue(it)
+            }
+        }
+    }
+    open fun getAllAlbumPreferences() {
+        viewModelScope.launch{
+            val result = repository.getAllAlbumPreferences()
+            result?.let{
+                userAlbumPreferences.postValue(it)
+            }
+        }
+    }
+    open fun getAllPerformerPreferences() {
+        viewModelScope.launch{
+            val result = repository.getAllPerformerPreferences()
+            result?.let{
+                userPerformerPreferences.postValue(it)
+            }
+        }
+    }
+
+    open fun getUserFollowingsGenrePreferences() {
+        viewModelScope.launch{
+            val result = repository.getUserFollowingsGenrePreferences(username)
+            result?.let{
+                userGenrePreferences.postValue(it)
+            }
+        }
+    }
+    open fun getUserFollowingsAlbumPreferences() {
+        viewModelScope.launch{
+            val result = repository.getUserFollowingsAlbumPreferences(username)
+            result?.let{
+                userAlbumPreferences.postValue(it)
+            }
+        }
+    }
+    open fun getUserFollowingsPerformerPreferences() {
+        viewModelScope.launch{
+            val result = repository.getUserFollowingsPerformerPreferences(username)
             result?.let{
                 userPerformerPreferences.postValue(it)
             }
@@ -215,6 +300,7 @@ open class MusicViewModel(protected val username: String): ViewModel(){
             }
         }
     }
+
     open fun getUserAlbumRatings() {
         viewModelScope.launch{
             val result = repository.getUserAlbumRatings(username)
@@ -235,8 +321,6 @@ open class MusicViewModel(protected val username: String): ViewModel(){
         viewModelScope.launch {
             val result = repository.postTracks(username, tracks)
             result?.let{
-                Log.d("MusicViewModel", "-${it.results}")
-                //Log.d("MusicViewModel", "-${it.isSuccessful}")
 
                 batchResult.postValue(true)
             }
@@ -246,16 +330,13 @@ open class MusicViewModel(protected val username: String): ViewModel(){
         viewModelScope.launch {
             val fileContent = repository.readContentFromUri(contentResolver, uri)
             fileContent?.let{
-                Log.d("MusicViewModel", "ALo: asdasd")
                 val gson = Gson()
                 val musicBatch = gson.fromJson(fileContent, MusicBatch::class.java)
                 val musics = musicBatch.songs
 
                 musics?.let {
-                    Log.d("MusicViewModel", "-${musics[0].song_name}")
                     parsedMusics.postValue(it)
                     postTracks(it)
-                    Log.d("MusicViewModel", "-${musics[0].song_name}")
                 }
                 //parseAndSaveMusics(it)
             }
@@ -267,13 +348,11 @@ open class MusicViewModel(protected val username: String): ViewModel(){
 
     // In your MusicViewModel
     open fun parseAndSaveMusics(fileContent: String) {
-        Log.d("MusicViewModel", "ALo: burada")
         val musics = fileContent.lines().filter { it.isNotBlank() }.map { line ->
             // Split each line and create Music objects
             // Assuming the format is exactly as the file content you provided
             // You need to modify the parsing logic based on the actual file format
             val parts = line.split(",")
-            Log.d("MusicViewModel", "-${parts[0].substringAfter(" ")}")
             Music(
                 song_name = parts[0].substringAfter(" "),
                 length = parts[1].substringAfter(" "),
@@ -289,13 +368,9 @@ open class MusicViewModel(protected val username: String): ViewModel(){
                 instrument = parts[11].substringAfter(" ")
             )
         }
-        Log.d("MusicViewModel", "ALo: burada???????")
         musics?.let{
-            Log.d("MusicViewModel", "ALo: vb")
             parsedMusics.postValue(it)
-            Log.d("MusicViewModel", "ALo: cv")
             postTracks(it)
-            Log.d("MusicViewModel", "ALo: asd")
         }
     }
 
@@ -309,9 +384,9 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
                            private val userFollowingsAlbumPreferencesService: UserFollowingsAlbumPreferencesService, private val userFollowingsPerformerPreferencesService: UserFollowingsPerformerPreferencesService,
                            private val allGenrePreferencesService: AllGenrePreferencesService, private val allAlbumPreferencesService: AllAlbumPreferencesService, private val allPerformerPreferencesService: AllPerformerPreferencesService,
                            private val recommendationsService: RecommendationsService
-) {
+): IMusicRepository {
 
-    open suspend fun getRecommendationsFromDB(token: String,criteriaString: String, targetAudience: String): RecommendationsResponse? {
+    override suspend fun getRecommendationsFromDB(token: String, criteriaString: String, targetAudience: String): RecommendationsResponse? {
         return try {
             val gson = Gson()
             val jsonObject = JsonObject()
@@ -355,7 +430,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun getAllGenrePreferences(): UserGenrePreferencesResponse? {
+    override suspend fun getAllGenrePreferences(): UserGenrePreferencesResponse? {
         return try {
             val response = allGenrePreferencesService.getAllGenrePreferences()
             if(response.isSuccessful) {
@@ -368,7 +443,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun getAllAlbumPreferences(): UserAlbumPreferencesResponse? {
+    override suspend fun getAllAlbumPreferences(): UserAlbumPreferencesResponse? {
         return try {
             val response = allAlbumPreferencesService.getAllAlbumPreferences()
             if(response.isSuccessful) {
@@ -382,7 +457,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
         }
     }
 
-    open suspend fun getAllPerformerPreferences(): UserPerformerPreferencesResponse? {
+    override suspend fun getAllPerformerPreferences(): UserPerformerPreferencesResponse? {
         return try {
             val response = allPerformerPreferencesService.getAllPerformerPreferences()
             if(response.isSuccessful) {
@@ -397,7 +472,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
     }
 
 
-    open suspend fun  getUserFollowingsPerformerPreferences(token: String): UserPerformerPreferencesResponse? {
+    override suspend fun  getUserFollowingsPerformerPreferences(token: String): UserPerformerPreferencesResponse? {
         return try {
             val response = userFollowingsPerformerPreferencesService.getUserFollowingsPerformerPreferences(token)
             if(response.isSuccessful) {
@@ -410,7 +485,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun getUserFollowingsAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
+    override suspend fun getUserFollowingsAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
         return try {
             Log.d("MainHost", "1")
 
@@ -432,7 +507,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun  getUserFollowingsGenrePreferences(token: String): UserGenrePreferencesResponse? {
+    override suspend fun  getUserFollowingsGenrePreferences(token: String): UserGenrePreferencesResponse? {
         return try {
             //Log.d("MainHost", "1")
             val response = userFollowingsGenrePreferencesService.getUserFollowingsGenrePreferences(token)
@@ -450,7 +525,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun getGroupGenrePreferences(token: String): UserGenrePreferencesResponse? {
+    override suspend fun getGroupGenrePreferences(token: String): UserGenrePreferencesResponse? {
         return try {
             Log.d("MainHost", "1")
             val response = groupGenrePreferencesService.getGroupGenrePreferences(token)
@@ -469,7 +544,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
         }
     }
 
-    open suspend fun getGroupAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
+    override suspend fun getGroupAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
         return try {
             val response = groupAlbumPreferencesService.getGroupAlbumPreferences(token)
             if(response.isSuccessful) {
@@ -483,7 +558,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
         }
     }
 
-    open suspend fun getGroupPerformerPreferences(token: String) : UserPerformerPreferencesResponse? {
+    override suspend fun getGroupPerformerPreferences(token: String) : UserPerformerPreferencesResponse? {
         return try {
             val response = groupPerformerPreferencesService.getGroupPerformerPreferences(token)
             if(response.isSuccessful){
@@ -496,31 +571,22 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun getUserGenrePreferences(token: String) : UserGenrePreferencesResponse? {
+    override suspend fun getUserGenrePreferences(token: String) : UserGenrePreferencesResponse? {
         return try {
-
-
-            Log.d("MainHost", "Bura calisti efenim")
-
             val response = userGenrePreferencesService.getUserGenrePreferences(token)
-            Log.d("MainHost", response.body().toString())
-
             if(response.isSuccessful) {
-                Log.d("MainHost", "Bura calisti efenim")
                 response.body()
             }
             else {
                 null
             }
         }catch (e: Exception) {
-            Log.d("MainHost", "Bura calisti efenim")
-            Log.d("MainHost", e.message.toString())
 
             null
         }
     }
 
-    open suspend fun getUserAlbumPreferences(token: String) : UserAlbumPreferencesResponse? {
+    override suspend fun getUserAlbumPreferences(token: String) : UserAlbumPreferencesResponse? {
         return try{
             val response = userAlbumPreferencesService.getUserAlbumPreferences(token)
             if(response.isSuccessful) {
@@ -534,7 +600,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
         }
     }
 
-    open suspend fun getUserPerformerPreferences(token: String) : UserPerformerPreferencesResponse? {
+    override suspend fun getUserPerformerPreferences(token: String) : UserPerformerPreferencesResponse? {
         return try {
             val response = userPerformerPreferencesService.getUserPerformerPreferences(token)
             if(response.isSuccessful) {
@@ -549,7 +615,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
         }
     }
 
-    open suspend fun getUserSongRatings(token: String) : UserGetSongRatingsResponse? {
+    override suspend fun getUserSongRatings(token: String) : UserGetSongRatingsResponse? {
         return try {
             val gson = Gson()
             val jsonObject = JsonObject()
@@ -564,7 +630,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun getUserAlbumRatings(token: String) : UserGetAlbumRatingsResponse? {
+    override suspend fun getUserAlbumRatings(token: String) : UserGetAlbumRatingsResponse? {
         return try {
             val gson = Gson()
             val jsonObject = JsonObject()
@@ -579,7 +645,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             null
         }
     }
-    open suspend fun getUserPerformerRatings(token: String) : UserGetPerformerRatingsResponse? {
+    override suspend fun getUserPerformerRatings(token: String) : UserGetPerformerRatingsResponse? {
         return try {
             val gson = Gson()
             val jsonObject = JsonObject()
@@ -596,7 +662,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
     }
 
 
-    open suspend fun postTracks(token: String, tracks: List<Music>) : AddSongsBatchResponse?{
+    override suspend fun postTracks(token: String, tracks: List<Music>) : AddSongsBatchResponse?{
         return try {
 
             val requestObject = AddSongsBatchRequest(token, tracks)
@@ -620,7 +686,7 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
         }
     }
 
-    open suspend fun readContentFromUri(contentResolver: ContentResolver, uri: Uri): String {
+    override suspend fun readContentFromUri(contentResolver: ContentResolver, uri: Uri): String {
         return withContext(Dispatchers.IO) {
             val inputStream = contentResolver.openInputStream(uri)
             val reader = BufferedReader(InputStreamReader(inputStream))
@@ -639,4 +705,101 @@ open class MusicRepository(private val addSongsBatchService: AddSongsBatchServic
             return@withContext content.toString()
         }
     }
+}
+
+class MockMusicRepository : IMusicRepository {
+
+    override suspend fun getRecommendationsFromDB(token: String, criteriaString: String, targetAudience: String): RecommendationsResponse? {
+        return null
+    }
+
+    override suspend fun getAllGenrePreferences(): UserGenrePreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getAllAlbumPreferences(): UserAlbumPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getAllPerformerPreferences(): UserPerformerPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getUserFollowingsPerformerPreferences(token: String): UserPerformerPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getUserFollowingsAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getUserFollowingsGenrePreferences(token: String): UserGenrePreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getGroupGenrePreferences(token: String): UserGenrePreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getGroupAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getGroupPerformerPreferences(token: String): UserPerformerPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getUserGenrePreferences(token: String): UserGenrePreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getUserAlbumPreferences(token: String): UserAlbumPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getUserPerformerPreferences(token: String): UserPerformerPreferencesResponse? {
+        return null
+    }
+
+    override suspend fun getUserSongRatings(token: String): UserGetSongRatingsResponse? {
+        return null
+    }
+
+    override suspend fun getUserAlbumRatings(token: String): UserGetAlbumRatingsResponse? {
+        return null
+    }
+
+    override suspend fun getUserPerformerRatings(token: String): UserGetPerformerRatingsResponse? {
+        return null
+    }
+
+    override suspend fun postTracks(token: String, tracks: List<Music>): AddSongsBatchResponse? {
+        return null
+    }
+
+    override suspend fun readContentFromUri(contentResolver: ContentResolver, uri: Uri): String {
+        return "0"
+    }
+}
+
+
+interface IMusicRepository {
+    suspend fun getRecommendationsFromDB(token: String, criteriaString: String, targetAudience: String): RecommendationsResponse?
+    suspend fun getAllGenrePreferences(): UserGenrePreferencesResponse?
+    suspend fun getAllAlbumPreferences(): UserAlbumPreferencesResponse?
+    suspend fun getAllPerformerPreferences(): UserPerformerPreferencesResponse?
+    suspend fun getUserFollowingsPerformerPreferences(token: String): UserPerformerPreferencesResponse?
+    suspend fun getUserFollowingsAlbumPreferences(token: String): UserAlbumPreferencesResponse?
+    suspend fun getUserFollowingsGenrePreferences(token: String): UserGenrePreferencesResponse?
+    suspend fun getGroupGenrePreferences(token: String): UserGenrePreferencesResponse?
+    suspend fun getGroupAlbumPreferences(token: String): UserAlbumPreferencesResponse?
+    suspend fun getGroupPerformerPreferences(token: String): UserPerformerPreferencesResponse?
+    suspend fun getUserGenrePreferences(token: String): UserGenrePreferencesResponse?
+    suspend fun getUserAlbumPreferences(token: String): UserAlbumPreferencesResponse?
+    suspend fun getUserPerformerPreferences(token: String): UserPerformerPreferencesResponse?
+    suspend fun getUserSongRatings(token: String): UserGetSongRatingsResponse?
+    suspend fun getUserAlbumRatings(token: String): UserGetAlbumRatingsResponse?
+    suspend fun getUserPerformerRatings(token: String): UserGetPerformerRatingsResponse?
+    suspend fun postTracks(token: String, tracks: List<Music>): AddSongsBatchResponse?
+    suspend fun readContentFromUri(contentResolver: ContentResolver, uri: Uri): String
 }
