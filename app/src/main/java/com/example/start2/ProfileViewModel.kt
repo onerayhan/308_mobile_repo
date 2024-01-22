@@ -42,6 +42,14 @@ import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Response
 
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.result.Result
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+
+
+
 
 class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
 
@@ -998,50 +1006,30 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
     private val _songList = MutableLiveData<List<com.example.start2.Song>>()
     val songList: LiveData<List<com.example.start2.Song>> get() = _songList
 
-
-
     fun fetchUserSongs() {
         GlobalScope.launch(Dispatchers.IO) {
-            val apiUrl = "http://51.20.128.164/api/user_songs"
+            val apiUrl = "http://51.20.128.164/api/user_songs/${_username.value.orEmpty()}"
+            val contentType = "application/json"
 
             try {
-                val url = URL(apiUrl)
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "POST"
-                connection.setRequestProperty("Content-Type", "application/json")
+                val (_, response, result) = Fuel.get(apiUrl)
+                    .header("Content-Type" to contentType)
+                    .response()
 
-                val jsonInputString = JSONObject().apply {
-                    put("username", _username.value.orEmpty())
-                }.toString()
-
-                connection.doOutput = true
-                connection.outputStream.use { os ->
-                    os.write(jsonInputString.toByteArray(charset("utf-8")))
-                }
-
-                val responseCode = connection.responseCode
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    val reader = BufferedReader(InputStreamReader(connection.inputStream))
-                    val response = StringBuilder()
-
-                    var line: String?
-                    while (reader.readLine().also { line = it } != null) {
-                        response.append(line)
-                    }
-                    reader.close()
-
-                    withContext(Dispatchers.Main) {
-                        Log.d("SongViewModel", "API Response: $response")
-                        parseSongsResponse(response.toString())
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        val errorMessage = "Error: ${connection.responseMessage}"
-                        Log.e("SongViewModel", errorMessage)
-                        _error.value = errorMessage
+                withContext(Dispatchers.Main) {
+                    when (result) {
+                        is Result.Success -> {
+                            val responseBody = String(response.data, Charsets.UTF_8)
+                            Log.d("SongViewModel", "API Response: $responseBody")
+                            parseSongsResponse(responseBody)
+                        }
+                        is Result.Failure -> {
+                            val errorMessage = "Error: ${result.error.response.responseMessage}"
+                            Log.e("SongViewModel", errorMessage)
+                            _error.value = errorMessage
+                        }
                     }
                 }
-
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     val errorMessage = "Error: ${e.message}"
@@ -1051,6 +1039,9 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             }
         }
     }
+
+
+
     private fun parseSongsResponse(response: String) {
         try {
             val jsonArray = JSONArray(response)

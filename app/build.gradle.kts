@@ -52,6 +52,9 @@ android {
 }
 
 dependencies {
+    implementation ("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation ("com.github.kittinunf.fuel:fuel-android:2.3.1")
+
     implementation("io.ktor:ktor-client-core:1.6.6")
     implementation("io.ktor:ktor-client-json:1.6.6")
     implementation("io.ktor:ktor-client-serialization:1.6.6")
