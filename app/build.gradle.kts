@@ -121,6 +121,8 @@ dependencies {
     implementation("me.onebone:toolbar-compose:2.3.5")
     implementation ("com.spotify.android:auth:1.2.5") // Maven dependency
 
+    implementation ("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation ("com.github.kittinunf.fuel:fuel-android:2.3.1")
     // All other dependencies for your app should also be here:
     implementation ("androidx.browser:browser:1.6.0")
     testImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
