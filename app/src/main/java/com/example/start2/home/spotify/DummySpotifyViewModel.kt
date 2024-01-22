@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.start2.services_and_responses.AddMobileTokenServiceProvider
 import kotlinx.coroutines.launch
 
-class DummySpotifyViewModel(token: String) : SpotifyViewModel(token) {
+class DummySpotifyViewModel(token: String) : SpotifyViewModel(token, isTest = true) {
     private val dummyRepository = DummySpotifyRepository()
 
     override fun getUserTopTracks() {

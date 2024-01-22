@@ -286,7 +286,7 @@ fun HomeScreen2(
 fun HomeScreenPreview() {
     val navController = rememberNavController() // Create a NavController
     val musicViewModel = MusicViewModel("aa", true)
-    val spotifyViewModel = SpotifyViewModel("aa")
+    val spotifyViewModel = SpotifyViewModel("aa", isTest = true)
     HomeScreen(
         showDetail = {},
         navController = navController,

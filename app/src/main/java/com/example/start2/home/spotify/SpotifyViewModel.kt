@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.start2.services_and_responses.AddMobileTokenResponse
 import com.example.start2.services_and_responses.AddMobileTokenService
 import com.example.start2.services_and_responses.AddMobileTokenServiceProvider
+import com.example.start2.viewmodels.IMusicRepository
 import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 import okhttp3.FormBody
@@ -18,13 +19,25 @@ import com.google.gson.Gson
 
 
 
-open class SpotifyViewModel(protected val token: String) : ViewModel() {
+open class SpotifyViewModel(protected val token: String, protected val isTest: Boolean) : ViewModel() {
 
-    private val repository = SpotifyRepository(SpotifyServiceProvider.instance,SpotifyTopArtistsServiceProvider.instance, SpotifySearchServiceProvider.instance,
-        SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance,
-        SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance, SpotifyArtistAlbumsServiceProvider.instance,
-        SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance, SpotifyGetSeveralTracksServiceProvider.instance)
+    private var repository =
+        when(isTest) {
+            true -> {
+                MockSpotifyRepository()
+                }
+            false -> {
+                SpotifyRepository(SpotifyServiceProvider.instance,SpotifyTopArtistsServiceProvider.instance, SpotifySearchServiceProvider.instance,
+                    SpotifyRecommendationsServiceProvider.instance, SpotifyArtistInfoServiceProvider.instance, SpotifyTrackInfoServiceProvider.instance,
+                    SpotifyAlbumInfoServiceProvider.instance, SpotifyArtistTopTrackServiceProvider.instance, SpotifyArtistAlbumsServiceProvider.instance,
+                    SpotifyAlbumTracksServiceProvider.instance, SpotifyTokenDataServiceProvider.instance, AddMobileTokenServiceProvider.instance, SpotifyGetSeveralTracksServiceProvider.instance)
 
+            }
+        }
+
+    fun setRepository(repo: ISpotifyRepository) {
+        repository = repo
+    }
 
     val username = MutableLiveData<String>()
     val tokenCode = MutableLiveData<String>()
@@ -32,6 +45,7 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
     val selectedTerm = MutableLiveData<String>("short_term")
     val topTracks = MutableLiveData<TopTracksResponse>()
 
+    val severalTracks = MutableLiveData<SpotifyGetSeveralTracksResponse>()
     val topArtists = MutableLiveData<TopArtistsResponse>()
 
     val searchResults = MutableLiveData<SpotifySearchResponse>()
@@ -154,6 +168,14 @@ open class SpotifyViewModel(protected val token: String) : ViewModel() {
                     total = offset,
                     items = accumulatedArtists
                 ))
+            }
+        }
+    }
+    open fun getSeveralTracks(token: String?, selectedTracks: String) {
+        viewModelScope.launch {
+            val result = repository.getSeveralTracks(token, selectedTracks)
+            result?.let {
+                severalTracks.postValue(it)
             }
         }
     }
@@ -322,8 +344,9 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
                              private val spotifyTrackInfoService: SpotifyTrackInfoService, private val spotifyAlbumInfoService : SpotifyAlbumInfoService,
                              private val spotifyArtistTopTrackService: SpotifyArtistTopTrackService, private val spotifyArtistAlbumsService: SpotifyArtistAlbumsService,
                              private val spotifyAlbumTracksService: SpotifyAlbumTracksService, private val spotifyTokenDataService: SpotifyTokenDataService,
-                             private val addMobileTokenService: AddMobileTokenService, private val spotifyGetSeveralTracksService: SpotifyGetSeveralTracksService) {
-    open suspend fun getUserTopTracks(token: String?, term: String , offset: Int): TopTracksResponse? {
+                             private val addMobileTokenService: AddMobileTokenService, private val spotifyGetSeveralTracksService: SpotifyGetSeveralTracksService)
+    : ISpotifyRepository {
+    override suspend fun getUserTopTracks(token: String?, term: String, offset: Int): TopTracksResponse? {
         return try {
             val response = spotifyTopTracksService.getUserTopTracks("Bearer $token" , range = term, limit = 50 , offset = offset)
             if (response.isSuccessful) {
@@ -336,7 +359,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
         }
     }
 
-    open suspend fun getUserTopArtist(token: String?, term: String, offset: Int) : TopArtistsResponse? {
+    override suspend fun getUserTopArtist(token: String?, term: String, offset: Int) : TopArtistsResponse? {
         return try {
             val response = spotifyTopArtistsService.getUserTopArtists(authHeader = "Bearer $token", range = term, limit = 50, offset = offset)
             if(response.isSuccessful) {
@@ -349,7 +372,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             null
         }
     }
-    open suspend fun getSelectedArtistInfo(token: String?, selectedArtistId : String) : SpotifyArtistInfoResponse? {
+    override suspend fun getSelectedArtistInfo(token: String?, selectedArtistId : String) : SpotifyArtistInfoResponse? {
         return try {
             Log.d("RegistrationActivity", "Pickle Riiiiick")
             val response = spotifyArtistInfoService.getArtistInfo("Bearer $token", selectedArtistId)
@@ -364,7 +387,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             null
         }
     }
-    open suspend fun getSelectedArtistTopTracks(token: String?, selectedArtistId: String) : SpotifyArtistTopTrackResponse? {
+    override suspend fun getSelectedArtistTopTracks(token: String?, selectedArtistId: String) : SpotifyArtistTopTrackResponse? {
         return try {
             val response = spotifyArtistTopTrackService.getArtistTopTracks("Bearer $token", selectedArtistId)
             if(response.isSuccessful) {
@@ -380,7 +403,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             null
         }
     }
-    open suspend fun getSelectedArtistAlbums(token: String?,selectedArtistId: String): SpotifyArtistAlbumsResponse? {
+    override suspend fun getSelectedArtistAlbums(token: String?, selectedArtistId: String): SpotifyArtistAlbumsResponse? {
         return try {
             val response = spotifyArtistAlbumsService.getArtistAlbums("Bearer $token",selectedArtistId )
             if(response.isSuccessful){
@@ -394,7 +417,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             null
         }
     }
-    open suspend fun getAlbumTracks(token: String?, selectedAlbumId: String): SpotifyAlbumTracksResponse?{
+    override suspend fun getAlbumTracks(token: String?, selectedAlbumId: String): SpotifyAlbumTracksResponse?{
         return try{
             val response = spotifyAlbumTracksService.getAlbumTracks("Bearer $token", selectedAlbumId)
             if(response.isSuccessful) {
@@ -409,7 +432,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
         }
     }
 
-    open suspend fun getSeveralTracks(token: String?, selectedTracks: String) : SpotifyGetSeveralTracksResponse? {
+    override suspend fun getSeveralTracks(token: String?, selectedTracks: String) : SpotifyGetSeveralTracksResponse? {
         return try {
             val response = spotifyGetSeveralTracksService.getSeveralTracks("Bearer $token", ids= selectedTracks)
             if(response.isSuccessful) {
@@ -422,7 +445,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             null
         }
     }
-    open suspend fun getSelectedTrackInfo(token: String?, selectedTrackId: String) : Track?{
+    override suspend fun getSelectedTrackInfo(token: String?, selectedTrackId: String) : Track?{
         return try {
             //Log.d()
             val response = spotifyTrackInfoService.getTrackInfo("Bearer $token", selectedTrackId)
@@ -439,7 +462,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
     }
 
 
-    open suspend fun getSelectedAlbumInfo(token: String?, selectedAlbumId: String) : Album? {
+    override suspend fun getSelectedAlbumInfo(token: String?, selectedAlbumId: String) : Album? {
         return try {
             val response = spotifyAlbumInfoService.getAlbumInfo("Bearer $token", selectedAlbumId)
             if(response.isSuccessful) {
@@ -453,7 +476,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
             null
         }
     }
-    open suspend fun search(token: String?, searchQuery : String) : SpotifySearchResponse? {
+    override suspend fun search(token: String?, searchQuery : String) : SpotifySearchResponse? {
         return try {
             Log.d("RegistrationActivity", "Every time I see your face")
             val response = spotifySearchService.searchSpotify("Bearer $token", searchQuery, "track,album,artist")
@@ -471,7 +494,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
 
     }
     //TODO:: Implement user entry recommendation
-    open suspend fun getRecommendation(token: String?, recommendationQuery: String , artistsQuery: String, trackQuery: String) : SpotifyRecommendationsResponse? {
+    override suspend fun getRecommendation(token: String?, recommendationQuery: String, artistsQuery: String, trackQuery: String) : SpotifyRecommendationsResponse? {
         return try {
             Log.d("RegistrationActivity", "big in japan")
             val response = spotifyRecommendationsService.getRecommendations("Bearer $token", 10, "TR", seedGenres = recommendationQuery, seedArtists = artistsQuery, seedTracks = trackQuery)
@@ -514,11 +537,11 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
         )
     }
 
-    open suspend fun rateTrack(trackId: String, rating: Int): RateResponse? {
+    override suspend fun rateTrack(trackId: String, rating: Int): RateResponse? {
         return null
     }
 
-    open suspend fun exchangeCodeForToken(tokenCode: String): JsonObject? {
+    override suspend fun exchangeCodeForToken(tokenCode: String): JsonObject? {
         val url = "https://accounts.spotify.com/api/token"
         val client = OkHttpClient()
         val REQUEST_CODE = 1337
@@ -556,7 +579,7 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
         }
 
     }
-    open suspend fun addMobileToken(userName: String?, tokenData: JsonObject) : AddMobileTokenResponse? {
+    override suspend fun addMobileToken(userName: String?, tokenData: JsonObject) : AddMobileTokenResponse? {
         return try {
             val jsonObject = JSONObject().apply {
                 put("username", userName)
@@ -577,6 +600,81 @@ open class SpotifyRepository(private val spotifyTopTracksService: SpotifyTopTrac
     }
 
 
+}
+
+class MockSpotifyRepository : ISpotifyRepository {
+    override suspend fun getUserTopTracks(token: String?, term: String, offset: Int): TopTracksResponse? {
+        return null
+    }
+
+    override suspend fun getUserTopArtist(token: String?, term: String, offset: Int): TopArtistsResponse? {
+        return null
+    }
+
+    override suspend fun getSelectedArtistInfo(token: String?, selectedArtistId: String): SpotifyArtistInfoResponse? {
+        return null
+    }
+
+    override suspend fun getSelectedArtistTopTracks(token: String?, selectedArtistId: String): SpotifyArtistTopTrackResponse? {
+        return null
+    }
+
+    override suspend fun getSelectedArtistAlbums(token: String?, selectedArtistId: String): SpotifyArtistAlbumsResponse? {
+        return null
+    }
+
+    override suspend fun getAlbumTracks(token: String?, selectedAlbumId: String): SpotifyAlbumTracksResponse? {
+        return null
+    }
+
+    override suspend fun getSeveralTracks(token: String?, selectedTracks: String): SpotifyGetSeveralTracksResponse? {
+        return null
+    }
+
+    override suspend fun getSelectedTrackInfo(token: String?, selectedTrackId: String): Track? {
+        return null
+    }
+
+    override suspend fun getSelectedAlbumInfo(token: String?, selectedAlbumId: String): Album? {
+        return null
+    }
+
+    override suspend fun search(token: String?, searchQuery: String): SpotifySearchResponse? {
+        return null
+    }
+
+    override suspend fun getRecommendation(token: String?, recommendationQuery: String, artistsQuery: String, trackQuery: String): SpotifyRecommendationsResponse? {
+        return null
+    }
+
+    override suspend fun rateTrack(trackId: String, rating: Int): RateResponse? {
+        return null
+    }
+
+    override suspend fun exchangeCodeForToken(tokenCode: String): JsonObject? {
+        return null
+    }
+
+    override suspend fun addMobileToken(userName: String?, tokenData: JsonObject): AddMobileTokenResponse? {
+        return null
+    }
+}
+
+interface ISpotifyRepository {
+    suspend fun getUserTopTracks(token: String?, term: String, offset: Int): TopTracksResponse?
+    suspend fun getUserTopArtist(token: String?, term: String, offset: Int): TopArtistsResponse?
+    suspend fun getSelectedArtistInfo(token: String?, selectedArtistId: String): SpotifyArtistInfoResponse?
+    suspend fun getSelectedArtistTopTracks(token: String?, selectedArtistId: String): SpotifyArtistTopTrackResponse?
+    suspend fun getSelectedArtistAlbums(token: String?, selectedArtistId: String): SpotifyArtistAlbumsResponse?
+    suspend fun getAlbumTracks(token: String?, selectedAlbumId: String): SpotifyAlbumTracksResponse?
+    suspend fun getSeveralTracks(token: String?, selectedTracks: String): SpotifyGetSeveralTracksResponse?
+    suspend fun getSelectedTrackInfo(token: String?, selectedTrackId: String): Track?
+    suspend fun getSelectedAlbumInfo(token: String?, selectedAlbumId: String): Album?
+    suspend fun search(token: String?, searchQuery: String): SpotifySearchResponse?
+    suspend fun getRecommendation(token: String?, recommendationQuery: String, artistsQuery: String, trackQuery: String): SpotifyRecommendationsResponse?
+    suspend fun rateTrack(trackId: String, rating: Int): RateResponse?
+    suspend fun exchangeCodeForToken(tokenCode: String): JsonObject?
+    suspend fun addMobileToken(userName: String?, tokenData: JsonObject): AddMobileTokenResponse?
 }
 
 

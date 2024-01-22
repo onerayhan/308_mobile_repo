@@ -41,7 +41,7 @@ class NavigatorActivity : ComponentActivity() {
         }
         // Initialize ViewModel
         val viewModel: SpotifyViewModel = if (token != null) {
-            ViewModelProvider(this, SpotifyViewModelFactory(token)).get(SpotifyViewModel::class.java)
+            ViewModelProvider(this, SpotifyViewModelFactory(token, isTest = false)).get(SpotifyViewModel::class.java)
         } else {
             DummySpotifyViewModel("dummy")
         }
