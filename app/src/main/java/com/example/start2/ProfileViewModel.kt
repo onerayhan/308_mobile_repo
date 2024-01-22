@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.example.start2.services_and_responses.UserGenrePreferencesResponse
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -38,19 +37,8 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import com.google.gson.JsonParser
-import io.ktor.client.HttpClient
-import io.ktor.client.features.get
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Response
 
@@ -148,7 +136,7 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         viewModelScope.launch {
             try {
                 _loading.value = true  // Corrected
-                val url = "http://51.20.128.164/api/user_followings_genre_preference"
+                val url = "http://51.20.128.164/api/user_followings_genre_preference${_username.value}"
                 val requestBody = JSONObject().apply {
                     put("username",  _username.value.orEmpty())
                 }.toString()
@@ -816,6 +804,8 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                 val mediaType = "application/json; charset=utf-8".toMediaType()
                 val requestBody = json.toRequestBody(mediaType)
 
+                Log.d("formgroup", "Sending request to $requestBody")
+
                 val client = OkHttpClient()
                 val url = "http://51.20.128.164/api/add_song"  // Replace with your actual API base URL
                 val postRequest = Request.Builder()
@@ -1130,52 +1120,78 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
         })
     }
 
+
     fun formGroup(usernameArr: List<String>, groupName: String) {
-        val url = "http://51.20.128.164/api/form_groups"
 
         // Check if the username array contains at least two names
         if (usernameArr.size < 2) {
-            println("Error: Username array must contain at least two names.")
+            Log.e("FormGroup", "Error: Username array must contain at least two names.")
             return
         }
 
-        // Create JSON request body
-        val json = """
-        {
-            "username_arr": ${usernameArr.joinToString(prefix = "[", postfix = "]", separator = "\",\"")},
-            "group_name": "$groupName"
-        }
-    """.trimIndent()
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                // Use Gson library to convert data to JSON
 
-        // Create OkHttpClient instance
-        val client = OkHttpClient()
+                val gson = Gson()
+                val json = gson.toJson(mapOf("username_arr" to usernameArr, "group_name" to groupName))
 
-        // Create request body with JSON content type
-        val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
+                val mediaType = "application/json; charset=utf-8".toMediaType()
+                val requestBody = json.toRequestBody(mediaType)
+                Log.d("Groupform", "Sending request to: $requestBody")
 
-        // Build the HTTP request
-        val request = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .build()
+                val client = OkHttpClient()
+                val url = "http://51.20.128.164/api/form_groups"  // Replace with your actual API base URL
+                val postRequest = Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build()
 
-        // Execute the request asynchronously
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // Handle failure
-                println("Request failed: ${e.message}")
-            }
+                Log.d("Groupform", "Sending request to: $postRequest")
 
-            override fun onResponse(call: Call, response: Response) {
-                // Handle response
+                Log.d("Groupform", "Sending request to $url with JSON: $json")
+
+                val response = client.newCall(postRequest).execute()
+
+
+                Log.d("Groupform", "Sending request to $url with JSON: $json")
+
+
+                Log.d("Groupform", "Sending request to $url with JSON: $json")
+
+
+
                 if (response.isSuccessful) {
-                    println("Group formed successfully")
+                    // Handle the successful response here
+                    val responseBody = response.body?.string()
+                    Log.d("Groupform", "Success: $responseBody")
+                    val jsonObject = JsonParser.parseString(responseBody).asJsonObject
+
+                    // Extract values from the JSON object
+                    val message = jsonObject.getAsJsonPrimitive("message").asString
+                    val songId = jsonObject.getAsJsonPrimitive("group_id").asInt
+
+                    // Now you can work with the extracted values
+                    Log.d("Groupform", "Message: $message")
+                    Log.d("Groupform", "Groupform ID: $songId")
+
+
                 } else {
-                    println("Failed to form group. Response code: ${response.code}")
+                    // Handle other errors here
+                    Log.e("Groupform", "Error: ${response.code} - ${response.message}")
                 }
+            } catch (e: Exception) {
+                // Handle exceptions here
+                Log.e("Groupform", "Exception: ${e.message}")
+                e.printStackTrace()
             }
-        })
+        }
+
     }
+
+
+
+
     fun removeUserFromGroup(username: String, groupId: Int) {
         val url = "http://51.20.128.164/api/remove_user_from_group"
 
@@ -1216,6 +1232,9 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             }
         })
     }
+    private val _userGroupInfo = MutableLiveData<List<com.example.start2.UserGroup>>()
+    val userGroupInfo: LiveData<List<com.example.start2.UserGroup>> get() = _userGroupInfo
+
 
     fun displayUserGroup() {
         GlobalScope.launch(Dispatchers.IO) {
@@ -1224,17 +1243,8 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             try {
                 val url = URL(apiUrl)
                 val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "POST"
+                connection.requestMethod = "GET"
                 connection.setRequestProperty("Content-Type", "application/json")
-
-                val jsonInputString = JSONObject().apply {
-                    put("username", _username.value.orEmpty())
-                }.toString()
-
-                connection.doOutput = true
-                connection.outputStream.use { os ->
-                    os.write(jsonInputString.toByteArray(charset("utf-8")))
-                }
 
                 val responseCode = connection.responseCode
                 if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -1248,13 +1258,13 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
                     reader.close()
 
                     withContext(Dispatchers.Main) {
-                        Log.d("GroupViewModel", "API Response: $response")
-                        parseSongsResponse(response.toString())
+                        Log.d("UserGroup", "API Response: $response")
+                        parseGroupResponse(response.toString())
                     }
                 } else {
                     withContext(Dispatchers.Main) {
                         val errorMessage = "Error: ${connection.responseMessage}"
-                        Log.e("GroupViewModel", errorMessage)
+                        Log.e("UserGroup", errorMessage)
                         _error.value = errorMessage
                     }
                 }
@@ -1262,24 +1272,56 @@ class ProfileViewModel(private val usr: UserPreferences): ViewModel() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     val errorMessage = "Error: ${e.message}"
-                    Log.e("GroupViewModel", errorMessage)
+                    Log.e("UserGroup", errorMessage)
                     _error.value = errorMessage
                 }
             }
         }
     }
 
+    private fun parseGroupResponse(response: String) {
+        try {
+            val jsonArray = JSONArray(response)
+
+            val userGroups = mutableListOf<UserGroup>()
+
+            for (i in 0 until jsonArray.length()) {
+                val jsonObject = jsonArray.getJSONObject(i)
+                val groupId = jsonObject.getInt("group_id")
+                val groupName = jsonObject.getString("group_name")
+                val groupMembersArray = jsonObject.getJSONArray("group_members")
+
+                val groupMembers = mutableListOf<String>()
+                for (j in 0 until groupMembersArray.length()) {
+                    groupMembers.add(groupMembersArray.getString(j))
+                }
+
+                val userGroup = UserGroup(groupId, groupName, groupMembers)
+                userGroups.add(userGroup)
+            }
+            Log.d("UserGroup", "parsing: ${userGroups}")
 
 
-
-
-
-
-
-
-
-
+            _userGroupInfo.postValue(userGroups)
+        } catch (e: JSONException) {
+            Log.e("UserGroup", "Error parsing JSON: ${e.message}")
+            _error.value = "Error parsing JSON"
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
