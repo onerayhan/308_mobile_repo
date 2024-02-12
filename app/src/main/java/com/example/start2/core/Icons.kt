@@ -3,7 +3,12 @@ package com.example.start2.core
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddChart
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.rounded.AddTask
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
@@ -27,7 +32,7 @@ fun HomeIcon(
     modifier: Modifier = Modifier
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(id = R.drawable.ic_home),
+        imageVector =  Icons.Outlined.Home,
         contentDescription = stringResource(id = R.string.home),
         modifier = modifier
     )
@@ -39,7 +44,7 @@ fun SearchIcon(
     tint: Color = defaultIconTint()
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(id = R.drawable.ic_home),
+        imageVector = Icons.Outlined.Search,
         contentDescription = stringResource(id = R.string.search),
         tint = tint,
         modifier = modifier
@@ -53,6 +58,18 @@ fun FavoriteIcon(
 ) {
     Icon(
         imageVector = Icons.Rounded.FavoriteBorder,
+        contentDescription = stringResource(id = R.string.favorites),
+        tint = tint,
+        modifier = modifier
+    )
+}
+@Composable
+fun RecommendationIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = defaultIconTint()
+) {
+    Icon(
+        imageVector = Icons.Rounded.AddTask,
         contentDescription = stringResource(id = R.string.favorites),
         tint = tint,
         modifier = modifier
@@ -75,7 +92,7 @@ fun RateIcon(
     modifier: Modifier = Modifier
 ) {
     Icon(
-        imageVector = Icons.Outlined.Person,
+        imageVector = Icons.Outlined.StarOutline,
         contentDescription = stringResource(id = R.string.rate),
         modifier = modifier
     )
@@ -85,7 +102,7 @@ fun AnalysisIcon(
     modifier: Modifier = Modifier
 ) {
     Icon(
-        imageVector = Icons.Outlined.Person,
+        imageVector = Icons.Outlined.AddChart,
         contentDescription = stringResource(id = R.string.analysis),
         modifier = modifier
     )

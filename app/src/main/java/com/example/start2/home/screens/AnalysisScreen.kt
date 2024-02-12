@@ -1,133 +1,202 @@
-package com.example.start2.home.screens
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.start2.home.AnalysisViewModel
-import com.example.start2.home.ui.ArtistProductivityChart
-import com.example.start2.home.ui.GenrePopularityChart
-import com.example.start2.home.ui.RatingDistributionChart
-import com.example.start2.home.ui.SongCharacteristicsChart
-import com.example.start2.home.ui.SongPopularityTrendChart
-
-
-
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import com.example.start2.home.ui.ArtistData
-import com.example.start2.home.ui.GenreData
-import com.example.start2.home.ui.RatingData
-import com.example.start2.home.ui.SongData
-import com.example.start2.home.ui.SongPopularityData
-import com.patrykandpatrick.vico.core.entry.FloatEntry
+import com.example.start2.home.Profile.UserPreferences
 import com.example.start2.home.navigators.LeafScreen
+import com.example.start2.home.spotify.SpotifyViewModel
+import com.example.start2.home.ui.createColumnChart
+import com.example.start2.services_and_responses.UserFollowingsGenrePreferencesResponse
+import com.example.start2.services_and_responses.UserGenrePreferencesResponse
+import com.example.start2.services_and_responses.UserPerformerPreferencesResponse
+import com.example.start2.viewmodels.MusicViewModel
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
+import com.patrykandpatrick.vico.core.entry.FloatEntry
 
 
-@Preview(showBackground = true)
-@Composable
-fun AnalysisScreenPreview() {
-    val dummyNavController = rememberNavController()
-    AnalysisScreen(navController = dummyNavController)
+
+
+
+private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
+    navigate(leafScreen.route) {
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+    }
 }
+
+
+fun convertFollowingGenrePreferencesToChartData(followingGenrePreferences: UserFollowingsGenrePreferencesResponse): List<FloatEntry> {
+    // Convert the following genre preferences data to the format required by your chart
+    return followingGenrePreferences.genres.mapIndexed { index, genrePreference ->
+        FloatEntry(x = index.toFloat(), y = genrePreference.count.toFloat())
+    }
+}
+
+fun convertPerformerPreferencesToChartData(performerPreferences: UserPerformerPreferencesResponse): List<FloatEntry> {
+    // Convert the performer preferences data to the format required by your chart
+    return performerPreferences.performers.mapIndexed { index, performerPreference ->
+        FloatEntry(x = index.toFloat(), y = performerPreference.count.toFloat())
+    }
+}
+// Convert GenrePreferences to Chart Data
+fun convertGenrePreferencesToChartData(genrePreferences: UserGenrePreferencesResponse): List<FloatEntry> {
+    // Convert the genre preferences data to the format required by your chart
+    return genrePreferences.genres.mapIndexed { index, genrePreference ->
+        FloatEntry(x = index.toFloat(), y = genrePreference.count.toFloat())
+    }
+}
+// Create a custom AxisValueFormatter for the x-axis
+fun createGenreNameFormatter(genrePreferences: UserGenrePreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
+    val indexToGenreName = genrePreferences.genres.mapIndexed { index, genrePreference ->
+        index.toFloat() to genrePreference.genre
+    }.toMap()
+
+    return AxisValueFormatter { value, _ ->
+        indexToGenreName[value] ?: ""
+    }
+}
+
+fun createFollowingGenreNameFormatter(followingGenrePreferences: UserFollowingsGenrePreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
+    // Map index (Float) to genre names
+    val indexToGenreName = followingGenrePreferences.genres.mapIndexed { index, genrePreference ->
+        index.toFloat() to genrePreference.genre
+    }.toMap()
+
+    // Return a custom AxisValueFormatter that uses this mapping
+    return AxisValueFormatter { value, _ ->
+        indexToGenreName[value] ?: ""
+    }
+}
+
+fun createPerformerNameFormatter(performerPreferences: UserPerformerPreferencesResponse): AxisValueFormatter<AxisPosition.Horizontal.Bottom> {
+    // Map index (Float) to performer names
+    val indexToPerformerName = performerPreferences.performers.mapIndexed { index, performerPreference ->
+        index.toFloat() to performerPreference.performer
+    }.toMap()
+
+    // Return a custom AxisValueFormatter that uses this mapping
+    return AxisValueFormatter { value, _ ->
+        indexToPerformerName[value] ?: ""
+    }
+}
+
+
+// Enum class for analysis options
 enum class AnalysisOption(val displayName: String) {
-    SongPopularity("Song Popularity Over Time"),
-    RatingDistribution("Rating Distribution"),
     PopularGenres("Most Popular Genres"),
-    ArtistProductivity("Artist Productivity Over Years"),
-    SongCharacteristics("Song Characteristics and Popularity"),
+    PopularPerformers("Most Popular Performers"),
+    FollowingGenrePreferences("Follower's Most Popular Genres"),
 }
 
 @Composable
-fun AnalysisScreen(navController: NavController) {
-    // Initialize the ViewModel using viewModel()
-    val viewModel: AnalysisViewModel = viewModel()
+fun AnalysisScreen(
+    navController: NavController,
+    viewModel: SpotifyViewModel?,
+    musicViewModel: MusicViewModel,
+) {
+    val context = LocalContext.current
+    val userPreferences = remember { UserPreferences(context) }
+    // State to keep track of the selected chart option
+    var selectedOption by remember { mutableStateOf(AnalysisOption.PopularGenres) }
 
-    var selectedOption by remember { mutableStateOf(AnalysisOption.SongPopularity) }
+    //username?.let{ profileViewModel.getUserFollowingsGenrePreferences()}
+    musicViewModel.getUserGenrePreferences()
+    musicViewModel.getUserPerformerPreferences()
 
+   // profileViewModel.getUserFollowingsGenrePreferences()
+
+    val genrePreferences by musicViewModel.userGenrePreferences.observeAsState()
+    val performerPreferences by musicViewModel.userPerformerPreferences.observeAsState()
+    //val followingGenrePreferences by profileViewModel.userFollowingsGenrePreferences.observeAsState()
     Scaffold(
-        topBar = { AnalysisTopBar() }
+        topBar = { AnalysisTopBar(title = "Your Song Activity") }
     ) { contentPadding ->
-        // Use contentPadding for the Column
         Column(
-            modifier = Modifier.padding(contentPadding)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .background(Color.White)
         ) {
-        }
-        Text(
-            text = "chartView",
-            modifier = Modifier.clickable { navController?.navigateToLeafScreen(LeafScreen.AnalysisTable) })
-        AnalysisOptionSelector(selectedOption) { option ->
-            selectedOption = option
-            viewModel.fetchDataForOption(option)
-        }
-        AnalysisChartArea(viewModel, selectedOption)
-    }
-}
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        // Handle button click here
+                        navController?.navigateToLeafScreen(LeafScreen.AnalysisTable)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    Text(text = "Go to Analysis Table")
+                }
+            }
 
-        private fun NavController.navigateToLeafScreen(leafScreen: LeafScreen) {
-            navigate(leafScreen.route) {
-                launchSingleTop = true
-                restoreState = true
-                popUpTo(graph.findStartDestination().id) {
-                    saveState = true
+            Spacer(modifier = Modifier.height(50.dp))
+
+            performerPreferences?.let {
+                val horizontalAxisValueFormatter1 = createPerformerNameFormatter(it)
+                val chartData = convertPerformerPreferencesToChartData(it)
+                createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter1)
+
+            }
+            genrePreferences?.let {
+                // Ensure genrePreferences is not null before passing it
+                val horizontalAxisValueFormatter = createGenreNameFormatter(it)
+
+                val chartData = convertGenrePreferencesToChartData(it)
+                createColumnChart(chartData, Color.Black, horizontalAxisValueFormatter)
+            }
         }
     }
+
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnalysisTopBar() {
-    TopAppBar(title = { Text("Data Analysis") })
-}
-@Composable
-fun AnalysisOptionSelector(selectedOption: AnalysisOption, onOptionSelected: (AnalysisOption) -> Unit) {
-    val expanded = remember { mutableStateOf(false) } // State to track if the dropdown is expanded
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Select an Analysis Option", fontWeight = FontWeight.Bold)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Dropdown menu to select an option
-        DropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false }
-        ) {
-            AnalysisOption.values().forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option.displayName) },
-                    onClick = {
-                        onOptionSelected(option)
-                        expanded.value = false
-                    }
-                )
-            }
-        }
-
-        // Button to show/hide the DropdownMenu
-        Button(onClick = { expanded.value = true }) {
-            Text("Show Options")
-        } }
-        }
-
-@Composable
-fun AnalysisChartArea(viewModel: AnalysisViewModel, selectedOption: AnalysisOption) {
-    val chartData by viewModel.chartData.observeAsState(listOf())
-
-    // Each chart function directly accepts List<FloatEntry>
-    when (selectedOption) {
-        AnalysisOption.SongPopularity -> SongPopularityTrendChart(chartData)
-        AnalysisOption.RatingDistribution -> RatingDistributionChart(chartData)
-        AnalysisOption.PopularGenres -> GenrePopularityChart(chartData)
-        AnalysisOption.ArtistProductivity -> ArtistProductivityChart(chartData)
-        AnalysisOption.SongCharacteristics -> SongCharacteristicsChart(chartData)
-    }
+fun AnalysisTopBar(title: String) {
+    TopAppBar(title = {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h2.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                textAlign = TextAlign.End
+            )
+        )
+    })
 }

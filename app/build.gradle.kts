@@ -52,6 +52,29 @@ android {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-client-core:1.6.6")
+    implementation("io.ktor:ktor-client-json:1.6.6")
+    implementation("io.ktor:ktor-client-serialization:1.6.6")
+    implementation("io.ktor:ktor-client-logging:1.6.6")
+    implementation ("com.spotify.android:auth:1.2.5")
+    implementation ("androidx.compose.ui:ui:1.0.0")
+    implementation ("androidx.compose.material:material:1.0.0")
+    implementation ("androidx.activity:activity-compose:1.3.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
+
+    implementation ("com.google.dagger:hilt-android:2.38.1")
+    implementation("androidx.core:core-ktx:+")
+    implementation("androidx.test.ext:junit-ktx:1.1.5")
+    annotationProcessor ("com.google.dagger:hilt-android-compiler:2.38.1")
+    implementation ("androidx.compose.ui:ui:1.5.4")
+    implementation ("androidx.compose.material3:material3:1.1.2")
+    implementation ("androidx.compose.ui:ui:1.6.0-beta01")
+    implementation ("androidx.compose.material:material:1.6.0-beta01")
+    implementation ("androidx.compose.ui:ui-tooling:1.6.0-beta01")
+
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0-beta01")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation("androidx.core:core-ktx:1.12.0")
@@ -73,9 +96,11 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation ("com.android.volley:volley:1.2.1")
     implementation ("com.google.code.gson:gson:2.10.1")
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-
+    implementation ("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
     implementation ("androidx.compose.material:material:")
@@ -93,12 +118,28 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.patrykandpatrick.vico:compose:1.12.0")
     implementation("com.patrykandpatrick.vico:core:1.12.0")
-
+    implementation("me.onebone:toolbar-compose:2.3.5")
     implementation ("com.spotify.android:auth:1.2.5") // Maven dependency
 
+    implementation ("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation ("com.github.kittinunf.fuel:fuel-android:2.3.1")
     // All other dependencies for your app should also be here:
     implementation ("androidx.browser:browser:1.6.0")
+    testImplementation ("androidx.compose.ui:ui-test-junit4:1.5.4")
 
+    androidTestImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation ("org.mockito:mockito-core:4.0.0")
+    testImplementation ("org.mockito:mockito-inline:4.0.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    implementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation ("org.mockito:mockito-android:3.11.0")
+    androidTestImplementation ("org.mockito:mockito-android:3.11.0")
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.1")
+    androidTestImplementation ("org.mockito:mockito-android:3.11.0")
+    testImplementation ("io.mockk:mockk:1.12.0")
+    testImplementation ("org.robolectric:robolectric:4.9.1")
+    androidTestImplementation ("org.robolectric:robolectric:4.9.1")
 
 
     testImplementation("junit:junit:4.13.2")

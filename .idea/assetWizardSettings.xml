@@ -11,25 +11,12 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
-                        <option name="children">
-                          <map>
-                            <entry key="clipartAsset">
-                              <value>
-                                <PersistentState>
-                                  <option name="values">
-                                    <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/home/baseline_home_24.xml" />
-                                    </map>
-                                  </option>
-                                </PersistentState>
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="baseline_home_24" />
-                            <entry key="sourceFile" value="C:\Users\ayhan\AndroidStudioProjects\guardians_of_code-development_mobile\mobil" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="color" value="f8da35" />
+                            <entry key="outputName" value="rectangle_171" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/Rectangle 17 (1).svg" />
                           </map>
                         </option>
                       </PersistentState>

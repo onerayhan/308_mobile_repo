@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.compose.ui:ui-test-android:1.6.0-beta01@aar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/74eab3acad9601b9b9198be32bf6e8ee/transformed/ui-test-release/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/74eab3acad9601b9b9198be32bf6e8ee/transformed/ui-test-release/res" />
+      <root url="file://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/transforms-3/74eab3acad9601b9b9198be32bf6e8ee/transformed/ui-test-release/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../AndroidStudioProjects/MyApplication7/caches/modules-2/files-2.1/androidx.compose.ui/ui-test-android/1.6.0-beta01/574c3552265032379904fa84fb6139bd0dc3c64e/ui-test-android-1.6.0-beta01-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
